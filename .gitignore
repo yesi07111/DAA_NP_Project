@@ -1,3 +1,18 @@
+# Personalized
+temp_*
+
+# LaTeX
+*.aux
+*.bbl
+*.bcf
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.run.xml
+*.synctex.gz
+
 # Dependencies
 node_modules/
 venv/
