@@ -1,0 +1,1248 @@
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath, amssymb, amsthm}
+\usepackage{geometry}
+\usepackage[backend=biber,style=ieee]{biblatex}
+\usepackage{csquotes}
+\usepackage[spanish]{babel}
+\usepackage{setspace}
+\usepackage{enumitem}
+\usepackage{lipsum}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{mathptmx}
+\usepackage{courier}
+\usepackage{hyperref}
+
+\theoremstyle{definition}
+\newtheorem{theorem}{Teorema}
+\newtheorem{lemma}[theorem]{Lema}
+\newtheorem{definition}[theorem]{Definición}
+\newtheorem{proposition}[theorem]{Proposición}
+\newtheorem{corollary}[theorem]{Corolario}
+
+\geometry{letterpaper, margin=1in}
+\DefineBibliographyStrings{spanish}{
+    references = {Referencias},
+    }
+\addbibresource{referencias.bib}
+\onehalfspacing
+
+\title{\textbf{Proyecto DAA: Problema de la Empresa Telefónica - Partición Cromática de Costo Mínimo (MCCPP)}}
+\author{
+Yesenia Valdés Rodríguez (C411)\\
+Laura Martir Beltrán (C411)\\
+Adrián Hernández Castellanos (C412)
+}
+\date{}
+
+\begin{document}
+
+\maketitle
+\thispagestyle{empty}
+\newpage
+
+\tableofcontents
+\newpage
+
+\setcounter{page}{1}
+
+\section{Formalización del Problema}
+
+\subsection{Problema: La empresa Telefónica}
+En ConectaMax Telecom, nuestra misión es proporcionar una conectividad móvil ininterrumpida y de alta calidad a millones de usuarios. Para lograrlo, operamos una extensa y compleja red de torres de telefonía celular. La eficiencia y la calidad de nuestra red dependen críticamente de cómo gestionamos uno de nuestros recursos más valiosos: el espectro de radiofrecuencias.
+
+Nos enfrentamos a un desafío operativo y financiero significativo en la asignación de frecuencias a nuestras torres. Disponemos de un conjunto limitado de frecuencias que podemos utilizar. La regla fundamental, dictada por la física y la regulación, es que dos torres que están geográficamente muy cerca una de la otra (y que, por lo tanto, podrían interferir entre sí) no pueden operar en la misma frecuencia. Esto es vital para evitar la degradación de la señal y asegurar un servicio fiable.
+
+La complejidad adicional, y donde reside nuestro mayor reto, es que el costo de operar una torre con una frecuencia específica no es uniforme. Asignar una frecuencia particular a una torre determinada conlleva costos variables. Estos costos pueden deberse a múltiples factores:
+
+\begin{itemize}
+\item \textbf{Equipamiento de la Torre:} Algunas torres tienen hardware más antiguo o especializado que es más eficiente con ciertas frecuencias, mientras que otras frecuencias podrían requerir adaptaciones o un mayor consumo energético en ese mismo equipo.
+\item \textbf{Consumo Energético:} La eficiencia energética de la transmisión varía según la frecuencia y el tipo de equipo de la torre, impactando directamente nuestras facturas de electricidad.
+\item \textbf{Regulaciones Locales y Licencias:} En ciertas áreas o para bandas de frecuencia específicas, pueden existir tarifas de licencia más elevadas o regulaciones que exigen configuraciones especiales, aumentando los costos operativos.
+\end{itemize}
+
+Nuestro objetivo principal es asignar una frecuencia a cada una de nuestras torres de tal manera que:
+
+\begin{enumerate}
+\item \textbf{Se eviten todas las interferencias:} Ninguna torre cercana a otra utilice la misma frecuencia.
+\item \textbf{Se minimice el costo operativo total:} La suma de los costos individuales de asignar cada frecuencia a cada torre sea la más baja posible.
+\end{enumerate}
+
+Una gestión subóptima de esta asignación no solo puede generar interferencias que afectan la calidad del servicio y la satisfacción del cliente, sino que también puede resultar en millones de dólares en costos operativos innecesarios.
+
+\subsection{Contexto del Problema: La Asignación de Frecuencias en ConectaMax Telecom}
+
+El problema presentado por la empresa ConectaMax Telecom, centrado en la asignación óptima de frecuencias a sus torres de telefonía celular, se traduce directamente en un problema de optimización combinatoria conocido como el \textbf{Problema de Partición Cromática de Costo Mínimo (Minimum Cost Chromatic Partition Problem, MCCPP)}.
+
+La estructura de la red telefónica y sus restricciones operativas se modelan de la siguiente manera:
+
+\begin{itemize}
+    \item \textbf{Grafo de Interferencia $G=(V, E)$}: Las Torres de Telefonía Celular se representan como los vértices ($V$) del grafo. Las aristas ($E$) representan las proximidades geográficas y el potencial de interferencia, donde una arista $\{u, v\} \in E$ indica que la Torre $u$ y la Torre $v$ no pueden operar en la misma frecuencia.
+    
+    \item \textbf{Etiquetas y Frecuencias $F$}: El conjunto limitado de frecuencias disponibles se convierte en el conjunto finito de etiquetas ($F$) (o colores).
+    
+    \item \textbf{Restricción Operacional (Coloración Propia)}: La regla de “evitar todas las interferencias” se traduce en la restricción de coloración propia, exigiendo que dos vértices adyacentes no posean la misma etiqueta:
+    \[
+        \phi(u) \neq \phi(v)
+    \]
+    
+    \item \textbf{Costo Operativo $C$}: La variabilidad en el costo de operar una torre con una frecuencia específica (debido a equipamiento, energía, licencias) se captura mediante la matriz de costos $C$, donde $c_{v,f}$ es el costo de asignar la frecuencia $f$ a la torre $v$.
+    
+    \item \textbf{Objetivo (Minimización del Costo)}: El objetivo de minimizar el costo operativo total se convierte en:
+    \[
+        \min \sum_{v \in V} c_{v, \phi(v)}
+    \]
+\end{itemize}
+
+El MCCPP es, por lo tanto, la formalización precisa del desafío de la empresa telefónica, ya que busca una partición válida de los vértices (torres) en clases de color (frecuencias) que minimice el costo total asociado a dicha partición.
+
+\subsection{Definición Formal}
+
+\textbf{Nombre del Problema}: Problema de Partición Cromática de Costo Mínimo (MCCPP).
+
+\textbf{Instancia de Entrada}: Una tupla $\langle G, F, C \rangle$, donde:
+
+\begin{itemize}
+    \item $G = (V, E)$: Un grafo no dirigido, con $|V|=n$ y $E$ el conjunto de aristas.
+    \item $F$: Conjunto finito de etiquetas (colores/frecuencias), $|F|=k$.
+    \item $C$: Matriz de costos donde $c_{v,f}$ es el costo de asignar la etiqueta $f$ al vértice $v$.
+\end{itemize}
+
+\textbf{Función Objetivo}: Encontrar una función de asignación de etiquetas $\phi: V \to F$ que minimice el costo total de la asignación.
+
+\textbf{Restricción de Factibilidad}:
+
+\begin{itemize}
+\item Para toda arista $\{u, v\} \in E$, se debe cumplir que $\phi(u) \neq \phi(v) \quad$.
+\end{itemize}
+
+\subsection{Modelado de Programación Entera Lineal (ILP 0-1)}
+
+El MCCPP se formaliza rigurosamente mediante el siguiente modelo de Programación Entera Lineal con variables binarias, que servirá de base para la demostración de complejidad y para la implementación de un algoritmo exacto (fuerza bruta/Branch-and-Bound en instancias pequeñas).
+
+\textbf{Parámetros:}
+\begin{itemize}
+    \item $V$: Conjunto de vértices.
+    \item $F$: Conjunto de etiquetas disponibles.
+    \item $c_{v, f}$: Costo de asignar la etiqueta $f \in F$ al vértice $v \in V$.
+\end{itemize}
+
+\textbf{Variables de Decisión:}
+\begin{itemize}
+    \item $x_{v, f} \in \{0, 1\}$: Variable binaria. $x_{v, f} = 1$ si el vértice $v$ es asignado a la etiqueta $f$; $x_{v, f} = 0$ en caso contrario.
+\end{itemize}
+
+\textbf{Función Objetivo (Minimización del Costo Total):}
+\[
+\min \sum_{v \in V} \sum_{f \in F} c_{v, f} \cdot x_{v, f}
+\]
+
+\textbf{Restricciones de Factibilidad:}
+
+\textbf{Asignación Única por Vértice:} Cada vértice debe ser asignado a exactamente una etiqueta.
+\[
+\sum_{f \in F} x_{v, f} = 1 \quad \forall v \in V
+\]
+
+\textbf{Restricción de No Conflicto (Coloración Propia):} Dos vértices adyacentes no pueden recibir la misma etiqueta.
+\[
+x_{u, f} + x_{v, f} \le 1 \quad \forall \{u, v\} \in E,\ \forall f \in F
+\]
+
+\textbf{Integridad:}
+\[
+x_{v, f} \in \{0, 1\} \quad \forall v \in V,\ \forall f \in F
+\]
+
+\section{Análisis de Complejidad Computacional}
+
+\subsection{Clase de Complejidad}
+
+El Problema de Partición Cromática de Costo Mínimo (MCCPP) es un problema NP-Hard en su versión de optimización. Dado que su restricción de factibilidad es idéntica a la del problema \(k\)-Colorability (reconocido como NP-Completo), la búsqueda de la solución óptima de costo mínimo es, por lo menos, tan difícil como la búsqueda de cualquier coloración válida.
+
+\subsection{Planteamiento del Problema de \(k\)-Colorabilidad}
+
+El \textbf{problema de \(k\)-Colorabilidad} (también conocido como \(k\)-Coloración Propia) plantea la siguiente cuestión fundamental: dado un grafo no dirigido \(G = (V, E)\) y un entero positivo \(k\), ¿es posible asignar colores a los vértices de \(G\) utilizando a lo sumo \(k\) colores diferentes, de tal forma que ningún par de vértices adyacentes compartan el mismo color?
+
+Este problema representa uno de los problemas clásicos de NP-Completitud y tiene aplicaciones en áreas como \textit{scheduling}, asignación de registros en compiladores, y problemas de asignación de frecuencias en redes.
+
+\subsection{Demostración de NP-Hardness mediante Reducción Polinomial}
+
+Se demuestra que el MCCPP es NP-Hard mediante una reducción en tiempo polinomial del problema de decisión \(k\)-Colorability (una instancia canónica de NP-Completo) al MCCPP.
+
+\textbf{Problema Fuente (NP-Completo):} \(k\)-Colorability.
+
+\textbf{Instancia:} \(\langle G, k \rangle\), donde \(G=(V, E)\) es un grafo y \(k\) es un entero positivo.
+
+\textbf{Pregunta:} ¿Existe una coloración propia de \(G\) utilizando a lo sumo \(k\) colores?
+
+\textbf{Reducción Polinomial \(\mathcal{R}\):}
+
+Dada una instancia \(\langle G, k \rangle\) del \(k\)-Colorability, construimos la siguiente instancia \(\langle G', F, C \rangle\) del MCCPP:
+
+\begin{itemize}
+
+\item \textbf{Grafo \(G'\):} Mantenemos el mismo grafo: \(G' = G\).
+
+\item \textbf{Conjunto de Etiquetas \(F\):} Definimos el conjunto de etiquetas como \(F = \{f_1, f_2, \ldots, f_k\}\), con \(|F|=k\).
+
+\item \textbf{Matriz de Costos \(C\):} Definimos un costo uniforme y nulo:
+\[
+c_{v, f} = 0 \quad \forall v \in V, \forall f \in F
+\]
+
+\item \textbf{Umbral de Decisión \(Z_{\max}\):} Establecemos el objetivo de optimización: \(\min Z\). La pregunta de decisión asociada al MCCPP será si el costo mínimo \(Z^*\) es \(\le 0\).
+
+\end{itemize}
+
+\textbf{Conclusión de la Reducción:}
+
+\begin{itemize}
+
+\item Si \(G\) es \(k\)-coloreable, existe una asignación \(\phi: V \to F\) que satisface la restricción de coloración propia. Como todos los costos son cero (\(c_{v, f} = 0\)), el costo total de esta asignación es \(Z = \sum c_{v, \phi(v)} = 0\). Por lo tanto, el costo mínimo óptimo \(Z^*\) es \(0\), y \(Z^* \le 0\).
+
+\item Si \(G\) no es \(k\)-coloreable, no existe ninguna asignación válida \(\phi: V \to F\) que cumpla la restricción. Por lo tanto, no existe una solución factible, y no podemos alcanzar el costo \(Z \le 0\).
+
+\end{itemize}
+
+Dado que se ha reducido el \(k\)-Colorability al MCCPP en tiempo polinomial (la construcción solo requiere asignar \(k \cdot n\) costos a cero), y la respuesta a la instancia del MCCPP determina la respuesta a la instancia del \(k\)-Colorability, el MCCPP (en su versión de optimización) es NP-Hard.
+
+\subsection{Jerarquía de Aproximabilidad Polinomial: PTAS, APX, APX-Hardness, APX-Complete y log-APX}
+
+Dada la \textbf{NP-Hardness} del Problema de Partición Cromática de Costo Mínimo (MCCPP), el análisis de su \textbf{aproximabilidad} es crucial. Este análisis establece los límites teóricos sobre cuán cerca de la solución óptima \(Z^*\) podemos esperar llegar en tiempo polinomial. Para ello, es indispensable definir la jerarquía de las clases de complejidad de aproximación.
+
+\begin{itemize}
+
+\item \textbf{PTAS (Polynomial Time Approximation Scheme)}: La clase \textbf{PTAS} incluye los problemas de optimización que admiten un esquema de aproximación en tiempo polinomial. Esto significa que, para cualquier constante \(\epsilon > 0\) arbitrariamente pequeña, existe un algoritmo en tiempo polinomial \(O(n^{f(1/\epsilon)})\) que produce una solución \(Z_{Alg}\) tal que \(Z_{Alg} \le (1+\epsilon)Z^*\) (para problemas de minimización). La complejidad temporal puede crecer exponencialmente con \(1/\epsilon\), pero es polinomial en el tamaño de la entrada \(n\).
+
+\item \textbf{APX (Approximable)}: La clase \textbf{APX} (Approximable) contiene todos los problemas NPO (NP Optimization) que admiten un algoritmo de aproximación de factor constante \(c\) en tiempo polinomial, donde \(c \ge 1\) es independiente del tamaño de la instancia \(n\). Formalmente, \(Z_{Alg} \le c \cdot Z^*\). La clase \textbf{PTAS} es un subconjunto estricto de \textbf{APX}, asumiendo que \(P \neq NP\). Pertenecer a APX implica que la calidad de la solución está acotada por una constante.
+
+\item \textbf{APX-Hard}: Un problema de optimización es \textbf{APX-Hard} si todo problema en \textbf{APX} puede ser reducido a él mediante una reducción que preserva la aproximación (típicamente una L-Reducción o PTAS-Reducción). La consecuencia fundamental de la APX-Hardness es que, si \(P \neq NP\), el problema \textbf{no admite un PTAS}. La demostración de APX-Hardness del MCCPP (Sección 2.5) establece precisamente esta limitación.
+
+\item \textbf{APX-Complete}: Un problema es \textbf{APX-Complete} si es \textbf{APX-Hard} y, además, pertenece a la clase \textbf{APX}. Esto implica que existe un algoritmo de aproximación de factor constante \(c\), pero que no existe un esquema de aproximación arbitrariamente cercano al óptimo (PTAS), salvo que \(P=NP\).
+
+\item \textbf{log-APX}: Esta clase es relevante para problemas cuya garantía de aproximación es logarítmica. Un problema se clasifica en \textbf{log-APX} si admite un algoritmo de aproximación con un factor de rendimiento \(R\) acotado por \(O(\ln n)\), donde \(n\) es el tamaño de la entrada. La clasificación en \(\mathbf{log}\)-APX tiene una implicación más restrictiva que la APX-Hardness: los problemas en \(\mathbf{log}\)-APX (y que no están en APX) \textbf{no admiten un algoritmo de aproximación de factor constante} \(c\), a menos que se cumplan condiciones de complejidad teórica muy improbables.
+
+\end{itemize}
+
+\subsection{Demostración de APX-Hardness del MCCPP}
+
+Para demostrar que un problema es APX-Hard, se requiere establecer una reducción que preserva la aproximación (típicamente una L-Reducción) desde un problema que ya se sabe es APX-Hard. Esta demostración refuta la posibilidad de esquemas de aproximación arbitrariamente cercanos al óptimo (PTAS), a menos que \(P=NP\).
+
+Por lo tanto, se establecerá una L-Reducción robusta desde el Minimum Vertex Cover (MVC).
+
+\subsubsection{Problema de Origen APX-Complete: Minimum Vertex Cover (MVC)}
+
+El problema de Minimum Vertex Cover (MVC) es un problema de optimización de minimización: dada una instancia de grafo \(G=(V, E)\), se busca el subconjunto de vértices \(V' \subseteq V\) de tamaño mínimo tal que cada arista en \(E\) tenga al menos un extremo en \(V'\).
+
+El MVC es un problema fundamental en complejidad y se sabe que es \textbf{APX-Complete} \cite{PY91}. Esto implica dos hechos cruciales:
+
+\begin{enumerate}
+
+\item \textbf{APX-Hardness}: MVC no admite un PTAS a menos que \(P=NP\) \cite{ALM+98}.
+
+\item \textbf{Pertenencia a APX}: Existe un algoritmo de aproximación en tiempo polinomial con un factor de aproximación constante (una \(2\)-aproximación basada en un algoritmo voraz clásico).
+
+\end{enumerate}
+
+La demostración formal de que MVC es APX-Complete, confirmando su \(2\)-aproximabilidad y su inaproximabilidad constante (cota inferior de \(1.3606\) si \(P \neq NP\)), se puede encontrar, por ejemplo, en \cite{dinur2005vc}, así como en desarrollos posteriores sobre la brecha de aproximación de Vertex Cover.
+
+El MVC está intrínsecamente ligado al Maximum Independent Set (MIS). Un conjunto de vértices \(V'\) es una cubierta de vértices si y solo si su complemento \(V \setminus V'\) es un conjunto independiente. Por lo tanto, minimizar \(|V'|\) es equivalente a maximizar \(|V \setminus V'|\), es decir, maximizar el tamaño del Conjunto Independiente. La dificultad de aproximar MIS se traslada directamente a la dificultad de aproximar MVC.
+
+La reducción \(\mathcal{R}\) transforma una instancia de MVC \(\langle G \rangle\) en una instancia de MCCPP \(\langle G', F, C \rangle\):
+
+\begin{itemize}
+
+\item \textbf{Grafo \(G'\)}: Se mantiene el grafo original, \(G' = G = (V, E)\).
+
+\item \textbf{Conjunto de Etiquetas \(F\)}: Se define un conjunto de etiquetas \(F = \{f_1, f_2, \ldots, f_n\}\), donde \(n = |V|\). Este conjunto es suficiente para cualquier coloración.
+
+\item \textbf{Matriz de Costos \(C\)}: Se definen costos binarios de la siguiente manera:
+
+\begin{itemize}
+
+\item \textbf{Costo Cero (Color Preferido)}: \(c_{v, f_1} = 0\), para todo vértice \(v \in V\).
+
+\item \textbf{Costo Unitario (Otros Colores)}: \(c_{v, f} = 1\), para todo \(v \in V\) y \(f \in \{f_2, \ldots, f_n\}\).
+
+\end{itemize}
+
+\end{itemize}
+
+El objetivo del MCCPP en esta instancia es encontrar una coloración propia \(\phi: V \to F\) que minimice el costo total \(Z_{MCCPP} = \sum_{v \in V} c_{v, \phi(v)}\).
+
+\textbf{Equivalencia de la Optimalidad:}
+
+Para minimizar \(Z_{MCCPP}\), se debe maximizar el número de vértices asignados al color \(f_1\) (costo 0). Sea \(I_1\) el conjunto de vértices coloreados con \(f_1\). Para que la coloración sea válida, \(I_1\) debe ser un conjunto independiente.
+
+El costo óptimo \(Z_{MCCPP}^*\) se logra cuando \(I_1\) es el Máximo Conjunto Independiente (\(I_{\max}\)), ya que todos los demás colores (\(f_2, \ldots, f_n\)) tienen costo 1.
+
+\[
+Z_{MCCPP}^* = 0 \cdot |I_{\max}| + 1 \cdot (|V| - |I_{\max}|) = |V| - |I_{\max}|
+\]
+
+Dado que el tamaño del Minimum Vertex Cover \(Z_{MVC}^*\) es igual a \(|V| - |I_{\max}|\), se establece la relación:
+
+\[
+Z_{MCCPP}^* = Z_{MVC}^*
+\]
+
+\textbf{Preservación de la Aproximación:}
+
+Si existiera un algoritmo de aproximación \(A_{MCCPP}\) para el MCCPP con factor de aproximación constante \(\alpha\), es decir, \(Z_{MCCPP}^{Alg} \le \alpha \cdot Z_{MCCPP}^*\), este algoritmo podría usarse para resolver MVC con el mismo factor:
+
+\[
+Z_{MVC}^{Alg} = Z_{MCCPP}^{Alg} \le \alpha \cdot Z_{MCCPP}^* = \alpha \cdot Z_{MVC}^*
+\]
+
+Dado que el MVC es APX-Hard, la existencia de una L-Reducción con preservación lineal del valor óptimo demuestra que el MCCPP es, a su vez, APX-Hard.
+
+\subsubsection{Implicaciones Teóricas: Exclusión del PTAS y APX-Completeness}
+
+La demostración de que el MCCPP es APX-Hard tiene consecuencias directas sobre la existencia de esquemas de aproximación.
+
+\subsubsection{Imposibilidad de PTAS}
+
+La APX-Hardness establece que, si \(P \neq NP\), el MCCPP no admite un PTAS. Esta limitación persiste incluso en el caso especial de costos binarios, tal como se demostró en la reducción a MVC.
+
+\subsubsection{Análisis Riguroso de Pertenencia a APX (MCCPP)}
+
+Un problema es APX-Complete si es APX-Hard y también pertenece a la clase APX (es decir, admite un algoritmo de aproximación de factor constante \(c\)).
+
+Aunque el MCCPP es APX-Hard, su pertenencia a APX no está universalmente establecida para grafos generales.
+
+Como la pertenencia de un problema APX-Hard a la clase APX requiere demostrar la existencia de un algoritmo de aproximación con un factor de rendimiento constante \(c \ge 1\) en tiempo polinomial, para el MCCPP esta demostración se considera altamente improbable para grafos generales.
+
+\textbf{Modelado Formal como Cobertura de Conjuntos Ponderada (WSC)}
+
+El MCCPP se puede modelar como el \textbf{Problema de Cobertura de Conjuntos Ponderada} (Weighted Set Cover, WSC), un problema fundamental de optimización ampliamente estudiado tanto desde el punto de vista algorítmico como de inaproximabilidad \cite{feige1998setcover,setcoverChronology2021}.
+
+\begin{itemize}
+
+\item \textbf{Definición Formal de WSC}: Dada una instancia \(\langle U, \mathcal{S}, w \rangle\), donde \(U\) es el universo de elementos a cubrir (\(|U|=n\)), \(\mathcal{S} = \{S_1, \ldots, S_m\}\) es una familia de subconjuntos de \(U\), y \(w: \mathcal{S} \to \mathbb{R}^+\) es la función de peso (costo) de cada subconjunto \(S_i\). El objetivo es encontrar una subcolección \(\mathcal{C} \subseteq \mathcal{S}\) tal que \(\bigcup_{S_i \in \mathcal{C}} S_i = U\), minimizando el costo total \(\sum_{S_i \in \mathcal{C}} w(S_i)\).
+
+\end{itemize}
+
+\textbf{Mapeo MCCPP a WSC:}
+
+Una instancia \(\langle G, F, C \rangle\) del MCCPP se transforma en una instancia \(\langle U, \mathcal{S}, w \rangle\) del WSC:
+
+\begin{enumerate}
+
+\item \textbf{Universo (\(U\))}: El conjunto de vértices \(V\) del grafo \(G\). El objetivo es “cubrir” todos los vértices, es decir, asignarles un color \cite{feige1998setcover,setcoverChronology2021}.
+
+\item \textbf{Conjuntos Candidatos (\(\mathcal{S}\))}: Cada conjunto \(S \in \mathcal{S}\) es un par \(\langle I, f \rangle\), donde \(I \subseteq V\) es un \textit{Conjunto Independiente} (IS) válido en \(G\) y \(f \in F\) es una frecuencia (color) disponible \cite{feige1998setcover,setcoverChronology2021}.
+
+\item \textbf{Costo del Conjunto \(w(S)\)}: El costo de elegir el conjunto \(S = \langle I, f \rangle\) es el costo total de asignar la frecuencia \(f\) a todos los vértices en \(I\):
+\[
+w(S) = \sum_{v \in I} c_{v,f}
+\]
+
+\end{enumerate}
+
+Una solución válida del WSC (una subcolección de conjuntos independientes que cubre \(V\)) corresponde directamente a una partición cromática válida de \(G\) con el mismo costo total.
+
+\textbf{Demostración de Inaproximabilidad Constante (MCCPP \(\notin\) APX)}
+
+El mejor algoritmo de aproximación conocido para el WSC es el algoritmo \textbf{Greedy}, que alcanza una cota asintótica óptima en términos del factor logarítmico \(\Theta(\ln n)\) tanto para Set Cover como para su versión ponderada \cite{feige1998setcover,setcoverChronology2021}.
+
+Sea \(Z_{WSC}^*\) el costo óptimo del WSC y \(Z_{WSC}^{Alg}\) el costo de la solución obtenida por el algoritmo voraz.
+
+\begin{itemize}
+
+\item \textbf{Factor de Aproximación Logarítmico}: El algoritmo Greedy garantiza un factor de aproximación \(R\) que está acotado superiormente por el número armónico \(H(|U|)\), donde \(|U|=|V|=n\):
+\[
+R = \frac{Z_{WSC}^{Alg}}{Z_{WSC}^*} \le H(|U|) = O(\ln n)
+\]
+
+\item \textbf{Límite Inferior de Inaproximabilidad}: Se ha demostrado rigurosamente que el WSC (y por extensión el Set Cover estándar) no admite un algoritmo de aproximación de factor constante \(c\). Específicamente, a menos que \(NP \subseteq DTIME(n^{\log \log n})\), no existe un algoritmo que garantice un factor de aproximación mejor que \((1 - \epsilon)\ln n\), para cualquier \(\epsilon > 0\) \cite{feige1998setcover,setcoverChronology2021}.
+
+\end{itemize}
+
+Dado que la mejor aproximación garantizada para el MCCPP es logarítmica \(O(\ln |V|)\), y existe un límite inferior que excluye factores constantes, se concluye formalmente que el MCCPP \textbf{no pertenece} a la clase APX, y por lo tanto, no es APX-Complete. En términos de la jerarquía de aproximación, el MCCPP se clasifica en la clase \(\mathbf{log}\)-APX.
+
+\subsection{Análisis de Complejidad Parametrizada}
+
+La \textbf{Complejidad Parametrizada} ofrece un marco teórico para analizar problemas NP-Hard en función de parámetros específicos que pueden influir en la complejidad computacional. En este contexto, se examina la dificultad del MCCPP cuando se parametriza por el número de frecuencias \(k = |F|\), por el treewidth \(tw\) del grafo \(G\) y otros enfoques.
+
+\textbf{FPT (Fixed-Parameter Tractable)}: Un problema parametrizado \(\langle I, k \rangle\) es FPT si existe un algoritmo que resuelve cualquier instancia en tiempo \(O(f(k) \cdot |I|^c)\), donde \(f\) es una función computable que depende únicamente del parámetro \(k\), y \(c\) es una constante independiente de \(k\) y \(|I|\). Esto implica que la complejidad exponencial está confinada al parámetro \(k\), permitiendo soluciones eficientes para valores pequeños de \(k\).
+
+\subsubsection{Definición Formal de W-Hardness}
+
+La \textbf{Complejidad Parametrizada} clasifica los problemas NP-Hard basándose en cómo el parámetro \(k\) afecta la complejidad exponencial. Un problema \(\langle I, k \rangle\) se clasifica en la jerarquía \(\mathbf{W}\) si no es FPT (asumiendo que \(\mathbf{FPT} \neq \mathbf{W}\)).
+
+La clase \(\mathbf{W}[\mathbf{1}]\) se define mediante problemas que son equivalentes bajo FPT-reducciones al problema \textit{Weighted Weft-1-Depth-\(d\) SAT} o, más comúnmente, al problema canónico \(\mathbf{k}\)-Clique.
+
+\textbf{Definición de W-Hardness:} Un problema parametrizado \(P\) es \(\mathbf{W}[\mathbf{1}]\)-Hard si todo problema en \(\mathbf{W}[\mathbf{1}]\) puede ser reducido a \(P\) mediante una \textbf{FPT-reducción}. Una FPT-reducción es una transformación de una instancia \(\langle I, k \rangle\) de \(P_1\) a una instancia \(\langle I', k' \rangle\) de \(P_2\), computable en tiempo \(O(f(k) \cdot |I|^c)\), donde el nuevo parámetro \(k'\) depende únicamente de \(k\) (\(k' \le g(k)\)).
+
+La consecuencia fundamental de la \(\mathbf{W}[\mathbf{1}]\)-Hardness es que, si se cree que la hipótesis de \(\mathbf{FPT} \neq \mathbf{W}[\mathbf{1}]\) es verdadera, el problema no admite un algoritmo de tiempo \(O(f(k) \cdot n^c)\), lo que descarta la kernelización con un tamaño que dependa únicamente de \(k\).
+
+\subsubsection*{Problema \(k\)-Coloring es W-Hard}
+
+La dificultad de la coloración se traslada directamente al reino de la complejidad parametrizada. Entonces se tiene que el problema \(\mathbf{k}\)-Coloring, parametrizado por el número de colores \(k\), es \(\mathbf{W}[\mathbf{1}]\)-Hard, tal como se establece en la literatura clásica de complejidad parametrizada y resultados específicos sobre problemas coloridos parametrizados por treewidth \cite{flum2006colorful}.
+
+\subsubsection*{Fundamentación Académica}
+
+Este resultado, que establece que la coloración es paramétricamente difícil, se basa en reducciones desde problemas centrales de la jerarquía \(W\), como \(k\)-Clique o su variante Multicolored Clique. La demostración completa se encuentra rigurosamente detallada en trabajos de Flum y Grohe sobre problemas coloridos parametrizados por treewidth y en manuales estándar de complejidad parametrizada \cite{flum2006colorful,cygan2015parameterized}.
+
+\subsubsection{Demostración de que el MCCPP es \(\mathbf{W}[\mathbf{1}]\)-Hard cuando se parametriza por \(|F|\)}
+
+El resultado de la \(W\)-Hardness del \(k\)-Coloring tiene implicaciones directas para el MCCPP, ya que la restricción de factibilidad del MCCPP es idéntica a la del \(k\)-Coloring.
+
+\subsubsection*{Planteamiento}
+
+El Problema de Partición Cromática de Costo Mínimo (MCCPP), parametrizado por el número de frecuencias \(k=|F|\), es \(\mathbf{W}[\mathbf{1}]\)-Hard.
+
+\subsubsection*{Demostración}
+
+La demostración se logra mediante la \textbf{FPT-Reducción trivial} del \(k\)-Coloring al MCCPP:
+
+\begin{enumerate}
+
+\item Se parte de una instancia del \(k\)-Coloring \(\langle G, k \rangle\).
+
+\item Se construye la instancia del MCCPP \(\langle G, F, C \rangle\) con \(|F|=k\), estableciendo todos los costos \(c_{v, f} = 0\).
+
+\item El tiempo de esta construcción es \(\mathbf{O(|V| \cdot k)}\), que satisface la condición FPT (polinomial en \(|V|\), pero la dependencia exponencial es solo en \(k\)).
+
+\item El parámetro se preserva: \(k' = k\).
+
+\end{enumerate}
+
+Dado que la existencia de una solución de costo cero en el MCCPP es equivalente a la existencia de una \(k\)-coloración válida, y la reducción es una FPT-reducción, se concluye que \(\mathbf{MCCPP}\) es \(\mathbf{W}[\mathbf{1}]\)-Hard cuando se parametriza por el número de colores \(k\).
+
+\subsubsection{Demostración de que el MCCPP es \(\mathbf{W}[\mathbf{1}]\)-Hard cuando se parametriza por Treewidth}
+
+\textbf{Estado de la Cuestión:}
+
+Existe literatura más antigua (< 2000) donde se afirma que el MCCPP es FPT por \(tw\). Sin embargo, en investigaciones más recientes (2017) se refuta lo afirmado en la literatura inicial sobre el problema: se ha demostrado formalmente mediante una reducción parametrizada rigurosa que el Problema de Partición Cromática de Costo Mínimo (MCCPP), también conocido como Weighted Coloring, es \textbf{W-hard} cuando se parametriza por la \textbf{treewidth} del grafo, incluso en el caso restringido de bosques (donde la treewidth es exactamente 1) \cite{araujo2017weightedforests}.
+
+\subsubsection*{Equivalencia Formal entre MCCPP y Weighted Coloring}
+
+Replanteemos el problema del MCCPP y el Weighted Coloring para establecer su equivalencia formal.
+
+\textbf{Problema 1: Minimum Cost Chromatic Partition Problem (MCCPP):}
+
+El Problema de Partición Cromática de Costo Mínimo se define formalmente de la siguiente manera:
+
+\textbf{Instancia:} Un grafo no dirigido \(G = (V, E)\) y una matriz de costos \(C\) donde \(c_{v, f}\) es el costo de asignar la etiqueta (frecuencia/color) \(f\) al vértice \(v\). Un conjunto finito \(F\) de etiquetas disponibles con \(|F| = k\).
+
+\textbf{Objetivo:} Encontrar una función de asignación \(\phi: V \to F\) (una coloración propia, es decir, \(\phi(u) \neq \phi(v)\) para toda arista \(\{u,v\} \in E\)) que minimice el costo total:
+\[
+Z_{MCCPP} = \min_{\phi \text{ coloración propia}} \sum_{v \in V} c_{v, \phi(v)}
+\]
+
+\textbf{Problema 2: Weighted Coloring (Weighted Chromatic Number):}
+
+El problema de Weighted Coloring, introducido formalmente por Guan y Zhu, se define como sigue \cite{guan1997weightedcoloring}:
+
+\textbf{Instancia:} Un grafo no dirigido \(G = (V, E)\) y una función de pesos \(w: V \to \mathbb{R}^+\) que asigna un peso positivo a cada vértice.
+
+\textbf{Definiciones de Colores y Pesos:}
+
+Una coloración propia \(c\) de \(G\) es una partición \(c = (S_i)_{i \in [1, k]}\) del conjunto \(V\) en \(k\) conjuntos independientes (también llamados estables) \(S_1, S_2, \ldots, S_k\).
+
+Dado que cada conjunto \(S_i\) es un conjunto independiente de vértices del mismo color, el \textit{peso} del color \(S_i\) se define como:
+
+\[
+w(i) = \max_{v \in S_i} w(v)
+\]
+
+es decir, el peso máximo de los vértices en ese color.
+
+El \textit{peso total} de una coloración \(c\) es:
+
+\[
+w(c) = \sum_{i=1}^{k} w(i) = \sum_{i=1}^{k} \max_{v \in S_i} w(v)
+\]
+
+\textbf{Objetivo:} Calcular la \textit{weighted chromatic number} \(\sigma(G, w)\), definida como el peso mínimo entre todas las coloraciones propias válidas de \(G\):
+
+\[
+\sigma(G, w) = \min_{c \text{ coloración propia}} w(c)
+\]
+
+Una coloración \(c\) tal que \(w(c) = \sigma(G, w)\) se llama coloración óptima ponderada.
+
+\subsubsection*{Planteamiento: Equivalencia entre MCCPP y Weighted Coloring}
+
+El MCCPP y el Weighted Coloring (también conocido como Max-Coloring en la literatura) son \textbf{exactamente el mismo problema}, aunque formulados de manera ligeramente diferente. La equivalencia puede demostrarse mediante la siguiente construcción:
+
+\begin{enumerate}
+
+\item \textbf{Transformación MCCPP \(\to\) Weighted Coloring:}
+
+Dada una instancia del MCCPP con matriz de costos \(C\) y conjunto de etiquetas \(F\), se construye una instancia de Weighted Coloring:
+
+\begin{itemize}
+
+\item Se utiliza el mismo grafo \(G = (V, E)\).
+
+\item Se define una función de pesos equivalente donde cada vértice recibe un peso que refleja su estructura de costos.
+
+\item La coloración óptima del MCCPP corresponde a una coloración ponderada donde el peso del color \(i\) es \(w(i) = \max_{v \in S_i} w(v)\) para cada clase de color \(S_i\) de la partición.
+
+\end{itemize}
+
+\item \textbf{Transformación Weighted Coloring \(\to\) MCCPP:}
+
+Dada una instancia de Weighted Coloring con grafo \(G = (V, E)\) y función de pesos \(w: V \to \mathbb{R}^+\), se construye una instancia del MCCPP:
+
+\begin{itemize}
+
+\item Se utiliza el mismo grafo \(G = (V, E)\).
+
+\item Se define un conjunto de etiquetas \(F = \{f_1, f_2, \ldots, f_n\}\) donde \(n = |V|\) (suficientemente grande para cualquier coloración).
+
+\item Se construye la matriz de costos \(C\) de modo que \(c_{v, f_i}\) represente el costo de asignar el color \(f_i\) al vértice \(v\), donde este costo está directamente relacionado con el peso del vértice en la clase de color correspondiente. Formalmente, si el vértice \(v\) es el de mayor peso en la clase de color \(i\), entonces el costo \(c_{v, f_i}\) es igual a \(w(v)\).
+
+\end{itemize}
+
+\item \textbf{Equivalencia de Soluciones Óptimas:}
+
+La solución óptima del MCCPP bajo la anterior transformación coincide exactamente con la solución óptima del Weighted Coloring. Ambos problemas buscan particionar los vértices de un grafo en conjuntos independientes (coloración propia) minimizando una función de costo que depende de los pesos máximos de los vértices en cada conjunto.
+
+\end{enumerate}
+
+\textbf{Referencia Académica:}
+
+Esta equivalencia está formalmente discutida en el trabajo seminal de Guan y Zhu sobre coloración ponderada, y se retoma en trabajos recientes sobre Weighted Coloring y MCCPP \cite{guan1997weightedcoloring,araujo2017weightedforests,baste2018dualparameterization}.
+
+\textbf{Conclusión:}
+
+Dado que MCCPP y Weighted Coloring son problemáticamente equivalentes, cualquier resultado de complejidad parametrizada (como W-hardness) que se demuestre para uno de ellos se aplica directamente al otro. En particular, la demostración de que Weighted Coloring es W-hard (como se establece en Araújo et al., 2017) implica inmediatamente que MCCPP es también W-hard bajo los mismos parámetros \cite{araujo2017weightedforests}.
+
+\subsubsection*{Independent Set es W-Completo}
+
+Antes de proceder a la demostración de \(\mathbf{W}[\mathbf{1}]\)-hardness del MCCPP mediante reducción desde Independent Set, es esencial establecer que Independent Set mismo es un problema canónico W-completo en complejidad parametrizada.
+
+\subsubsection*{Definición del Problema Independent Set}
+
+\textbf{Instancia:} Un grafo no dirigido \(G = (V, E)\) y un entero positivo \(k\) (parámetro).
+
+\textbf{Pregunta:} ¿Existe un conjunto \(S \subseteq V\) de vértices con \(|S| \geq k\) tal que ningún par de vértices en \(S\) es adyacente? Es decir, ¿existe un conjunto independiente de tamaño al menos \(k\)?
+
+\subsubsection*{Planteamiento: Independent Set es W-Completo}
+
+El problema Independent Set parametrizado por el tamaño de la solución \(k\) es \textbf{W-completo}. Esta es una de las conclusiones fundamentales de la teoría de complejidad parametrizada, establecida desde los trabajos fundacionales de Downey y Fellows y sistematizada en manuales modernos \cite{downey2013fundamentals,cygan2015parameterized}.
+
+\subsubsection*{Implicaciones}
+
+La W-completeness de Independent Set significa que dos cosas son ciertas:
+
+\begin{enumerate}
+
+\item \textbf{Independent Set pertenece a W:} Existe un certificador eficiente (en términos de complejidad parametrizada) que puede verificar en tiempo \(f(k) \cdot n^c\) si un conjunto \(S\) de tamaño \(k\) es un conjunto independiente válido. Esta verificación es trivial: simplemente revisar si existen aristas entre los vértices de \(S\), lo cual toma \(O(k^2)\) tiempo.
+
+\item \textbf{Todo problema en W puede ser reducido a Independent Set mediante una FPT-reducción:} La demostración se basa en mostrar que la definición de W mediante máquinas de Turing ponderadas puede ser capturada por Independent Set. Específicamente, cualquier problema definible como “¿existe una solución de tamaño exactamente \(k\) que satisfaga la propiedad \(P(x, k)\)?” (donde \(P\) es verificable en tiempo FPT) puede ser reducido a Independent Set.
+
+\end{enumerate}
+
+\subsubsection*{Referencia Académica}
+
+Estos resultados fundamentales están exhaustivamente cubiertos en \cite{cygan2015parameterized,downey2013fundamentals}, donde se expone la jerarquía W y se demuestra rigurosamente que Independent Set parametrizado por \(k\) es W-completo.
+
+\subsubsection*{Demostración de \(\mathbf{W}[\mathbf{1}]\)-Hardness del MCCPP vía Weighted Coloring}
+
+\subsubsection*{Teorema Principal}
+
+El Problema de Partición Cromática de Costo Mínimo (MCCPP), cuando se parametriza por la \textbf{treewidth} del grafo (o más generalmente, por el tamaño del mayor componente conexo del grafo), es \textbf{W-hard}.
+
+\textbf{Demostración de \(\mathbf{W}[\mathbf{1}]\)-Hardness por Reducción desde Independent Set}
+
+La demostración se logra mediante una \textbf{FPT-reducción parametrizada} desde el problema canónico \(\mathbf{W}[\mathbf{1}]\)-hard de \textit{Independent Set} hacia Weighted Coloring y, por equivalencia, hacia MCCPP \cite{araujo2017weightedforests}.
+
+\textbf{Definición de Problemas:}
+
+\begin{itemize}
+
+\item \textbf{Independent Set (IS):} Dado un grafo \(G=(V,E)\) y un entero \(k\), ¿existe un conjunto \(S \subseteq V\) con \(|S| \geq k\) tal que ningún par de vértices en \(S\) es adyacente?
+
+\item \textbf{Weighted Coloring (WC):} Dado un grafo ponderado \((G, w)\) con función de pesos \(w: V \to \mathbb{R}^+\), donde el peso de un color \(S_i\) se define como \(w(i) = \max_{v \in S_i} w(v)\), ¿existe una coloración propia \(c = (S_i)_{i=1}^k\) tal que \(w(c) = \sum_{i=1}^k w(i) \leq M\) para un umbral \(M\)?
+
+\end{itemize}
+
+\textbf{Construcción de la Reducción:}
+
+La reducción construye a partir de una instancia \((G, k)\) de Independent Set una instancia ponderada \((G', w)\) de Weighted Coloring, introduciendo gadgets especializados:
+
+\begin{enumerate}
+
+\item \textbf{Árboles Binomiales Ponderados \(B_i\)}: Para cada \(i \in [0, 4k+3]\), se definen recursivamente árboles binomiales con pesos específicos \(w_i^0 = 1/2^i + j\varepsilon\), donde \(\varepsilon\) es un parámetro pequeño seleccionado cuidadosamente. Estos árboles fuerzan que en cualquier coloración de peso \(\leq M\), todos los vértices de un árbol binomial reciban el mismo color de forma determinista.
+
+\item \textbf{Árboles Auxiliares \(A_i^j\)}: Para cada índice \(i \in [0, 4k-1]\) y \(j \in [0, n]\), se construyen árboles auxiliares que contienen copias de árboles binomiales. Su función es actuar como verificadores de que los vértices originales se han seleccionado de forma consistente a lo largo de diferentes copias.
+
+\item \textbf{Gadget AND (\(R_0\)-AND)}: Un circuito lógico ponderado que implementa la operación lógica AND entre dos entradas, garantizando que si ambas entradas reciben un color específico \(R_0\), la salida debe también recibir \(R_0\).
+
+\item \textbf{Árboles de Vértices \(T_i^j\)}: Para cada \((i, j) \in [0, k-1] \times [0, n-1]\), se construye un árbol que codifica si el vértice \(\beta^{-1}(j)\) (donde \(\beta\) es una biyección \(V \to [0, n-1]\)) pertenece o no al conjunto independiente.
+
+\end{enumerate}
+
+\textbf{Parámetro Umbral \(M\):}
+
+Se define \(M = k(n-1)\varepsilon + \sum_{i=0}^{4k+3} \frac{1}{2^i}\) con \(0 < \varepsilon < \frac{1}{nk2^{4k+3}}\).
+
+Esta selección garantiza que:
+
+\begin{itemize}
+
+\item \(M < 2\), proporcionando un umbral bien definido.
+
+\item Cada vez que se selecciona un vértice para el conjunto independiente (coloreando su raíz con \(R_0\)), se incurre en un costo adicional de \((n-1)\varepsilon\).
+
+\item Solo es posible seleccionar exactamente \(k\) vértices sin exceder el presupuesto \(M\).
+
+\end{itemize}
+
+\textbf{Lema de Correspondencia:}
+
+Sea \((T, w)\) un bosque ponderado que contiene, para cada \((i,j) \in [0, k-1] \times [0, n-1]\), la estructura \(T_i^j\) como subárbol. Sea \(c\) una coloración de \((T, w)\) con \(w(c) \leq M\). Entonces existen índices \((j_i)_{i \in [0, k-1]} \in [0, n-1]^k\) tales que para cada raíz \(u\) de \(T_{j}^{i}\):
+
+\begin{itemize}
+
+\item Si \(j = j_i\) para algún \(i \in [0, k-1]\), entonces \(c(u) = R_0\).
+
+\item Si \(j \neq j_i\) para todo \(i \in [0, k-1]\), entonces \(c(u) = R_1\).
+
+\end{itemize}
+
+\textbf{Prueba de Equivalencia:}
+
+La FPT-reducción satisface: existe un conjunto independiente de tamaño exactamente \(k\) en \(G\) si y solo si existe una coloración \((G', w)\) con \(w(c) \leq M\).
+
+\begin{itemize}
+
+\item \textbf{(Adelante, \(\Rightarrow\))}: Si \(Z\) es un conjunto independiente de tamaño \(k\) en \(G\), se puede construir una coloración válida asignando cada vértice \(v \in Z\) al color \(R_0\) (costo 0 en las estructuras correspondientes) en los árboles \(T_i^j\) donde \(j = \beta(v)\). Para aristas \(\{v_1, v_2\} \in E\) con \(v_1 \in Z, v_2 \notin Z\), los gadgets AND se pueden satisfacer con el color \(R_1\) en la salida, manteniendo \(w(c) = M\).
+
+\item \textbf{(Atrás, \(\Leftarrow\))}: Si existe una coloración con \(w(c) \leq M\), por el Lema anterior, existen índices \((j_i)\) tales que exactamente \(k\) vértices reciben color \(R_0\). Definiendo \(Z = \{\beta^{-1}(j_i) : i \in [0, k-1]\}\), se verifica que no hay arista entre elementos de \(Z\). Si existiera una arista \(\{v_1, v_2\}\) con \(v_1, v_2 \in Z\), entonces los gadgets AND en \(H_{\{v_1, v_2\}, i_1, i_2}\) forzarían que su raíz se coloreara con \(R_0\), lo que contradice el árbol binomial \(B_{4k}\) conectado a ella.
+
+\end{itemize}
+
+\textbf{Complejidad de la Reducción:}
+
+La construcción requiere:
+
+\begin{itemize}
+
+\item Tiempo: \(f(k) \cdot n^{O(1)}\) donde \(f(k) = 2^{O(k)}\) es una función computable de \(k\).
+
+\item El parámetro se preserva: \(k' = k\) (el parámetro de la nueva instancia depende solo del parámetro de la instancia original).
+
+\item El tamaño de cada componente conexo de \((G', w)\) está acotado por \(O(k)\).
+
+\end{itemize}
+
+\subsubsection*{Conclusión}
+
+El Problema de Partición Cromática de Costo Mínimo (MCCPP), cuando se parametriza por la \textbf{treewidth} del grafo (o por el tamaño del mayor componente conexo), es \textbf{W-hard}. Por lo tanto, a menos que \(\mathbf{FPT} = \mathbf{W[1]}\), \textbf{no existe un algoritmo FPT para el MCCPP parametrizado por treewidth}. Este resultado es válido incluso en la clase altamente restringida de bosques (treewidth = 1), lo que hace aún más fuerte la imposibilidad \cite{araujo2017weightedforests}.[1]
+
+\textbf{Corolario sobre la Optimización Observada en Bounded Treewidth:}
+
+Guan y Zhu observaron que en grafos de treewidth acotada \(t\), se podía resolver \(\sigma(G, w; r)\) en tiempo \(n^{O(r)} \cdot r^{O(t)}\) mediante programación dinámica estándar. Sin embargo, este tiempo no es FPT porque la dependencia en \(n\) es polinomial de grado potencialmente alto, y más crucialmente, porque el parámetro \(r\) (número de colores) está acoplado de forma multiplicativa con el tamaño de la entrada. La demostración de W-hardness implica que no puede haber mejora fundamental en esta complejidad (bajo conjeturas estándar de complejidad parametrizada) \cite{guan1997weightedcoloring,araujo2017weightedforests}.[1]
+
+\subsubsection*{Referencia Académica}
+
+Los detalles completos de la reducción y de los gadgets utilizados para demostrar la W-hardness de Weighted Coloring (y, por equivalencia, de MCCPP) en bosques pueden encontrarse en \cite{araujo2017weightedforests}.
+
+\subsubsection{Búsqueda de Parámetros Alternativos FPT para el MCCPP}
+
+Dado que se ha demostrado que el MCCPP es W-hard con respecto a las frecuencias \(f\) (equivalente a número de colores \(r\)) y treewidth, es natural investigar si existen otros parámetros para los cuales el problema sea FPT.
+
+\textbf{Panorama de Parámetros Estudiados:}
+
+Los siguientes parámetros han sido analizados en la literatura sobre problemas de coloración ponderada y problemas relacionados:
+
+\begin{enumerate}
+
+\item \textbf{Vertex Cover:} Este parámetro mide la mínima cantidad de vértices cuya eliminación convierte al grafo en una unión disjunta de conjuntos independientes. Aunque para coloración simple (\(k\)-Coloring) existen algoritmos FPT parametrizados por vertex cover, para MCCPP la literatura académica no reporta resultados positivos.
+
+\item \textbf{Modular Decomposition Width:} Más restrictivo que treewidth, pero tampoco se ha demostrado FPT para MCCPP.
+
+\item \textbf{Clique-Width:} Para coloración estándar se conocen limitaciones, pero MCCPP con costos no ha sido completamente caracterizado.
+
+\item \textbf{Pathwidth:} Similar a treewidth pero con separadores lineales en lugar de árboles. Por la reducción desde Independent Set, también es W-hard para MCCPP.[1]
+
+\item \textbf{Número de Colores \(r\) (Restricción):} Se puede demostrar que MCCPP es W-hard cuando se parametriza por \(r\) (el número de colores permitidos) \cite{araujo2017weightedforests}.[2]
+
+\end{enumerate}
+
+\textbf{Resultado de W-Hardness para el Parámetro \(r\):}[2]
+
+Siguiendo técnicas de reducción desde Dominating Set y resultados sobre Weighted Coloring, se obtiene:
+
+\subsubsection*{Planteamiento}
+
+El problema de determinar \(\sigma(G, w; r)\) (el costo mínimo de una coloración propia usando exactamente \(r\) colores) en un grafo ponderado es \textbf{W-hard} cuando se parametriza únicamente por \(r\).[2]
+
+Esto implica que incluso si se fija el número de colores a utilizar, el problema sigue siendo paramétricamente intratable (a menos que \(\mathbf{W[2]} = \mathbf{FPT}\), lo que implicaría un colapso de la jerarquía W) \cite{araujo2017weightedforests}.
+
+\textbf{Análisis de Falta de FPT para Parámetros Naturales:}
+
+Por la reducción desde Independent Set y por los resultados de W-hardness para Weighted Coloring, los siguientes parámetros naturales \textbf{también son W-hard} para MCCPP, debido a que están todos acotados por la talla del mayor componente conexo:[1]
+
+\begin{itemize}
+
+\item Treewidth del grafo
+
+\item Pathwidth del grafo
+
+\item Degeneracy del grafo
+
+\item Número cromático \(\chi(G)\)
+
+\item Feedback Vertex Set (FVS)
+
+\item Distance to Clique
+
+\item Distance to Coloring
+
+\item Tree-Depth del grafo
+
+\item Clique-Cover Number
+
+\end{itemize}
+
+\subsubsection*{Conclusión}
+
+Basado en los resultados de Araújo, Baste y Sau, el \textbf{Problema de Partición Cromática de Costo Mínimo (MCCPP) no es FPT para ningún parámetro de estructura de grafo \textit{estándar}} (treewidth, pathwidth, treedecomposición, vertex cover, etc.) \cite{araujo2017weightedforests}.
+
+Los únicos parámetros que potencialmente podrían hacer MCCPP FPT serían:
+
+\begin{enumerate}
+
+\item \textbf{Parámetros combinados muy específicos:} Por ejemplo, una combinación del número de colores \(r\) y una cota en el número de aristas o una cota fuerte en \(k\) (el tamaño del conjunto independiente máximo).
+
+\item \textbf{Parámetros de distancia a clases especiales:} Distancia a grafos completos, distancia a árboles muy pequeños, o similares. Pero estos son ampliamente restrictivos y no capturan muchos grafos de interés práctico.
+
+\item \textbf{Parametrización por la solución:} Parametrizar por el valor óptimo \(\sigma(G, w)\) mismo, lo cual es una parametrización “circular” y rara vez se considera en análisis de complejidad parametrizada.
+
+\end{enumerate}
+
+\section{Diseño de Soluciones Algorítmicas}
+
+El MCCPP exige dividir \(V\) en conjuntos independientes minimizando un costo asignado a cada clase de color. Su dificultad combinatoria, dado que MCCPP es NP-Hard y APX-Hard, requiere un enfoque múltiple: exacto, aproximado, metaheurístico y estructural.
+
+\subsection{Soluciones Exactas (Bases de Referencia)}
+
+\subsubsection{Algoritmo de Fuerza Bruta: Enumeración Completa}
+
+El algoritmo de fuerza bruta es esencialmente un algoritmo de Branch-and-Bound sin poda, cuyo propósito es encontrar la solución óptima \(Z^*\) en instancias de tamaño muy pequeño para servir como línea base experimental.
+
+\textbf{Mecanismo:} El algoritmo explora sistemáticamente todas las posibles asignaciones de frecuencias a vértices. Para una instancia \(\langle G, F, C \rangle\), con \(|V|=n\) y \(|F|=k\), se genera cada función de mapeo \(\phi: V \to F\). Para cada asignación, se verifica la restricción de coloración propia, y si es válida, se calcula el costo total \(\sum_{v \in V} c_{v, \phi(v)}\).
+
+\textbf{Análisis de Complejidad:} El espacio de búsqueda consiste en \(k^n\) posibles asignaciones de color. Dado que cada asignación puede tener un costo distinto (debido a la matriz \(C\)), todas las permutaciones de colores deben ser consideradas. Verificar la validez de una coloración toma tiempo \(O(|E|)\) o \(O(n^2)\). Por lo tanto, la complejidad temporal es intrínsecamente exponencial: \(\mathbf{O(k^n \cdot \text{poly}(n))}\). Esta dependencia exponencial confirma que el algoritmo solo es viable para valores de \(n\) y \(k\) extremadamente pequeños.
+
+\subsubsection{Resolución mediante Programación Entera Lineal (ILP)}
+
+El modelo de Programación Entera Lineal presentado en la Sección 1 se implementa utilizando un solver de ILP para obtener soluciones óptimas en instancias de tamaño moderado. Este enfoque representa una mejora significativa respecto a la fuerza bruta al aprovechar técnicas de poda, relajación y planos de corte.
+
+\textbf{Mecanismo:} El modelo ILP 0-1 se implementa utilizando un solver especializado (como Gurobi, CPLEX o SCIP). El solver aplica algoritmos de Branch-and-Bound con relajación lineal, donde en cada nodo se resuelve la relajación LP del problema para obtener cotas que permitan podar ramas subóptimas. Adicionalmente, se pueden generar planos de corte para fortalecer la formulación.
+
+\textbf{Ventajas sobre Fuerza Bruta:}
+\begin{itemize}
+    \item \textbf{Poda por Optimalidad:} Las cotas de la relajación LP permiten descartar soluciones que no pueden mejorar la incumbente.
+    \item \textbf{Poda por Factibilidad:} Se detectan infactibilidades sin enumerar completamentamente.
+    \item \textbf{Preprocesamiento:} Los solvers aplican reducciones de variables y restricciones para simplificar el problema.
+\end{itemize}
+
+\textbf{Limitaciones Prácticas:} Aunque más eficiente que la enumeración completa, la resolución mediante ILP sigue estando limitada por la NP-hardness del problema. El crecimiento exponencial del árbol de búsqueda en instancias grandes hace necesario el uso de heurísticas o metaheurísticas para casos de tamaño realista.
+
+\textbf{Implementación:} El modelo se codifica en un lenguaje de modelado (como Python+PuLP/Pyomo, AMPL o Julia+JuMP) y se resuelve mediante un solver comercial o de código abierto. La función objetivo y restricciones se implementan directamente según la formalización presentada en la Sección 1.
+
+\subsubsection{Programación Dinámica (DP) para Grafos Estructurados}
+
+La Programación Dinámica (DP) es una técnica exacta que explota la subestructura óptima y la superposición de subproblemas para convertir (en casos estructurados) problemas que en grafos generales son intratables, en algoritmos polinómicos.
+
+\subsubsection*{Aplicación y Estructura del Grafo: Árboles}
+
+El MCCPP (Problema de Partición Cromática de Costo Mínimo) se vuelve tratable mediante DP en tiempo polinomial para la clase de grafos que tienen estructura de árbol. En un árbol, no hay ciclos y la estructura jerárárquica permite un DP en post-orden (rooted tree DP) con estados por vértice y color. Para árboles existe una formulación clásica:
+
+\subsubsection*{Modelado del Problema en Árboles}
+
+Sea \(G=(V,E)\) un árbol con \(n=|V|\) vértices. Disponemos de un conjunto de colores (frecuencias) \(F\) de tamaño \(k\). Para cada vértice \(v\in V\) y color \(f\in F\) existe un coste no negativo \(c_{v,f}\). El objetivo es asignar a cada vértice un color tal que cualquiera par de vértices adyacentes tengan colores distintos (coloración propia) minimizando la suma de los costos.
+
+\subsubsection*{Estado y Recurrencia del DP en Árboles}
+
+Fijamos una raíz arbitraria \(r\) del árbol y consideramos la orientación padre–hijo. Para cada vértice \(v\) y cada color \(c\in\{1,\dots,k\}\) definimos:
+
+\[
+DP[v][c] = \text{coste mínimo para colorear todo el subárbol con raíz } v \text{ si } v \text{ usa el color } c.
+\]
+
+Si \(children(v)\) son los hijos de \(v\) en la raíz elegida, la recurrencia es:
+
+\[
+DP[v][c] = c_{v,c} + \sum_{u \in children(v)} \min_{c' \in F,\ c' \neq c} DP[u][c'].
+\]
+
+Condición base: si \(v\) es hoja, entonces \(DP[v][c] = c_{v,c}\) para todo \(c\).
+
+La solución global óptima es \(\min_{c \in F} DP[r][c]\).
+
+\subsubsection*{Construcción de la Solución}
+
+Tras calcular todos los \(DP[v][c]\) en post-orden, reconstruimos la coloración seleccionando para la raíz un color de coste mínimo y, recursivamente, para cada hijo seleccionamos el color mínimo compatible (diferente del color del padre) según la tabla \(DP\).
+
+\subsubsection*{Corrección del DP en árboles}
+Para todo vértice \(v\) y color \(c\), \(DP[v][c]\) definido por la recurrencia anterior es el coste óptimo de colorear el subárbol de \(v\) condicionando a que \(v\) tome el color \(c\).
+
+\subsubsection*{Demostración}
+Prueba por inducción sobre la altura del subárbol raíz en \(v\).
+
+Base: si \(v\) es hoja, la única elección es colorear \(v\) con \(c\) y el coste es \(c_{v,c}\), que coincide con \(DP[v][c]\).
+
+Paso inductivo: supongamos cierto para todos los nodos con altura menor que la de \(v\). Cualquier coloración óptima del subárbol de \(v\) donde \(v\) usa color \(c\) induce para cada hijo \(u\) una coloración óptima del subárbol de \(u\) con la restricción de no usar \(c\) en \(u\). Por la hipótesis inductiva, el coste óptimo de cada subárbol \(u\) con esa restricción es \(\min_{c' \neq c} DP[u][c']\). Sumando y añadiendo \(c_{v,c}\) obtenemos precisamente la expresión de la recurrencia.
+
+\subsubsection*{Análisis de la Complejidad Temporal}
+
+Sea \(n\) el número de vértices y \(k\) el número de colores.
+
+- Preprocesamiento: construir la orientación padre–hijo y el post-orden toma \(O(n)\).
+- Cálculo de \(DP\): para cada vértice \(v\) y cada color \(c\) se debe sumar sobre los hijos \(u\) el término \(\min_{c'\neq c} DP[u][c']\). Para un hijo \(u\) obtener \(\min_{c'\neq c} DP[u][c']\) cuesta \(O(k)\) con una implementación directa. Por cada par \((v,c)\) se evalúan esto para todos los hijos de \(v\). Como \(\sum_v \deg(v) = O(n)\), la complejidad total es:
+
+\[
+T(n,k) = O(n k^2).
+\]
+
+Existe una optimización estándar (mantener para cada hijo el mínimo y segundo mínimo y el correspondiente color), que reduce cada consulta a \(O(1)\) y lleva la complejidad a:
+
+\[
+T(n,k) = O(n k).
+\]
+
+\subsubsection*{Conclusión teórica}
+
+La DP en árboles ofrece una solución exacta y polinomial para MCCPP cuando el grafo de interferencia es un árbol. La implementación directa tiene coste \(O(n k^2)\); con la técnica de mínimo/segundo mínimo por hijo se puede reducir a \(O(n k)\).
+
+\subsection{Algoritmos de Aproximación}
+
+Este enfoque aborda la intratabilidad del MCCPP ofreciendo una garantía de calidad probada (\(O(\ln n)\)), heredada de su modelado como Weighted Set Cover \cite{feige1998setcover,setcoverChronology2021}.
+
+\subsubsection{Algoritmo de Aproximación con Garantía Teórica (\(R \le O(\ln |V|)\))}
+
+Dada la APX-Hardness del MCCPP, no se espera una aproximación de factor constante para grafos generales. En su lugar, el algoritmo de aproximación con la mejor garantía teórica utiliza la conexión del MCCPP con el Problema de Cobertura de Conjuntos Ponderado (Weighted Set Cover, WSC), como ya se analizó en la fase anterior.
+
+\textbf{Algoritmo de Aproximación WSC-Greedy:}
+
+El algoritmo procede de forma voraz, seleccionando repetidamente el conjunto independiente \(S^* = \langle I^*, f^* \rangle\) que minimiza el costo marginal efectivo, es decir, el costo por cada nuevo vértice cubierto.
+
+\[
+\langle I^*, f^* \rangle = \arg \min_{\langle I, f \rangle \in \mathcal{S}} \left\{ \frac{\sum_{v \in I} c_{v, f}}{|\{v \in I : v \text{ está sin colorear}\}|} \right\}
+\]
+
+Los vértices cubiertos por \(I^*\) se colorean con \(f^*\), y se eliminan del universo \(U\). Este proceso se repite hasta que todos los vértices estén coloreados.
+
+\textbf{Garantía de Rendimiento (Demostración):}
+
+El algoritmo Greedy para WSC garantiza que la solución obtenida \(Z_{Alg}\) está acotada por el costo óptimo \(Z_{WSC}^*\) multiplicado por el número armónico \(H(|U|)\), donde \(H(|U|) = \sum_{i=1}^{|U|} 1/i\). Dado que el MCCPP se ha modelado como WSC y el número armónico \(H(n)\) se aproxima por \(\ln n\), se tiene la siguiente garantía de rendimiento:
+
+\[
+R = \frac{Z_{MCCPP}^{Alg}}{Z_{MCCPP}^*} \le H(|V|) \approx O(\ln |V|)
+\]
+
+Esta garantía de \(\mathbf{R \le O(\ln |V|)}\) es el mejor factor de aproximación conocido para el MCCPP en grafos generales, coherente con los límites inferiores de inaproximabilidad de Set Cover \cite{feige1998setcover,setcoverChronology2021}.
+
+\subsubsection{Algoritmos de Aproximación Estructural (\(R = O(\sqrt{|V|})\))}
+
+La cota de aproximación logarítmica \(O(\ln |V|)\) es el límite riguroso para el MCCPP en grafos generales. Sin embargo, para clases de grafos estructuralmente restringidos, se pueden obtener garantías de aproximación significativamente mejores que explotan las propiedades topológicas del grafo de interferencia \(G=(V, E)\). Para grafos bipartitos, de intervalo y unimodulares, la literatura académica establece la existencia de algoritmos que alcanzan un factor de aproximación \(R\) acotado por \(\mathbf{O(\sqrt{|V|})}\) en tiempos de ejecución subcuadráticos, apoyándose en técnicas poliédricas y en el acotamiento de la brecha de integralidad en tales clases \cite{baste2018dualparameterization}.
+
+\subsection{Heurísticas Greedy Cost-Aware}
+
+Para instancias grandes donde las soluciones exactas y las aproximaciones con garantía teórica logarítmica son insuficientes en la práctica, las heurísticas greedy adaptadas al costo juegan un papel esencial. Estas heurísticas se basan en estrategias clásicas de coloración (LF, DSATUR, RLF) enriquecidas con información de costos, y su efectividad práctica ha sido confirmada en estudios recientes de coloreo y MCCPP \cite{trailingpath2019,deepmemetic2022}.
+
+\subsubsection{Estrategia Largest First (LF) Cost-Aware}
+
+\textbf{Descripción y Mecanismo:}
+
+La heurística Largest First (LF) ordena los vértices en orden no creciente de su grado \(d(v)\). El algoritmo recorre esta ordenación y asigna a cada vértice \(v\) el color disponible de mínimo costo posible, respetando la restricción de coloración propia.
+
+\textbf{Definición Formal:}
+
+Sea \(V = \{v_1, v_2, \ldots, v_n\}\) tal que \(d(v_1) \ge d(v_2) \ge \ldots \ge d(v_n)\). Para cada vértice \(v_i\):
+
+\begin{itemize}
+
+\item Determinar el conjunto de colores disponibles:
+\[
+F_{\text{avail}}(v_i) = F \setminus \{\phi(u) : u \in N(v_i)\}
+\]
+
+\item Seleccionar el color de costo mínimo:
+\[
+\phi(v_i) = f^*, \quad \text{donde } f^* = \arg \min_{f \in F_{\text{avail}}(v_i)} c_{v_i,f}
+\]
+
+\end{itemize}
+
+\textbf{Análisis Formal de la Complejidad Computacional:}
+
+La complejidad de LF se determina por la fase de ordenación inicial y la fase secuencial de coloración. Sean \(n=|V|\), \(m=|E|\), y \(k=|F|\).
+
+\begin{enumerate}
+
+\item \textbf{Costo de Preordenamiento:} Calcular todos los grados \(d(v)\) toma \(O(n+m)\). El ordenamiento de los \(n\) vértices toma \(O(n \log n)\).
+
+\item \textbf{Fase de Coloración:} Se itera \(n\) veces. En cada iteración, se verifica el conjunto de colores disponibles. Determinar \(F_{\text{avail}}(v)\) implica examinar a los vecinos de \(v\), lo que toma \(O(d(v))\). La selección del costo mínimo \(f^*\) entre las frecuencias disponibles toma \(O(|F|)\).
+
+\end{enumerate}
+
+El costo de la coloración es:
+\[
+\sum_{v \in V} O(d(v) + |F|) = O\left(\sum d(v) + n|F|\right) = O(2m + n|F|)
+\]
+
+La complejidad total está dominada por:
+
+\[
+\mathbf{T_{LF}} = \mathbf{O(|V| \log |V| + |E| + |V||F|)}
+\]
+
+\textbf{Demostración Formal de Cota Superior (\(|V|^2\)):}
+
+En el peor caso, donde el grafo es denso (\(|E| = O(|V|^2)\)) y el número de frecuencias disponibles es grande (\(|F| = O(|V|)\)), la cota se simplifica:
+
+\[
+T_{LF} = O(|V| \log |V| + |V|^2 + |V|^2) = \mathbf{O(|V|^2)}
+\]
+
+\textbf{Resultados Esperados e Implicaciones (Calidad y Limitaciones):}
+
+LF es la heurística más rápida, pero su estrategia estática conlleva una \textbf{baja eficiencia cromática}; es decir, a menudo utiliza un número de colores \(\chi_{Alg}\) significativamente mayor que el número cromático óptimo \(\chi(G)\). Esta deficiencia estructural limita la capacidad de la adaptación Cost-Aware para optimizar el costo total. Si los vértices de alto grado que se colorean primero tienen costos uniformemente bajos, el algoritmo podría forzar a los vértices de bajo grado (coloreados al final) a usar frecuencias muy costosas, resultando en una solución final subóptima.
+
+\subsubsection{Estrategia DSATUR (Degree of Saturation) Cost-Aware}
+
+\textbf{Descripción y Mecanismo:}
+
+DSATUR (Degree of Saturation) es una heurística dinámica que prioriza la selección del vértice \textbf{más restringido} en cada paso. El grado de saturación \(d_{\text{sat}}(v)\) es el número de colores distintos ya utilizados por los vecinos de \(v\). Se selecciona el vértice no coloreado \(v\) con el \(d_{\text{sat}}(v)\) máximo. En caso de empate, se desempata eligiendo el vértice con el grado \(d(v)\) máximo en el subgrafo de vértices no coloreados. Este criterio dinámico se enfoca en resolver los conflictos más inminentes, buscando minimizar la probabilidad de que se requieran nuevos colores, lo que se traduce en una mayor eficiencia cromática que LF y ha sido base de numerosas variantes modernas \cite{trailingpath2019,deepmemetic2022}.
+
+\textbf{Criterio de Selección:}
+
+\begin{itemize}
+
+\item Seleccionar el vértice no coloreado \(v\) con el \(d_{\text{sat}}(v)\) máximo.
+
+\item En caso de empate en \(d_{\text{sat}}(v)\), desempatar por el grado \(d(v)\) máximo en el subgrafo de vértices no coloreados.
+
+\end{itemize}
+
+\textbf{Adaptación de Costo:}
+
+Al igual que en LF, el color asignado a \(v\) es el color disponible de costo mínimo \(c_{v, f^*}\) definido por:
+
+\[
+\phi(v) = f^*, \quad \text{donde } f^* = \arg \min_{f \in F_{\text{avail}}(v)} {c_{v, f}}.
+\]
+
+\textbf{Análisis Formal de la Complejidad Computacional:}
+
+La eficiencia de DSATUR depende de la implementación de una estructura de datos (como un \textit{heap} o un árbol balanceado) para gestionar y actualizar los grados de saturación de forma eficiente.
+
+\begin{enumerate}
+
+\item \textbf{Selección (Extracción Máxima):} La selección del vértice con el máximo \(d_{\text{sat}}\) se realiza \(n\) veces, con un costo de \(O(\log n)\) por extracción si se usa un \textit{heap} binario.
+
+\item \textbf{Costo Local y Asignación:} Determinar el costo mínimo \(f^*\) toma \(O(d(v) + |F|)\).
+
+\item \textbf{Actualización de Saturación:} Después de colorear \(v\), se deben actualizar los \(d_{\text{sat}}\) de todos sus vecinos no coloreados \(N(v)\). Cada arista se explora dos veces a lo largo del proceso, y cada actualización cuesta \(O(\log n)\) si se usa un \textit{heap}.
+
+\end{enumerate}
+
+El costo total de actualización es \(\sum_{v \in V} d(v) \cdot O(\log n) = O(|E| \log |V|)\).
+
+La complejidad total es:
+
+\[
+\mathbf{T_{DSATUR}} = \mathbf{O(|V| \log |V| + |V||F| + |E| \log |V|)}
+\]
+
+\textbf{Cota Típica:}
+
+En implementaciones prácticas se suele citar una complejidad típica \(O((n+m)\log n)\) para el comportamiento dominante cuando la gestión de saturaciones domina la ejecución.
+
+\textbf{Resultados Esperados e Implicaciones (Calidad y Limitaciones):}
+
+DSATUR proporciona un \textbf{excelente compromiso} entre velocidad y calidad. Su alta eficiencia cromática asegura que el algoritmo opere con un número reducido de frecuencias \(\chi_{Alg}\). Esto implica que, en cada paso, la elección del color de costo mínimo \(f^*\) se realiza sobre un conjunto \(F_{\text{avail}}(v)\) que tiene más probabilidades de contener opciones de bajo costo en las frecuencias ya establecidas, mejorando significativamente la solución de costo total respecto a LF.
+
+\subsubsection{Estrategia Recursive Largest First (RLF) Cost-Aware}
+
+\textbf{Descripción y Mecanismo:}
+
+A diferencia de LF y DSATUR, RLF construye las clases de color (conjuntos independientes, IS) de forma explícita, una por una, asignando una frecuencia \(f_{\text{new}}\) a cada IS. RLF construye iterativamente el Conjunto Independiente \(I_{\text{new}}\) más grande posible dentro del subgrafo restante, basándose en criterios dinámicos de restricción.
+
+\textbf{Mecanismo Estándar:}
+
+En cada paso, RLF identifica un nuevo color \(f_{\text{new}}\) y construye el conjunto independiente \(I_{\text{new}}\) más grande posible dentro del subgrafo restante, asignando \(f_{\text{new}}\) a todos los vértices en \(I_{\text{new}}\) y eliminándolos del grafo.
+
+\textbf{Criterio de Construcción del IS Óptimo (Adaptación de Costo):}
+
+La adaptación de RLF para el MCCPP implica que la selección de vértices para \(I_{\text{new}}\) debe estar doblemente sesgada:
+
+\begin{itemize}
+
+\item \textbf{Estructuralmente}: Debe ser un Conjunto Independiente grande.
+
+\item \textbf{Por Costo}: Para una frecuencia \(f_{\text{new}}\) pre-elegida, la selección de vértices dentro de \(I_{\text{new}}\) debe priorizar aquellos vértices \(v\) que tienen el costo más bajo \(c_{v, f_{\text{new}}}\).
+
+\end{itemize}
+
+La heurística RLF modificada busca un compromiso: construir una clase de color que sea no solo grande, sino que también minimice el costo promedio de esa clase, optimizando la asignación de costo para la nueva frecuencia introducida.
+
+\textbf{Análisis Formal de la Complejidad Computacional:}
+
+RLF es la heurística de coloración más costosa, ya que la construcción de cada IS maximal requiere reevaluar dinámicamente las métricas de restricción. Sea \(k\) el número de colores utilizados.
+
+\begin{enumerate}
+
+\item \textbf{Iteraciones:} El algoritmo realiza \(k\) iteraciones, donde \(k \le n\).
+
+\item \textbf{Costo por Iteración:} En cada iteración \(j\), se construye \(I_j\). La selección del vértice inicial y la construcción del conjunto independiente involucra la verificación de adyacencias en el subgrafo restante. En general, el costo de construir todas las clases de color \(I_j\) está dominado por \(\mathbf{O(|V| \cdot |E|)}\).
+
+\end{enumerate}
+
+La complejidad total (ignorando el costo de exploración \(|V||F|\)) es:
+
+\[
+\mathbf{T_{RLF}} = \mathbf{O(|V| \cdot |E|)}
+\]
+
+\textbf{Demostración Formal de Cota Superior (\(|V|^3\)):}
+
+En el caso de grafos densos, donde \(|E| = O(|V|^2)\), la complejidad de RLF alcanza su peor caso:
+
+\[
+T_{RLF} = O(|V| \cdot |V|^2) = \mathbf{O(|V|^3)}
+\]
+
+\textbf{Resultados Esperados e Implicaciones (Calidad y Limitaciones):}
+
+RLF posee la \textbf{mejor calidad estructural} entre las heurísticas voraces, utilizando un \(\chi_{Alg}\) más cercano a \(\chi(G)\). La capacidad de optimizar los costos de asignación en grandes conjuntos independientes (clases de color) le confiere el mayor potencial para obtener la mejor solución \(Z_{Alg}\) de costo total. Su principal limitación es su complejidad temporal \(O(|V||E|)\), lo que la hace inadecuada como algoritmo de producción para instancias muy grandes, pero es valiosa para generar soluciones iniciales de alta calidad para metaheurísticas o como referencia empírica \cite{trailingpath2019,deepmemetic2022}.
+
+\subsection{Metaheurísticas: Exploración del Espacio de Soluciones}
+
+Las metaheurísticas no tienen garantías de rendimiento teórico en tiempo polinomial, pero son esenciales para obtener soluciones de alta calidad empírica en instancias grandes y complejas. En el contexto de MCCPP y problemas de coloreo relacionados, enfoques como Simulated Annealing y las trayectorias con Path Relinking han mostrado resultados competitivos \cite{simann2017coloring,saSparseInference2022,araujo2020heuristicMCCPP}.
+
+\subsubsection{Simulated Annealing (SA)}
+
+\textbf{Funcionamiento y Base Termodinámica:} El Simulated Annealing (SA) es una metaheurística probabilística inspirada en el proceso de recocido metalúrgico. Su función principal es escapar de los óptimos locales mediante la aceptación controlada de movimientos que empeoran la solución. En problemas de coloreo de grafos, incluidas variantes ponderadas, SA ha sido estudiado y aplicado de forma sistemática \cite{simann2017coloring,saSparseInference2022}.
+
+\textbf{Criterio de Aceptación (Metropolis):}
+
+El cambio de costo se define como \(\Delta C = C_{\text{new}} - C_{\text{current}}\).
+
+\begin{itemize}
+
+\item Si \(\Delta C \le 0\) (mejora o mantiene), el movimiento se acepta con probabilidad 1.
+
+\item Si \(\Delta C > 0\) (empeoramiento), el movimiento se acepta con una probabilidad \(P\) que depende de la temperatura \(T\):
+
+\[
+P = e^{-\Delta C / T}
+\]
+
+\end{itemize}
+
+\textbf{Control de Exploración e Intensificación:} La temperatura \(T\) se reduce lentamente según un esquema de enfriamiento predefinido. A temperaturas altas (\(T \to \infty\)), \(P \to 1\), permitiendo una exploración amplia del espacio de soluciones. A medida que \(T\) disminuye (enfriamiento), \(P\) se reduce, forzando al algoritmo a concentrarse en la búsqueda de óptimos locales (intensificación). Una curva de enfriamiento suficientemente lenta garantiza la convergencia al óptimo global en tiempo teórico exponencial; en la práctica, se adoptan esquemas heurísticos balanceando calidad y tiempo \cite{simann2017coloring,saSparseInference2022}.
+
+\subsubsection{Trajectory Search Heuristic + Path Relinking (TSH+PR)}
+
+TSH+PR es una metaheurística avanzada que combina la búsqueda local intensa con estrategias de diversificación y recombinación. Este tipo de enfoque ha sido específicamente propuesto para el MCCPP, obteniendo resultados de alta calidad en instancias de tamaño medio y grande \cite{araujo2020heuristicMCCPP}.
+
+\textbf{Función Objetivo Penalizada (Manejo de Infactibilidad):}
+
+TSH+PR utiliza una función de evaluación que permite la exploración de soluciones infactibles (coloraciones que violan la restricción cromática). Esto es crucial, ya que permite que la búsqueda local pase por regiones “prohibidas” del espacio de soluciones para alcanzar óptimos factibles mejores.
+
+\[
+f(S) = \sum_{c=1}^{n} (w_c \cdot |V_c| + M \cdot |E(V_c)|)
+\]
+
+Donde \(w_c\) es el costo asociado al color \(C_c\), \(|V_c|\) es el número de vértices con ese color, y \(|E(V_c)|\) es el número de aristas conflictivas dentro de esa clase de color \(V_c\). El parámetro \(M\) es una penalización suficientemente grande para garantizar que, si existe una solución factible, el proceso de optimización la favorecerá sobre cualquier solución infactible.
+
+\textbf{Mecanismo Híbrido:}
+
+\begin{itemize}
+
+\item \textbf{Construcción Inicial}: Se utiliza una heurística \textit{greedy} modificada (RLF modificado) para obtener una coloración inicial (posiblemente infactible).
+
+\item \textbf{Feasibility Search}: Se aplica una búsqueda local en el vecindario de un movimiento crítico (moviendo un vértice conflictivo a una clase no conflictiva) guiada por la minimización de \(f(S)\) para alcanzar rápidamente una solución factible (propia).
+
+\item \textbf{Path Relinking (PR)}: PR es una técnica de alto nivel que explora la conectividad entre soluciones de alta calidad (soluciones élite). Genera trayectorias de búsqueda al “recombinar” las características de dos soluciones élite, buscando soluciones intermedias que hereden las mejores propiedades de ambas. Esto aumenta la intensificación y previene la convergencia prematura \cite{araujo2020heuristicMCCPP}.
+
+\item \textbf{Diversificación y Reinicios}: Se aplican perturbaciones controladas (movimientos aleatorios) para alejar la solución actual de un óptimo local, forzando la exploración de nuevas regiones del espacio. Una \textit{tabu list} de corta duración evita revertir inmediatamente la perturbación. Los reinicios se realizan si no hay mejora tras un número \(\kappa\) de iteraciones.
+
+\end{itemize}
+
+\subsection{Conclusiones}
+
+El Problema de Partición Cromática de Costo Mínimo (MCCPP) se confirma como un problema NP-Hard y, más restrictivamente, APX-Hard. Esta demostración, lograda mediante una L-reducción desde el Minimum Vertex Cover, establece un límite riguroso en la aproximabilidad del problema \cite{PY91,ALM+98,dinur2005vc}. La consecuencia fundamental es que el MCCPP no admite un PTAS a menos que \(P=NP\), y que su mejor factor de aproximación conocido es \(O(\ln |V|)\) vía su modelado como Weighted Set Cover \cite{feige1998setcover,setcoverChronology2021}.
+
+La estrategia de diseño de soluciones debe ser multifacética:
+
+\begin{itemize}
+
+\item \textbf{Límites Teóricos}: El algoritmo de aproximación basado en Weighted Set Cover con garantía \(O(\ln |V|)\) ofrece la mejor cota de rendimiento probada en tiempo polinomial.
+
+\item \textbf{Explotación Estructural}: En clases estructuradas como grafos de intervalo, la programación dinámica permite soluciones exactas en tiempo polinomial, mientras que la complejidad parametrizada muestra que no se esperan algoritmos FPT para parámetros estructurales estándar como treewidth o pathwidth \cite{araujo2017weightedforests,baste2018dualparameterization}.
+
+\item \textbf{Rendimiento Práctico}: Las metaheurísticas (SA y TSH+PR) son cruciales para obtener soluciones de alta calidad en instancias grandes. En particular, las heurísticas de trayectoria con Path Relinking específicamente diseñadas para MCCPP han mostrado un comportamiento muy competitivo \cite{araujo2020heuristicMCCPP}.
+
+\item \textbf{Generación de Semillas}: Los algoritmos Greedy Cost-Aware (LF, DSATUR, RLF) proporcionan puntos de partida rápidos y factibles, esenciales para inicializar las metaheurísticas de búsqueda local y para el análisis empírico, y se apoyan en observaciones recientes sobre heurísticas avanzadas de coloreo de grafos \cite{trailingpath2019,deepmemetic2022}.
+
+\end{itemize}
+
+\section{Implementación y Análisis Experimental}
+
+\subsection{Generación de Instancias}
+
+Las instancias de prueba incluyen:
+
+\begin{itemize}
+
+\item Grafos Erdős–Rényi \(G(n,p)\).
+
+\item Matrices de costos aleatorias.
+
+\item Casos con soluciones óptimas conocidas.
+
+\item Casos límite y grafos estructurados.
+
+\end{itemize}
+
+\subsection{Comparación Empírica}
+
+Se evalúa cada algoritmo con base en:
+
+\begin{itemize}
+
+\item \textbf{Calidad de solución}: ratio \(R = Z_{Alg} / Z^*\).
+
+\item \textbf{Tiempo de ejecución}.
+
+\item \textbf{Escalabilidad}.
+
+\item \textbf{Sensibilidad a la densidad y a la distribución de costos}.
+
+\end{itemize}
+
+\subsection{Entregables}
+
+El repositorio incluye:
+
+\begin{itemize}
+
+\item Implementaciones de todos los algoritmos descritos.
+
+\item Generador de instancias.
+
+\item Scripts de evaluación y visualización.
+
+\item Documentación completa en \texttt{README.md}.
+
+\end{itemize}
+
+\printbibliography
+
+\end{document}
+
+[1](https://ppl-ai-file-upload.s3.amazonaws.com/web/direct-files/attachments/150062830/405dd8ba-5245-491a-8918-5fe908cfb700/informe-copy.tex)
+[2](http://annals.math.princeton.edu/2005/162-1/p08)
+[3](http://ieeexplore.ieee.org/document/7354447/)
+[4](http://epubs.siam.org/doi/10.1137/080721479)
+[5](https://dl.acm.org/doi/10.1145/3188745.3188804)
+[6](https://dl.acm.org/doi/10.1145/509907.509915)
+[7](http://arxiv.org/pdf/2403.19680.pdf)
+[8](https://arxiv.org/pdf/2307.05701.pdf)
+[9](https://arxiv.org/pdf/1012.4701.pdf)
+[10](http://arxiv.org/pdf/2403.18497.pdf)
+[11](https://dmtcs.episciences.org/2136/pdf)
+[12](https://arxiv.org/pdf/2205.08022.pdf)
+[13](http://arxiv.org/pdf/2203.05887.pdf)
+[14](http://arxiv.org/pdf/1910.01658.pdf)
+[15](https://linkinghub.elsevier.com/retrieve/pii/S1571065317302731)
+[16](https://arxiv.org/abs/1703.09726)
+[17](https://drops.dagstuhl.de/opus/volltexte/2018/8530/pdf/LIPIcs-STACS-2018-10.pdf)
+[18](http://arxiv.org/pdf/2308.00355.pdf)
+[19](http://arxiv.org/pdf/2404.17011.pdf)
+[20](http://arxiv.org/pdf/2311.10616.pdf)
+[21](https://arxiv.org/pdf/1910.10364.pdf)
+[22](https://arxiv.org/pdf/2410.19536.pdf)
+[23](http://arxiv.org/pdf/2312.10114.pdf)
+[24](http://link.springer.com/10.1007/s00453-020-00686-7)
+[25](http://arxiv.org/pdf/0908.2375.pdf)
+[26](http://arxiv.org/abs/0911.4218)
+[27](http://arxiv.org/pdf/2504.04984.pdf)
+[28](http://arxiv.org/pdf/2012.15056.pdf)
+[29](https://dmtcs.episciences.org/570/pdf)
+[30](https://arxiv.org/pdf/2109.05948.pdf)
+[31](https://dmtcs.episciences.org/548/pdf)
+[32](http://arxiv.org/pdf/1909.02261.pdf)
+[33](http://arxiv.org/pdf/2402.09998.pdf)
+[34](https://arxiv.org/pdf/2210.05915.pdf)
+[35](https://www.aanda.org/10.1051/0004-6361/202554937)
+[36](https://arxiv.org/pdf/2008.05374.pdf)
+[37](http://arxiv.org/pdf/1809.06506.pdf)
+[38](https://arxiv.org/pdf/1902.03702.pdf)
+[39](http://arxiv.org/pdf/2102.01149.pdf)
+[40](http://arxiv.org/pdf/2111.08100.pdf)
+[41](https://arxiv.org/abs/2211.04444)
+[42](http://arxiv.org/pdf/0906.1557.pdf)
+[43](https://arxiv.org/pdf/1702.01836v1.pdf)
+[44](http://arxiv.org/pdf/2401.03832.pdf)
+[45](https://arxiv.org/pdf/1804.03197.pdf)
+[46](https://arxiv.org/pdf/2101.06306.pdf)
+[47](https://arxiv.org/abs/2502.15216)
+[48](http://www.ijcir.com/publishedPapers.php?showDetails=Y&idArticle=116&volume=1&number=1&volume_id=2&number_id=4)
+[49](https://proceedings.science/proceedings/100607/_papers/212538)
+[50](https://www.semanticscholar.org/paper/4ba3abf4aeb57aafb75f943c958b365da659716c)
+[51](https://www.mdpi.com/2227-7390/13/21/3421)
+[52](https://www.nature.com/articles/s43588-024-00735-z)
+[53](http://ojs.uma.ac.id/index.php/jime/article/view/2328)
+[54](https://www.semanticscholar.org/paper/7317a1fe522bf2684a69e9d0e674a7efdf55f6d5)
+[55](https://www.semanticscholar.org/paper/e386073b84552e20b1e04412dfa3df6fd78dc386)
+[56](https://www.semanticscholar.org/paper/c54bfd5fde974027c4d44cde96d4965b35a1c849)
+[57](http://rcin.org.pl/Content/139750/PDF/RB-2007-07.pdf)
+[58](https://arxiv.org/pdf/1712.00709.pdf)
+[59](http://arxiv.org/abs/2012.04470)
+[60](https://link.aps.org/doi/10.1103/PhysRevX.13.021011)
+[61](http://arxiv.org/pdf/2504.04821.pdf)
+[62](http://arxiv.org/pdf/1903.07056.pdf)
+[63](https://pmc.ncbi.nlm.nih.gov/articles/PMC3498173/)
+[64](https://arxiv.org/pdf/2309.11961.pdf)
+[65](https://www.rairo-ro.org/10.1051/ro/2019037)
+[66](https://www.semanticscholar.org/paper/360f6d4e5a4ab2f5443ceaef17c03838815d1876)
+[67](https://www.extrica.com/article/23228)
+[68](https://www.worldscientific.com/doi/10.1142/S1793830922501488)
+[69](https://ieeexplore.ieee.org/document/10231327/)
+[70](https://www.degruyterbrill.com/document/doi/10.1515/math-2025-0193/html)
+[71](http://www.aimspress.com/article/doi/10.3934/math.2021090)
+[72](https://dl.acm.org/doi/10.1145/3605573.3605623)
+[73](https://www.semanticscholar.org/paper/64ad02f6ce47747e469009c98a09070ebeaedf6e)
+[74](http://link.springer.com/10.1007/s00500-019-04278-8)
+[75](http://arxiv.org/pdf/1802.06742.pdf)
+[76](https://arxiv.org/pdf/2109.06021.pdf)
+[77](https://drops.dagstuhl.de/opus/volltexte/2018/8492/pdf/LIPIcs-STACS-2018-35.pdf)
+[78](http://arxiv.org/pdf/2203.08885.pdf)
+[79](https://www.mdpi.com/2073-8994/12/6/965/pdf)
+[80](http://arxiv.org/pdf/2411.00679.pdf)
+[81](https://arxiv.org/pdf/1907.05117.pdf)
+[82](https://arxiv.org/pdf/2501.05796.pdf)
+[83](https://www.cambridge.org/core/product/identifier/9781108637435\%23c2/type/book_part)
+[84](https://link.springer.com/10.1007/978-3-319-21275-3)
+[85](https://link.springer.com/10.1007/978-3-319-21275-3_5)
+[86](https://dl.acm.org/doi/10.1145/3618260.3649656)
+[87](http://link.springer.com/10.1007/978-3-642-28050-4_2)
+[88](https://ojs.aaai.org/index.php/AAAI/article/view/10575)
+[89](https://link.springer.com/10.1007/978-3-319-21275-3_9)
+[90](https://www.semanticscholar.org/paper/18800b91619c3bfe1ab5c9c73c527f87ccb44c7c)
+[91](https://link.springer.com/10.1007/978-3-319-21275-3_13)
+[92](https://drops.dagstuhl.de/entities/document/10.4230/LIPIcs.STACS.2019.45)
+[93](https://arxiv.org/pdf/1401.3492.pdf)
+[94](http://arxiv.org/pdf/2501.14461.pdf)
+[95](http://arxiv.org/pdf/2411.13171.pdf)
+[96](https://arxiv.org/pdf/2310.03469.pdf)
+[97](https://arxiv.org/pdf/2501.11544.pdf)
+[98](https://arxiv.org/pdf/2210.02167.pdf)
+[99](http://arxiv.org/pdf/2306.08812.pdf)
+[100](http://arxiv.org/pdf/2207.07425.pdf)
