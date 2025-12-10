@@ -1,5 +1,7 @@
 # Personalized
 temp_*
+.venv/
+expriments_results
 
 # LaTeX
 *.aux
