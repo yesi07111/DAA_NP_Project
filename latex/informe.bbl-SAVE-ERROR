@@ -1,0 +1,634 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.2 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{none/global//global/global}
+    \entry{PY91}{inproceedings}{}
+      \name{author}{2}{}{%
+        {{hash=b3b407bb63367a850366076095ee1970}{%
+           family={Papadimitriou},
+           familyi={P\bibinitperiod},
+           given={Christos\bibnamedelima H.},
+           giveni={C\bibinitperiod\bibinitdelim H\bibinitperiod}}}%
+        {{hash=4c46d2f3f797a5dedce8a376cb13fe3a}{%
+           family={Yannakakis},
+           familyi={Y\bibinitperiod},
+           given={Mihalis},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {ACM}%
+      }
+      \strng{namehash}{6173388e86e7febe4640b0153ab9de45}
+      \strng{fullhash}{6173388e86e7febe4640b0153ab9de45}
+      \strng{bibnamehash}{6173388e86e7febe4640b0153ab9de45}
+      \strng{authorbibnamehash}{6173388e86e7febe4640b0153ab9de45}
+      \strng{authornamehash}{6173388e86e7febe4640b0153ab9de45}
+      \strng{authorfullhash}{6173388e86e7febe4640b0153ab9de45}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Proceedings of the 20th ACM Symposium on Theory of Computing (STOC)}
+      \field{title}{Optimization, Approximation, and Complexity Classes}
+      \field{year}{1988}
+      \field{pages}{229\bibrangedash 234}
+      \range{pages}{6}
+      \verb{doi}
+      \verb 10.1145/62212.62231
+      \endverb
+    \endentry
+    \entry{ALM+98}{article}{}
+      \name{author}{5}{}{%
+        {{hash=8e08b59145b9531815169c7ed0a0b055}{%
+           family={Arora},
+           familyi={A\bibinitperiod},
+           given={Sanjeev},
+           giveni={S\bibinitperiod}}}%
+        {{hash=8de06808d97fa9673d700197a2bce191}{%
+           family={Lund},
+           familyi={L\bibinitperiod},
+           given={Carsten},
+           giveni={C\bibinitperiod}}}%
+        {{hash=2f555526320a1c4028ad0f6328953999}{%
+           family={Motwani},
+           familyi={M\bibinitperiod},
+           given={Rajeev},
+           giveni={R\bibinitperiod}}}%
+        {{hash=8753fbfaaa4aa8a1195c657edc9daef4}{%
+           family={Sudan},
+           familyi={S\bibinitperiod},
+           given={Madhu},
+           giveni={M\bibinitperiod}}}%
+        {{hash=02787b7c625f75874530bb3bf8b10add}{%
+           family={Szegedy},
+           familyi={S\bibinitperiod},
+           given={Mario},
+           giveni={M\bibinitperiod}}}%
+      }
+      \strng{namehash}{ab405688b3c276098991bcafe5da7076}
+      \strng{fullhash}{6bc1e98cb01145498a2f0dd2d6054b70}
+      \strng{bibnamehash}{6bc1e98cb01145498a2f0dd2d6054b70}
+      \strng{authorbibnamehash}{6bc1e98cb01145498a2f0dd2d6054b70}
+      \strng{authornamehash}{ab405688b3c276098991bcafe5da7076}
+      \strng{authorfullhash}{6bc1e98cb01145498a2f0dd2d6054b70}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM}
+      \field{number}{3}
+      \field{title}{Proof Verification and the Hardness of Approximation Problems}
+      \field{volume}{45}
+      \field{year}{1998}
+      \field{pages}{501\bibrangedash 555}
+      \range{pages}{55}
+      \verb{doi}
+      \verb 10.1145/278298.278306
+      \endverb
+    \endentry
+    \entry{dinur2005vc}{article}{}
+      \name{author}{2}{}{%
+        {{hash=9a5f80a9b2b1359cbc50244c7816730c}{%
+           family={Dinur},
+           familyi={D\bibinitperiod},
+           given={Irit},
+           giveni={I\bibinitperiod}}}%
+        {{hash=2f812c424904e68e80be26841995f567}{%
+           family={Safra},
+           familyi={S\bibinitperiod},
+           given={Samuel},
+           giveni={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{e35324df4b456fb097c6be6071d32448}
+      \strng{fullhash}{e35324df4b456fb097c6be6071d32448}
+      \strng{bibnamehash}{e35324df4b456fb097c6be6071d32448}
+      \strng{authorbibnamehash}{e35324df4b456fb097c6be6071d32448}
+      \strng{authornamehash}{e35324df4b456fb097c6be6071d32448}
+      \strng{authorfullhash}{e35324df4b456fb097c6be6071d32448}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Annals of Mathematics}
+      \field{number}{1}
+      \field{title}{On the Hardness of Approximating Minimum Vertex Cover}
+      \field{volume}{162}
+      \field{year}{2005}
+      \field{pages}{439\bibrangedash 485}
+      \range{pages}{47}
+      \verb{doi}
+      \verb 10.4007/annals.2005.162.439
+      \endverb
+    \endentry
+    \entry{feige1998setcover}{article}{}
+      \name{author}{1}{}{%
+        {{hash=b1684193b9de8503418fa549b5fe487c}{%
+           family={Feige},
+           familyi={F\bibinitperiod},
+           given={Uriel},
+           giveni={U\bibinitperiod}}}%
+      }
+      \strng{namehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{fullhash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{bibnamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authorbibnamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authornamehash}{b1684193b9de8503418fa549b5fe487c}
+      \strng{authorfullhash}{b1684193b9de8503418fa549b5fe487c}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Journal of the ACM}
+      \field{number}{4}
+      \field{title}{A Threshold of $\backslash$ln $n$ for Approximating Set Cover}
+      \field{volume}{45}
+      \field{year}{1998}
+      \field{pages}{634\bibrangedash 652}
+      \range{pages}{19}
+      \verb{doi}
+      \verb 10.1145/285055.285059
+      \endverb
+    \endentry
+    \entry{setcoverChronology2021}{article}{}
+      \name{author}{2}{}{%
+        {{hash=127bb675723fab36cc90aa3a5b6f43d7}{%
+           family={Maus},
+           familyi={M\bibinitperiod},
+           given={Yannic},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=0c1c6f898d0054027d314bba3a416110}{%
+           family={Schafer},
+           familyi={S\bibinitperiod},
+           given={Guido},
+           giveni={G\bibinitperiod}}}%
+      }
+      \strng{namehash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \strng{fullhash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \strng{bibnamehash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \strng{authorbibnamehash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \strng{authornamehash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \strng{authorfullhash}{c3da1d6cea83e8f3c05102d604ac3922}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{ACM SIGACT News}
+      \field{number}{4}
+      \field{title}{A Chronology of Set Cover Inapproximability Results}
+      \field{volume}{52}
+      \field{year}{2021}
+      \field{pages}{58\bibrangedash 80}
+      \range{pages}{23}
+      \verb{doi}
+      \verb 10.1145/3506735.3506745
+      \endverb
+    \endentry
+    \entry{flum2006colorful}{incollection}{}
+      \name{author}{2}{}{%
+        {{hash=ef74151fe467e7138f6c00165c0fe8c0}{%
+           family={Flum},
+           familyi={F\bibinitperiod},
+           given={Jörg},
+           giveni={J\bibinitperiod}}}%
+        {{hash=09c9a63ce22980640e97ed9ed81ea815}{%
+           family={Grohe},
+           familyi={G\bibinitperiod},
+           given={Martin},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Elsevier}%
+      }
+      \strng{namehash}{2bf41be78965a2709ef0b6bb911f663a}
+      \strng{fullhash}{2bf41be78965a2709ef0b6bb911f663a}
+      \strng{bibnamehash}{2bf41be78965a2709ef0b6bb911f663a}
+      \strng{authorbibnamehash}{2bf41be78965a2709ef0b6bb911f663a}
+      \strng{authornamehash}{2bf41be78965a2709ef0b6bb911f663a}
+      \strng{authorfullhash}{2bf41be78965a2709ef0b6bb911f663a}
+      \field{sortinit}{9}
+      \field{sortinithash}{0a5ebc79d83c96b6579069544c73c7d4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Theor. Comput. Sci. (special issue on Parameterized Complexity)}
+      \field{number}{1}
+      \field{title}{On the Complexity of Some Colorful Problems Parameterized by Treewidth}
+      \field{volume}{349}
+      \field{year}{2006}
+      \field{pages}{9\bibrangedash 29}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1016/j.tcs.2005.09.023
+      \endverb
+    \endentry
+    \entry{cygan2015parameterized}{book}{}
+      \name{author}{8}{}{%
+        {{hash=fc00f5045e289bdc649a0e1fa023fede}{%
+           family={Cygan},
+           familyi={C\bibinitperiod},
+           given={Marek},
+           giveni={M\bibinitperiod}}}%
+        {{hash=79f82fca58f3e65e15c5f702996ec47f}{%
+           family={Fomin},
+           familyi={F\bibinitperiod},
+           given={Fedor\bibnamedelima V.},
+           giveni={F\bibinitperiod\bibinitdelim V\bibinitperiod}}}%
+        {{hash=dee7568c109553bdf170c20c09eb7fb2}{%
+           family={Kowalik},
+           familyi={K\bibinitperiod},
+           given={{Ł}ukasz},
+           giveni={Ł\bibinitperiod}}}%
+        {{hash=d36fdf541c333f611dfa11132a784053}{%
+           family={Lokshtanov},
+           familyi={L\bibinitperiod},
+           given={Daniel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=e31719b087ab896a11d4b30ad542eab8}{%
+           family={Marx},
+           familyi={M\bibinitperiod},
+           given={Dániel},
+           giveni={D\bibinitperiod}}}%
+        {{hash=0a3f85829e46b5ad472cbcfbf3f57549}{%
+           family={Pilipczuk},
+           familyi={P\bibinitperiod},
+           given={Marcin},
+           giveni={M\bibinitperiod}}}%
+        {{hash=1ab5cb4c1773d12f499567e578046996}{%
+           family={Pilipczuk},
+           familyi={P\bibinitperiod},
+           given={Micha{ł}},
+           giveni={M\bibinitperiod}}}%
+        {{hash=f6ffd3ea3887e04ef5a00a54c6c71668}{%
+           family={Saurabh},
+           familyi={S\bibinitperiod},
+           given={Saket},
+           giveni={S\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{0105fbfc06b2c19ca7b3d990443f208d}
+      \strng{fullhash}{72110df57f7a14006f1c8292ee85813c}
+      \strng{bibnamehash}{0105fbfc06b2c19ca7b3d990443f208d}
+      \strng{authorbibnamehash}{0105fbfc06b2c19ca7b3d990443f208d}
+      \strng{authornamehash}{0105fbfc06b2c19ca7b3d990443f208d}
+      \strng{authorfullhash}{72110df57f7a14006f1c8292ee85813c}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{series}{Texts in Theoretical Computer Science}
+      \field{title}{Parameterized Algorithms}
+      \field{year}{2015}
+      \verb{doi}
+      \verb 10.1007/978-3-319-21275-3
+      \endverb
+    \endentry
+    \entry{araujo2017weightedforests}{article}{}
+      \name{author}{3}{}{%
+        {{hash=f7c0ea9a8356d34c42cec96026fbf8cd}{%
+           family={Araújo},
+           familyi={A\bibinitperiod},
+           given={Júlio},
+           giveni={J\bibinitperiod}}}%
+        {{hash=802aefd6f38ed17e8b47cff598bdd487}{%
+           family={Baste},
+           familyi={B\bibinitperiod},
+           given={Julien},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f23ac7e85d8fa0e0f95c4813702523da}{%
+           family={Sau},
+           familyi={S\bibinitperiod},
+           given={Ignasi},
+           giveni={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{bfa6595faf1564999b5214b0b16f4395}
+      \strng{fullhash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{bibnamehash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{authorbibnamehash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{authornamehash}{bfa6595faf1564999b5214b0b16f4395}
+      \strng{authorfullhash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \field{extraname}{1}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Discrete Applied Mathematics}
+      \field{title}{Ruling Out FPT Algorithms for Weighted Coloring on Forests}
+      \field{volume}{283}
+      \field{year}{2020}
+      \field{pages}{381\bibrangedash 396}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1016/j.dam.2019.12.018
+      \endverb
+    \endentry
+    \entry{guan1997weightedcoloring}{article}{}
+      \name{author}{2}{}{%
+        {{hash=ea129c83f2040b1bda3a7db705bea2f8}{%
+           family={Guan},
+           familyi={G\bibinitperiod},
+           given={Da-Jiang},
+           giveni={D\bibinithyphendelim J\bibinitperiod}}}%
+        {{hash=4c73a8ef4d222eb71f862538d668c13a}{%
+           family={Zhu},
+           familyi={Z\bibinitperiod},
+           given={Xuding},
+           giveni={X\bibinitperiod}}}%
+      }
+      \strng{namehash}{898cad1a03a401e3ac31e00e4468bd79}
+      \strng{fullhash}{898cad1a03a401e3ac31e00e4468bd79}
+      \strng{bibnamehash}{898cad1a03a401e3ac31e00e4468bd79}
+      \strng{authorbibnamehash}{898cad1a03a401e3ac31e00e4468bd79}
+      \strng{authornamehash}{898cad1a03a401e3ac31e00e4468bd79}
+      \strng{authorfullhash}{898cad1a03a401e3ac31e00e4468bd79}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Information Processing Letters}
+      \field{number}{2}
+      \field{title}{A Coloring Problem for Weighted Graphs}
+      \field{volume}{61}
+      \field{year}{1997}
+      \field{pages}{77\bibrangedash 81}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.1016/S0020-0190(97)00100-X
+      \endverb
+    \endentry
+    \entry{baste2018dualparameterization}{article}{}
+      \name{author}{3}{}{%
+        {{hash=802aefd6f38ed17e8b47cff598bdd487}{%
+           family={Baste},
+           familyi={B\bibinitperiod},
+           given={Julien},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f23ac7e85d8fa0e0f95c4813702523da}{%
+           family={Sau},
+           familyi={S\bibinitperiod},
+           given={Ignasi},
+           giveni={I\bibinitperiod}}}%
+        {{hash=f524e7d2a1db2bf0aa08c0ae5b4c800b}{%
+           family={Thilikos},
+           familyi={T\bibinitperiod},
+           given={Dimitrios\bibnamedelima M.},
+           giveni={D\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+      }
+      \strng{namehash}{0cc86916e3662d6b11624de01040c3bf}
+      \strng{fullhash}{edd67d4e2edeb6a47b3587381a0975f0}
+      \strng{bibnamehash}{edd67d4e2edeb6a47b3587381a0975f0}
+      \strng{authorbibnamehash}{edd67d4e2edeb6a47b3587381a0975f0}
+      \strng{authornamehash}{0cc86916e3662d6b11624de01040c3bf}
+      \strng{authorfullhash}{edd67d4e2edeb6a47b3587381a0975f0}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Algorithmica}
+      \field{number}{10}
+      \field{title}{Dual Parameterization of Weighted Coloring}
+      \field{volume}{82}
+      \field{year}{2020}
+      \field{pages}{2956\bibrangedash 2985}
+      \range{pages}{30}
+      \verb{doi}
+      \verb 10.1007/s00453-020-00686-7
+      \endverb
+    \endentry
+    \entry{downey2013fundamentals}{book}{}
+      \name{author}{2}{}{%
+        {{hash=c8c6348830e1a7890ac25a6ff36d0bfe}{%
+           family={Downey},
+           familyi={D\bibinitperiod},
+           given={Rodney\bibnamedelima G.},
+           giveni={R\bibinitperiod\bibinitdelim G\bibinitperiod}}}%
+        {{hash=5c9d76150713d66a1817eee181e94e10}{%
+           family={Fellows},
+           familyi={F\bibinitperiod},
+           given={Michael\bibnamedelima R.},
+           giveni={M\bibinitperiod\bibinitdelim R\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \strng{fullhash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \strng{bibnamehash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \strng{authorbibnamehash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \strng{authornamehash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \strng{authorfullhash}{a1a56e0a221fdc8c9daed5a61707d8bc}
+      \field{sortinit}{1}
+      \field{sortinithash}{4f6aaa89bab872aa0999fec09ff8e98a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{series}{Texts in Computer Science}
+      \field{title}{Fundamentals of Parameterized Complexity}
+      \field{year}{2013}
+      \verb{doi}
+      \verb 10.1007/978-1-4471-5559-1
+      \endverb
+    \endentry
+    \entry{trailingpath2019}{article}{}
+      \name{author}{3}{}{%
+        {{hash=4118f7aa4370b2f5516ad69b033e0012}{%
+           family={Bouziri},
+           familyi={B\bibinitperiod},
+           given={Houda},
+           giveni={H\bibinitperiod}}}%
+        {{hash=9165fea8e4e935dbad2580565a7c56fd}{%
+           family={Nouioua},
+           familyi={N\bibinitperiod},
+           given={Sofiane},
+           giveni={S\bibinitperiod}}}%
+        {{hash=47ecbbe807058320758cfa05a56f8db5}{%
+           family={Salah},
+           familyi={S\bibinitperiod},
+           given={Haithem\bibnamedelima Ben},
+           giveni={H\bibinitperiod\bibinitdelim B\bibinitperiod}}}%
+      }
+      \strng{namehash}{3c6a1c81f7cdf4d431747f081c915722}
+      \strng{fullhash}{8de26e47ee8f146a809d87b8e8995e97}
+      \strng{bibnamehash}{8de26e47ee8f146a809d87b8e8995e97}
+      \strng{authorbibnamehash}{8de26e47ee8f146a809d87b8e8995e97}
+      \strng{authornamehash}{3c6a1c81f7cdf4d431747f081c915722}
+      \strng{authorfullhash}{8de26e47ee8f146a809d87b8e8995e97}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Soft Computing}
+      \field{number}{16}
+      \field{title}{Graph Coloring: A Novel Heuristic Based on Trailing Path—Properties, Perspective and Applications in Structured Networks}
+      \field{volume}{24}
+      \field{year}{2020}
+      \field{pages}{12437\bibrangedash 12452}
+      \range{pages}{16}
+      \verb{doi}
+      \verb 10.1007/s00500-019-04278-8
+      \endverb
+    \endentry
+    \entry{deepmemetic2022}{article}{}
+      \name{author}{3}{}{%
+        {{hash=4bce5642e77cba6ef95525f9299e4088}{%
+           family={Tian},
+           familyi={T\bibinitperiod},
+           given={Yingjie},
+           giveni={Y\bibinitperiod}}}%
+        {{hash=b2e22db866fa79372f07034ed0140d0e}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Qingfu},
+           giveni={Q\bibinitperiod}}}%
+        {{hash=b03c97712c9a3f7b2b13fb1c99dc4d60}{%
+           family={Zhang},
+           familyi={Z\bibinitperiod},
+           given={Weiqi},
+           giveni={W\bibinitperiod}}}%
+      }
+      \strng{namehash}{a8e5844da4981eb11e8bc45f53d2c250}
+      \strng{fullhash}{9679f3ed68e05e215735d7678ca2c5e2}
+      \strng{bibnamehash}{9679f3ed68e05e215735d7678ca2c5e2}
+      \strng{authorbibnamehash}{9679f3ed68e05e215735d7678ca2c5e2}
+      \strng{authornamehash}{a8e5844da4981eb11e8bc45f53d2c250}
+      \strng{authorfullhash}{9679f3ed68e05e215735d7678ca2c5e2}
+      \field{sortinit}{2}
+      \field{sortinithash}{8b555b3791beccb63322c22f3320aa9a}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Applied Soft Computing}
+      \field{title}{A Deep Learning Guided Memetic Framework for Graph Coloring Problems}
+      \field{volume}{122}
+      \field{year}{2022}
+      \field{pages}{108830}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1016/j.asoc.2022.108830
+      \endverb
+    \endentry
+    \entry{simann2017coloring}{article}{}
+      \name{author}{3}{}{%
+        {{hash=8e85520625b85c04838938da29d423df}{%
+           family={Peeters},
+           familyi={P\bibinitperiod},
+           given={Hanna},
+           giveni={H\bibinitperiod}}}%
+        {{hash=f82aeb5928cd8edef31f92dfdbfe0db1}{%
+           family={Spoerhase},
+           familyi={S\bibinitperiod},
+           given={Joachim},
+           giveni={J\bibinitperiod}}}%
+        {{hash=7e010c9835c528b6dea6ec84022a5735}{%
+           family={Wolff},
+           familyi={W\bibinitperiod},
+           given={Alexander},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{38c4362b2cb60fa6587bccddc3c9b63a}
+      \strng{fullhash}{4b82a106e87a7c4ae766fb43f60fff50}
+      \strng{bibnamehash}{4b82a106e87a7c4ae766fb43f60fff50}
+      \strng{authorbibnamehash}{4b82a106e87a7c4ae766fb43f60fff50}
+      \strng{authornamehash}{38c4362b2cb60fa6587bccddc3c9b63a}
+      \strng{authorfullhash}{4b82a106e87a7c4ae766fb43f60fff50}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arXiv}
+      \field{journaltitle}{arXiv preprint}
+      \field{title}{Simulated Annealing Algorithm for Graph Coloring}
+      \field{year}{2017}
+      \verb{eprint}
+      \verb 1712.00709
+      \endverb
+    \endentry
+    \entry{saSparseInference2022}{article}{}
+      \true{moreauthor}
+      \true{morelabelname}
+      \name{author}{1}{}{%
+        {{hash=6041775b39f3b133506807bcfc3840a6}{%
+           family={Ricci-Tersenghi},
+           familyi={R\bibinithyphendelim T\bibinitperiod},
+           given={Federico},
+           giveni={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{c88db4357b9d9410b261a10570329442}
+      \strng{fullhash}{c88db4357b9d9410b261a10570329442}
+      \strng{bibnamehash}{c88db4357b9d9410b261a10570329442}
+      \strng{authorbibnamehash}{c88db4357b9d9410b261a10570329442}
+      \strng{authornamehash}{c88db4357b9d9410b261a10570329442}
+      \strng{authorfullhash}{c88db4357b9d9410b261a10570329442}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Physical Review X}
+      \field{number}{2}
+      \field{title}{A Theory Explaining the Limits and Performances of Algorithms Based on Simulated Annealing in Solving Sparse Hard Inference Problems}
+      \field{volume}{13}
+      \field{year}{2022}
+      \field{pages}{021011}
+      \range{pages}{1}
+      \verb{doi}
+      \verb 10.1103/PhysRevX.13.021011
+      \endverb
+    \endentry
+    \entry{araujo2020heuristicMCCPP}{article}{}
+      \name{author}{3}{}{%
+        {{hash=f7c0ea9a8356d34c42cec96026fbf8cd}{%
+           family={Araújo},
+           familyi={A\bibinitperiod},
+           given={Júlio},
+           giveni={J\bibinitperiod}}}%
+        {{hash=802aefd6f38ed17e8b47cff598bdd487}{%
+           family={Baste},
+           familyi={B\bibinitperiod},
+           given={Julien},
+           giveni={J\bibinitperiod}}}%
+        {{hash=f23ac7e85d8fa0e0f95c4813702523da}{%
+           family={Sau},
+           familyi={S\bibinitperiod},
+           given={Ignasi},
+           giveni={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{bfa6595faf1564999b5214b0b16f4395}
+      \strng{fullhash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{bibnamehash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{authorbibnamehash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \strng{authornamehash}{bfa6595faf1564999b5214b0b16f4395}
+      \strng{authorfullhash}{2f25f31e4f5ef401e6fe9decf258693e}
+      \field{extraname}{2}
+      \field{sortinit}{3}
+      \field{sortinithash}{ad6fe7482ffbd7b9f99c9e8b5dccd3d7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{RAIRO - Operations Research}
+      \field{title}{A Heuristic for the Minimum Cost Chromatic Partition Problem}
+      \field{volume}{54}
+      \field{year}{2020}
+      \field{pages}{361\bibrangedash 381}
+      \range{pages}{21}
+      \verb{doi}
+      \verb 10.1051/ro/2019037
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+
