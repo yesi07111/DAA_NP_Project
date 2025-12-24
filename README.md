@@ -1,209 +1,270 @@
-# Proyecto DAA - MCCPP (Minimum Cost Chromatic Partition Problem)
+# MCCPP - Minimum Cost Chromatic Partition Problem
+
+Proyecto de Análisis y Diseño de Algoritmos (DAA) - Universidad de La Habana
+
+**Autores:**
+- Yesenia Valdés Rodríguez (C411)
+- Laura Martir Beltrán (C411)
+- Adrián Hernández Castellanos (C412)
 
 ## Descripción del Proyecto
 
-Este proyecto implementa soluciones para el **Problema de Partición Cromática de Costo Mínimo (MCCPP)**, un problema de optimización combinatoria que consiste en asignar colores a los vértices de un grafo de manera que vértices adyacentes tengan colores diferentes, minimizando el costo total de la coloración.
+Este proyecto implementa y analiza múltiples algoritmos para resolver el problema MCCPP (Minimum Cost Chromatic Partition Problem), que busca encontrar una coloración de grafo que minimice el costo total, respetando las restricciones de coloración válida.
 
-### Aplicaciones Prácticas
-- **Diseño VLSI**: Asignación de frecuencias en circuitos integrados
-- **Programación de Tareas**: Asignación de recursos con costos diferenciados
-- **Asignación de Registros**: Optimización en compiladores
-- **Redes de Comunicación**: Asignación de frecuencias sin interferencias
+## Estructura del Proyecto
 
-## 🚀 Instalación y Configuración
+```
+.
+├── algorithms/                          # Implementaciones de algoritmos
+│   ├── exacts_algorithms.py            # Algoritmos exactos (fuerza bruta, DP, ILP, etc.)
+│   ├── approximation_algorithms.py     # Algoritmos de aproximación (WSC, etc.)
+│   ├── heuristic_algorithms.py         # Heurísticas (LF, DSATUR, RLF, etc.)
+│   └── metaheuristic_algorithms.py     # Metaheurísticas (SA, TS+PR, etc.)
+├── instances/                           # Instancias de prueba (generadas)
+├── results/                             # Resultados de ejecuciones
+├── utils/                               # Utilidades
+│   ├── timeout_handler.py              # Manejo de timeouts globales
+│   ├── utils.py                        # Funciones auxiliares
+│   ├── evaluation.py                   # Evaluación y comparación
+│   └── instances_generator.py          # Generación de instancias
+├── main.py                             # 
+├── requirements.txt                    # Dependencias
+└── README.md                           # Este archivo
+```
 
-### Prerrequisitos
-- Python 3.8 o superior
-- pip (gestor de paquetes de Python)
+## Instalación
 
-### Instalación
+### Requisitos
+- Python 3.8+
+- pip
 
-1. **Clonar el repositorio**:
+### Pasos de Instalación
+
+1. **Clonar o descargar el proyecto:**
+   ```bash
+   cd [ruta_a_la_carpeta_raiz]
+   ```
+
+2. **Crear un entorno virtual (recomendado):**
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate  # En Windows
+   ```
+
+3. **Instalar dependencias:**
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+## Uso
+
+### Ejecutar el Menú Principal
+
 ```bash
-git clone https://github.com/yesi07111/DAA_NP_Project
-cd DAA_Project
+python main.py
 ```
 
-2. **Crear entorno virtual (recomendado)**:
-```bash
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-venv\Scripts\activate     # Windows
-```
+Se abrirá un menú interactivo con las siguientes opciones:
 
-3. **Instalar dependencias**:
-```bash
-pip install -r code/requirements.txt
-```
+1. **Generar instancias de prueba**
+   - Genera automáticamente un conjunto de 100+ instancias de diferentes tipos
+   - Garantiza que todas sean factibles (χ(G) ≤ k)
+   - Tipos incluidos: Completos, Ciclos, Grillas, Erdős-Rényi, Árboles, etc.
 
-### Dependencias Principales
-- `networkx`: Manipulación y análisis de grafos
-- `numpy`: Cálculos numéricos y matrices
-- `matplotlib`: Visualización de resultados
-- `scipy`: Análisis estadístico
-- `pandas`: Procesamiento de datos
+2. **Listar instancias disponibles**
+   - Muestra todas las instancias generadas
+   - Indica si son factibles y estima χ(G)
 
-## 📁 Estructura del Proyecto
+3. **Listar algoritmos disponibles**
+   - Muestra todos los algoritmos implementados por categoría
 
-```
-DAA_Project/
-├── code/
-│   ├── src/
-│   │   ├── instances/
-│   │   │   ├── generators.py          # Generadores de instancias ER y estructuradas
-│   │   │   ├── special_cases.py       # Instancias especiales con óptimos conocidos
-│   │   │   └── interval_graphs.py     # Instancias de grafos de intervalo
-│   │   ├── algorithms/
-│   │   │   ├── exact/                 # Algoritmos exactos
-│   │   │   ├── heuristic/            # Algoritmos heurísticos
-│   │   │   ├── approximation/        # Algoritmos de aproximación
-│   │   │   └── metaheuristic/        # Algoritmos metaheurísticos
-│   │   ├── evaluation/
-│   │   │   ├── benchmarks.py         # Suite de benchmarks
-│   │   │   ├── scalability_tests.py  # Pruebas de escalabilidad
-│   │   │   └── statistical_analysis.py # Análisis estadístico
-│   │   └── utils/
-│   │       ├── graph_utils.py        # Utilidades para grafos
-│   │       ├── cost_utils.py         # Generación de matrices de costo
-│   │       └── io_utils.py           # Manejo de archivos
-│   ├── instances/                    # Instancias generadas
-│   │   ├── benchmarks/              # Benchmarks académicos
-│   │   └── interval_graphs/         # Instancias de intervalo
-│   ├── experiment_results/          # Resultados de experimentos
-|   |
-|   ├── run_experiments.py           # Punto de entrada para solo correr los experimentos
-|   ├── main.py                      # Punto de entrada principal
-│   └── requirements.txt
-|
-├── latex/
-│   └── informe.tex                  # Código LaTeX del informe
-└── informe.pdf                      # Informe final del proyecto
-```
+4. **Ejecutar procesamiento completo (todos vs todos)**
+   - Ejecuta todos los algoritmos en instancias seleccionadas
+   - Respeta el modo de ejecución actual (ver opción 7)
 
-## 📊 Flujo de Trabajo
+5. **Ejecutar procesamiento personalizado**
+   - Permite seleccionar instancias y algoritmos específicos
+   - Mayor control sobre qué se ejecuta
 
-### Diagrama del Proceso
+6. **Visualizar estadísticas guardadas**
+   - Genera gráficos y reportes comparativos
 
-```
-Generación de Instancias
-         ↓
-   Ejecución de Algoritmos
-         ↓
-  Evaluación de Resultados
-         ↓
-   Análisis Estadístico
-         ↓
-  Generación de Reportes
-```
+7. **Cambiar modo de ejecución**
+   - **Modo "TODOS vs TODOS"** (defecto): Los 3 algoritmos brute force siempre se ejecutan
+   - **Modo "SELECTIVO"**: Los algoritmos se eligen según el tamaño del grafo
 
-### Pasos Detallados
+0. **Salir**
 
-1. **Fase de Preparación**:
-   - Generar instancias de prueba
-   - Configurar parámetros experimentales
-   - Preparar estructuras de datos
-
-2. **Fase de Ejecución**:
-   - Ejecutar algoritmos sobre instancias
-   - Medir tiempos de ejecución
-   - Registrar calidad de soluciones
-
-3. **Fase de Análisis**:
-   - Comparar algoritmos entre sí
-   - Analizar escalabilidad
-   - Realizar pruebas estadísticas
-
-4. **Fase de Reporte**:
-   - Generar tablas comparativas
-   - Crear visualizaciones
-   - Documentar hallazgos
-
-## 📈 Tipos de Instancias Disponibles
-
-### Instancias Especiales (20 tipos)
-- **Caminos**: P3, P5
-- **Ciclos**: C4, C6, C8 (pares), C5, C7 (impares)
-- **Estrellas**: S4, S5, S8
-- **Grafos Completos**: K3, K4
-- **Bipartitos Completos**: K_{2,2}, K_{3,4}, K_{4,5}
-- **Árboles Binarios**: Balanceado (7 vértices), Completo (15 vértices)
-- **Grafos de Intervalo**: Simple (5 vértices), Complejo (7 vértices)
-
-### Benchmarks Académicos (4 tipos)
-- **Jansen Path** (1997): 6 vértices, 3 colores
-- **Jansen Cycle** (1997): 10 vértices, 3 colores
-- **DIMACS Style**: 10 vértices, 4 colores
-- **Scheduling Application**: 8 vértices, 3 colores
-
-## 🧮 Algoritmos Implementados
+## Categorías de Algoritmos
 
 ### Exactos
-- `brute_force`: Búsqueda exhaustiva de todas las coloraciones válidas (para instancias pequeñas)
-- `dp_interval_graphs`: Programación dinámica para grafos de intervalo (usando la estructura de intervalos)
-- `ilp_solver`: Resolución mediante Programación Lineal Entera (usando PuLP)
+- **brute_force**: Enumeración completa de coloraciones (exhaustivo)
+- **backtracking**: Backtracking con pruning básico
+- **intelligent_backtracking**: Backtracking con poda inteligente
+- **ilp_solver**: Programación Lineal Entera (para n ≤ 50)
+- **dp_tree**: Programación Dinámica para árboles
+- **dp_interval**: Programación Dinámica para grafos de intervalo
+
+### Aproximación
+- **wsc**: Weighted Set Cover greedy
+- **wsc_improved**: WSC + búsqueda local
+- **interval_approx**: Aproximación específica para grafos de intervalo
 
 ### Heurísticas
-- `largest_first`: Ordenamiento por grado descendente
-- `dsatur`: Algoritmo DSATUR (Degree of SATURation)
-- `rlf`: Algoritmo Recursive Largest First
-
-### Algoritmos de Aproximación
-- `weighted_set_cover`: Basado en cubiertas de conjuntos
-- `structural_approximation`: Aproximaciones estructurales para:
-  - **Grafos bipartitos**: Aprovecha la estructura 2-coloreable
-  - **Grafos de intervalo**: Utiliza el ordenamiento temporal de intervalos
-  - **Grafos generales**: Estrategia greedy mejorada con detección de propiedades
+- **largest_first**: Largest First (coloración por grado descendente)
+- **dsatur**: DSATUR (Degree of Saturation)
+- **rlf**: Recursive Largest First
 
 ### Metaheurísticas
-- `simulated_annealing`: Recocido simulado
-- `trajectory_search`: Búsqueda por trayectorias
+- **simulated_annealing**: Recocido Simulado
+- **adaptive_sa**: Recocido Simulado Adaptivo
+- **trajectory_search**: Búsqueda por Trayectoria + Path Relinking
+- **hybrid**: Metaheurística Híbrida (LS + SA)
+- **adaptive**: Metaheurística Adaptiva
 
-### Detalles de Algoritmos Especializados
+## Características Principales
 
-**Aproximaciones Estructurales**:
-- **Bipartitos**: Detecta particiones y asigna colores óptimos por conjunto
-- **Intervalo**: Ordena por tiempo de finalización y asigna colores disponibles de menor costo
-- **General**: Combina información de grado y varianza de costos
+### Timeout Global
+- Todos los algoritmos tienen un límite de tiempo de **180 segundos** (3 minutos)
+- El timeout se verifica frecuentemente en bucles largos
+- Garantiza que el programa nunca se cuelgue indefinidamente
 
-**ILP Solver**:
-- Formula el problema como programa lineal entero
-- Utiliza restricciones de adyacencia y asignación única
-- Resuelve con solver CBC a través de PuLP
+### Generación de Instancias
+- Crea instancias de diferentes tipos de grafos
+- Asegura factibilidad (k ≥ χ(G))
+- Tamaños variados (6 a 30 vértices)
 
-**Fuerza Bruta**:
-- Genera todas las coloraciones posibles
-- Filtra las válidas (vértices adyacentes con colores diferentes)
-- Selecciona la de menor costo (garantiza optimalidad para instancias pequeñas)
+### Evaluación Completa
+- Verifica factibilidad de soluciones
+- Calcula costo total
+- Cuenta operaciones ejecutadas
+- Mide tiempo de ejecución
+- Detecta soluciones óptimas cuando es posible
 
-**DP para Grafos de Intervalo**:
-- Aprovecha la estructura lineal de los intervalos
-- Algoritmo polinomial basado en ordenamiento temporal
-- Garantiza optimalidad para esta clase de grafos
-  
-## 📋 Resultados y Reportes
-
-El proyecto genera automáticamente:
-
-1. **Reporte de Benchmarks**: Comparación de algoritmos en todas las instancias
-2. **Análisis de Escalabilidad**: Comportamiento con instancias grandes
-3. **Reporte Estadístico**: Pruebas de hipótesis y significancia
-4. **Visualizaciones**: Gráficos de rendimiento y escalabilidad
-
-### Ejemplo de Salida
-```
-========================================================================
-EXPERIMENTOS COMPLETADOS - RESUMEN
-========================================================================
-Total de instancias: 24
-Algoritmos evaluados: 8
-Tiempo total de ejecución: 45 minutos
-
-Mejores algoritmos por categoría:
-- Instancias pequeñas: dsatur
-- Instancias grandes: simulated_annealing
-- Tiempo de ejecución: largest_first
+### Salida Estandarizada
+Todos los algoritmos retornan un diccionario con:
+```python
+{
+    'solution': dict,           # Coloración encontrada {vértice: color}
+    'cost': float,              # Costo total de la solución
+    'execution_time': float,    # Tiempo de ejecución en segundos
+    'operations': int,          # Número de operaciones realizadas
+    'feasible': bool,           # ¿Es una coloración válida?
+    'optimal': bool,            # ¿Es óptima? (cuando es conocida)
+    'algorithm': str            # Nombre del algoritmo
+}
 ```
 
----
+## Modos de Ejecución
 
-**Nota**: Para más detalles sobre los algoritmos específicos o la teoría detrás del MCCPP, consultar el informe `informe.pdf` y la documentación en los archivos fuente.
+### Modo "TODOS vs TODOS" (predeterminado)
+Los 3 algoritmos brute force se ejecutan siempre:
+- brute_force
+- backtracking  
+- intelligent_backtracking
+
+Con timeout de 180 segundos cada uno.
+
+**Ventaja:** Permite comparar con soluciones exactas en instancias pequeñas
+**Desventaja:** Lento para grafos grandes (n > 20)
+
+### Modo "SELECTIVO"
+Los algoritmos se eligen según el tamaño:
+- **n ≤ 7**: Ejecutar brute_force
+- **7 < n ≤ 12**: Ejecutar backtracking
+- **12 < n ≤ 20**: Ejecutar intelligent_backtracking
+- **n > 20**: Ejecutar solo heurísticas y metaheurísticas
+
+**Ventaja:** Más rápido, escalable a grafos grandes
+**Desventaja:** Menos comparativas con exactos en grafos medianos
+
+## Ejemplos de Uso
+
+### Ejemplo 1: Ejecutar todos los algoritmos en una instancia
+```bash
+python main.py
+# Selecciona opción 4 o 5
+# Elige una o varias instancias
+# (Los algoritmos se ejecutan automáticamente)
+```
+
+### Ejemplo 2: Cambiar a modo selectivo
+```bash
+python main.py
+# Selecciona opción 7 para cambiar modo
+# Ahora los algoritmos se eligen automáticamente por tamaño
+```
+
+### Ejemplo 3: Generar nuevas instancias
+```bash
+python main.py
+# Selecciona opción 1
+# Se generan automáticamente 100+ instancias
+```
+
+## Parámetros Ajustables
+
+En `main.py` puedes ajustar:
+
+```python
+# Línea ~160
+EXECUTION_MODE = "all_brute"  # Cambiar a "selective" para modo selectivo
+```
+
+## Estructura de Resultados
+
+Los resultados se guardan en `results/` en formato JSON:
+```
+results/
+├── instance_name_results.json
+├── comparison_stats.json
+└── ...
+```
+
+Cada archivo contiene:
+- Metadata de la instancia
+- Resultados detallados de cada algoritmo
+- Comparativas y estadísticas
+
+## Interpretación de Resultados
+
+### Costo
+- Número flotante representando el costo total
+- Menores valores = mejores soluciones
+- ∞ = algoritmo no encontró solución
+
+### Feasible (Factible)
+- ✓ = Coloración válida (respeta restricciones)
+- ✗ = Coloración inválida (hay conflictos)
+
+### Optimal (Óptimo)
+- ★ = Solución óptima (cuando es verificada)
+- ○ = No óptima (o no verificada)
+
+### Operaciones
+- Número de operaciones básicas ejecutadas
+- Permite analizar complejidad práctica
+- Independiente del tiempo de CPU
+
+## Solución de Problemas
+
+### "Error: Instancia infactible"
+- La instancia necesita más colores de los disponibles
+- Generar nuevas instancias (opción 1 del menú)
+- O aumentar k en la generación
+
+### "Timeout (180s excedido)"
+- El algoritmo exacto es demasiado lento para esta instancia
+- Cambiar a modo selectivo (opción 7)
+- O usar instancias más pequeñas
+
+### "No hay instancias generadas"
+- Ejecutar "Generar instancias de prueba" (opción 1)
+- Asegurarse de que el directorio `instances/` existe
+
+## Referencias
+
+- Informe del Proyecto DAA - Secciones 1-4
+- Papers de algoritmos de coloración de grafos
+- NetworkX Documentation: https://networkx.org/
+- PuLP Documentation: https://coin-or.github.io/pulp/
