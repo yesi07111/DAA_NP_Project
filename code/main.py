@@ -24,7 +24,8 @@ from algorithms.approximation_algorithms import (
 from algorithms.heuristic_algorithms import (
     largest_first_heuristic,
     dsatur_heuristic,
-    recursive_largest_first_heuristic
+    recursive_largest_first_heuristic,
+    peo_greedy_heuristic
 )
 from algorithms.metaheuristic_algorithms import (
     simulated_annealing,
@@ -45,11 +46,6 @@ from algorithms.approximation_algorithms import (
     weighted_set_cover_approximation,
     improved_weighted_set_cover,
     interval_graph_approximation
-)
-from algorithms.heuristic_algorithms import (
-    largest_first_heuristic,
-    dsatur_heuristic,
-    recursive_largest_first_heuristic
 )
 from algorithms.metaheuristic_algorithms import (
     simulated_annealing,
@@ -144,6 +140,12 @@ ALGORITHMS = {
         'category': 'Heurísticas',
         'condition': lambda g, cm: True,
         'description': 'Recursive Largest First'
+    },
+    'peo_greedy': {
+        'func': peo_greedy_heuristic,
+        'category': 'Heurísticas',
+        'condition': lambda g, cm: nx.is_chordal(g),
+        'description': 'Perfect Elimination Order - Greedy (solo grafos cordales)'
     },
     'simulated_annealing': {
         'func': simulated_annealing,

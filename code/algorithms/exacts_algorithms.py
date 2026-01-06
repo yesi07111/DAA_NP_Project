@@ -507,17 +507,7 @@ def dynamic_programming_tree(graph: nx.Graph, cost_matrix: np.ndarray, root: Opt
 # 3.2 PROGRAMACIÓN DINÁMICA PARA GRAFOS DE INTERVALO
 
 def dp_interval_graph_solver(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[str, Any]:
-    """
-    Programación Dinámica CORRECTA para Grafos de Intervalo.
-    
-    CORRECCIÓN: Mantiene el coloreo parcial durante el DP para verificar
-    correctamente la compatibilidad con TODOS los vecinos previos en el PEO,
-    no solo el inmediatamente anterior.
-    
-    Estado: DP[i][c] = (costo_mínimo, coloración_parcial)
-    
-    Complejidad: O(n * k^2 * ω) donde ω = tamaño clique máxima
-    """
+
     start_time = time.time()
     operations = 0
     
@@ -677,107 +667,4 @@ def dp_interval_graph_solver(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[s
         'algorithm': 'dp_interval_corrected',
         'complexity': 'O(n·k²·ω)',
         'reference': 'Corrección implementada - Verificación completa de vecinos previos'
-    })
-
-def peo_greedy_heuristic(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[str, Any]:
-    """
-    Heurística basada en PEO para grafos cordales (incluyendo intervalos).
-    
-    ENFOQUE HONESTO: No es DP exacto, es greedy sobre PEO.
-    - Colorea vértices en orden PEO
-    - Elige color de costo mínimo compatible con vecinos YA coloreados
-    - GARANTÍA: Heurística sin factor de aproximación probado
-    - RENDIMIENTO EMPÍRICO: 5-15% sobre óptimo en benchmarks
-    
-    Complejidad: O(n·k·d) donde d = grado promedio
-    """
-    start_time = time.time()
-    operations = 0
-    
-    # Verificar cordalidad
-    operations += graph.number_of_nodes() ** 2
-    if not nx.is_chordal(graph):
-        return {
-            'solution': None,
-            'cost': float('inf'),
-            'execution_time': time.time() - start_time,
-            'operations': operations,
-            'optimal': False,
-            'feasible': False,
-            'error': 'El grafo no es cordal',
-            'algorithm': 'peo_greedy_heuristic'
-        }
-    
-    # Obtener PEO
-    try:
-        operations += graph.number_of_nodes() ** 2
-        peo_cliques = list(nx.chordal_graph_cliques(graph))
-        vertex_order = []
-        seen = set()
-        for clique in peo_cliques:
-            for v in clique:
-                if v not in seen:
-                    vertex_order.append(v)
-                    seen.add(v)
-                    operations += 1
-    except:
-        vertex_order = sorted(graph.nodes(), key=lambda n: graph.degree(n))
-        operations += len(vertex_order)
-    
-    n_colors = cost_matrix.shape[1]
-    coloring = {}
-    
-    # GREEDY SIMPLE sobre PEO
-    for vertex in vertex_order:
-        operations += 1
-        
-        # Colores usados por vecinos ya coloreados
-        forbidden = {coloring[nbr] for nbr in graph.neighbors(vertex) if nbr in coloring}
-        operations += graph.degree(vertex)
-        
-        # Elegir color de costo mínimo disponible
-        best_c = None
-        min_cost = float('inf')
-        
-        for c in range(n_colors):
-            operations += 1
-            if c not in forbidden:
-                if cost_matrix[vertex, c] < min_cost:
-                    min_cost = cost_matrix[vertex, c]
-                    best_c = c
-        
-        if best_c is None:
-            # Sin colores disponibles
-            return {
-                'solution': {},
-                'cost': float('inf'),
-                'execution_time': time.time() - start_time,
-                'operations': operations,
-                'feasible': False,
-                'error': 'K insuficiente',
-                'algorithm': 'peo_greedy_heuristic'
-            }
-        
-        coloring[vertex] = best_c
-    
-    # Aplicar búsqueda local opcional
-    from approximation_algorithms import _apply_local_search
-    final_result = _apply_local_search(graph, coloring, cost_matrix, operations, rounds=2)
-    operations = final_result['operations']
-    
-    is_feasible = is_proper_coloring(graph, final_result['coloring'])
-    total_cost = sum(cost_matrix[v, final_result['coloring'][v]] 
-                     for v in final_result['coloring'])
-    
-    return convert_numpy_types({
-        'solution': final_result['coloring'],
-        'cost': total_cost,
-        'execution_time': time.time() - start_time,
-        'operations': operations,
-        'algorithm': 'peo_greedy_heuristic',
-        'feasible': is_feasible,
-        'optimal': False,  # Es heurística
-        'approximation_factor': 'Heurística sin garantía teórica',
-        'empirical_quality': '5-15% sobre óptimo (estimado)',
-        'complexity': 'O(n·k·d)'
     })

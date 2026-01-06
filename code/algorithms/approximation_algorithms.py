@@ -17,7 +17,7 @@ def evaluate_cost(coloring: Dict[int, int], cost_matrix: np.ndarray) -> float:
     return sum(cost_matrix[v, c] for v, c in coloring.items())
 
 def _apply_local_search(graph, coloring, cost_matrix, initial_ops, rounds=1):
-    """Aplica Hill Climbing para mejorar la solución existente"""
+
     if not coloring: 
         return {'coloring': {}, 'operations': initial_ops}
     
@@ -57,18 +57,7 @@ def _apply_local_search(graph, coloring, cost_matrix, initial_ops, rounds=1):
 # ============================================================================
 
 def weighted_set_cover_approximation(graph: nx.Graph, cost_matrix: np.ndarray, heuristic: str = "greedy_ratio") -> Dict[str, Any]:
-    """
-    Algoritmo de Aproximación WSC con garantía O(ln n).
-    
-    Según informe Sección 3.2.1:
-    "Algoritmo de Aproximación con Garantía Teórica (R ≤ O(ln |V|))"
-    
-    Estrategia:
-    Selecciona iterativamente el conjunto independiente (S) y color (f) 
-    que minimice el costo promedio por vértice recién cubierto.
-    
-    Factor de aproximación garantizado: R ≤ H(|V|) ≈ O(ln |V|)
-    """
+
     start_time = time.time()
     n_vertices = graph.number_of_nodes()
     n_colors = cost_matrix.shape[1]
@@ -200,11 +189,7 @@ def weighted_set_cover_approximation(graph: nx.Graph, cost_matrix: np.ndarray, h
     })
 
 def improved_weighted_set_cover(graph: nx.Graph, cost_matrix: np.ndarray, heuristic: str = "greedy_ratio") -> Dict[str, Any]:
-    """
-    WSC Greedy + Hill Climbing (Búsqueda Local).
-    
-    Ejecuta WSC y luego mejora con intercambio de colores.
-    """
+
     # 1. Obtener solución inicial
     result = weighted_set_cover_approximation(graph, cost_matrix, heuristic)
     
@@ -267,20 +252,7 @@ def improved_weighted_set_cover(graph: nx.Graph, cost_matrix: np.ndarray, heuris
 # ============================================================================
 
 def interval_graph_approximation(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[str, Any]:
-    """
-    Aproximación para grafos de intervalo (y cordales) usando 
-    Orden de Eliminación Perfecta (PEO).
-    
-    Según informe Sección 3.2.2:
-    "Grafos de Intervalo y Cordales - Aproximación O(√|V|)"
-    
-    Y Sección 3.1.3:
-    "Programación Dinámica (DP) para Grafos Estructurados"
-    menciona grafos de intervalo con PEO.
-    
-    Factor de aproximación: O(√|V|)
-    No requiere coordenadas de intervalos, infiere la estructura.
-    """
+
     start_time = time.time()
     n_vertices = graph.number_of_nodes()
     n_colors = cost_matrix.shape[1]

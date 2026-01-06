@@ -20,28 +20,7 @@ def simulated_annealing(graph: nx.Graph, cost_matrix: np.ndarray,
                        max_non_improving: int = 1000,
                        penalty_weight: float = 1000.0,
                        seed: int = None) -> Dict[str, Any]:
-    """
-    Simulated Annealing metaheuristic for DAA Project - MCCPP.
-    
-    Inspired by the metallurgical process of annealing, this algorithm explores
-    the solution space by accepting worse solutions with a probability that
-    decreases over time, allowing it to escape local optima.
-    
-    Args:
-        graph: networkx Graph
-        cost_matrix: n_vertices x n_colors cost matrix
-        initial_solution: starting solution (if None, generates one)
-        initial_temperature: starting temperature
-        cooling_rate: geometric cooling rate (0 < rate < 1)
-        min_temperature: minimum temperature to stop
-        max_iterations: maximum number of iterations
-        max_non_improving: maximum iterations without improvement
-        penalty_weight: weight for constraint violations in objective
-        seed: random seed for reproducibility
-    
-    Returns:
-        dictionary with solution and metrics
-    """
+
     if seed is not None:
         random.seed(seed)
         np.random.seed(seed)
@@ -168,18 +147,7 @@ def simulated_annealing(graph: nx.Graph, cost_matrix: np.ndarray,
 
 def _evaluate_solution_with_penalties(graph: nx.Graph, coloring: Dict[int, int],
                                     cost_matrix: np.ndarray, penalty_weight: float) -> float:
-    """
-    Evaluate solution with penalties for constraint violations for DAA Project - MCCPP
-    
-    Args:
-        graph: networkx Graph
-        coloring: proposed coloring
-        cost_matrix: cost matrix
-        penalty_weight: weight for constraint violations
-    
-    Returns:
-        penalized cost value
-    """
+
     # Base cost
     base_cost = evaluate_solution(coloring, cost_matrix)
     
@@ -193,17 +161,7 @@ def _evaluate_solution_with_penalties(graph: nx.Graph, coloring: Dict[int, int],
 
 def _generate_neighbor(graph: nx.Graph, current_solution: Dict[int, int],
                       n_colors: int) -> Dict[int, int]:
-    """
-    Generate a neighbor solution for Simulated Annealing in DAA Project - MCCPP
-    
-    Args:
-        graph: networkx Graph
-        current_solution: current coloring
-        n_colors: number of available colors
-    
-    Returns:
-        neighbor solution
-    """
+
     neighbor = current_solution.copy()
     
     # Choose a random vertex
@@ -251,19 +209,7 @@ def adaptive_simulated_annealing(graph: nx.Graph, cost_matrix: np.ndarray,
                                 adaptive_cooling: bool = True,
                                 restart_strategy: bool = True,
                                 seed: int = None) -> Dict[str, Any]:
-    """
-    Adaptive Simulated Annealing with enhanced strategies for DAA Project - MCCPP
-    
-    Args:
-        graph: networkx Graph
-        cost_matrix: cost matrix
-        adaptive_cooling: whether to use adaptive cooling schedule
-        restart_strategy: whether to use restart strategy
-        seed: random seed
-    
-    Returns:
-        dictionary with solution and metrics
-    """
+
     if seed is not None:
         random.seed(seed)
         np.random.seed(seed)
@@ -383,27 +329,7 @@ def trajectory_search_heuristic(
     seed: int = None,
     initial_algorithm: str = "improved_weighted_set_cover",
 ) -> Dict[str, Any]:
-    """
-    Trajectory Search Heuristic with Path Relinking for DAA Project - MCCPP.
 
-    Advanced metaheuristic combining local search with strategic diversification
-    and intensification through Path Relinking. Based on the TSH+PR approach
-    specifically designed for MCCPP.
-
-    Args:
-        graph: networkx Graph
-        cost_matrix: n_vertices x n_colors cost matrix
-        population_size: size of the solution population
-        max_iterations: maximum number of iterations
-        tabu_tenure: tenure for tabu search component
-        path_relinking_frequency: how often to apply path relinking
-        elite_pool_size: number of elite solutions to maintain
-        diversification_frequency: how often to apply diversification
-        seed: random seed for reproducibility
-
-    Returns:
-        dictionary with solution and metrics
-    """
     if seed is not None:
         random.seed(seed)
         np.random.seed(seed)
@@ -872,19 +798,7 @@ def hybrid_metaheuristic(
     time_limit: float = 10000.0,
     seed: int = None,
 ) -> Dict[str, Any]:
-    """
-    Hybrid metaheuristic that adapts based on problem characteristics for DAA Project - MCCPP
 
-    Args:
-        graph: networkx Graph
-        cost_matrix: cost matrix
-        method: metaheuristic method or "auto" for automatic selection
-        time_limit: maximum execution time in seconds
-        seed: random seed
-
-    Returns:
-        dictionary with solution and metrics
-    """
     start_time = time.time()
     n_vertices = graph.number_of_nodes()
     density = nx.density(graph)
@@ -956,19 +870,7 @@ def adaptive_metaheuristic(
     time_budget: float = 10000.0,
     seed: int = None,
 ) -> Dict[str, Any]:
-    """
-    Adaptive metaheuristic that tries multiple strategies within time budget for DAA Project - MCCPP
 
-    Args:
-        graph: networkx Graph
-        cost_matrix: cost matrix
-        strategies: list of strategies to try
-        time_budget: total time budget in seconds
-        seed: random seed
-
-    Returns:
-        dictionary with solution and metrics
-    """
     if strategies is None:
         strategies = ["trajectory_search", "adaptive_sa", "hybrid"]
 
