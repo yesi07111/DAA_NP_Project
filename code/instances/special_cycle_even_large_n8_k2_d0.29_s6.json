@@ -1,0 +1,104 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      7
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      6,
+      7
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cost_matrix": [
+    [
+      2,
+      100
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      100,
+      2
+    ]
+  ],
+  "n_vertices": 8,
+  "n_edges": 8,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "cycle_even_larger",
+    "n_vertices": 8,
+    "n_colors": 2,
+    "known_optimal_cost": 16.0,
+    "cycle_length": 8,
+    "chromatic_number": 2,
+    "is_bipartite": true,
+    "description": "Ciclo par C_8: mayor que C_6, 2-colorable, costo \u00f3ptimo 16",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1
+    },
+    "is_feasible": true
+  }
+}

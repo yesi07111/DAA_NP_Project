@@ -1,0 +1,101 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      6
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      5,
+      6
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      1,
+      100
+    ],
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      100,
+      1
+    ],
+    [
+      100,
+      1,
+      100
+    ],
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      100,
+      1
+    ]
+  ],
+  "n_vertices": 7,
+  "n_edges": 7,
+  "n_colors": 3,
+  "metadata": {
+    "instance_type": "cycle_odd_larger",
+    "n_vertices": 7,
+    "n_colors": 3,
+    "known_optimal_cost": 7.0,
+    "cycle_length": 7,
+    "chromatic_number": 3,
+    "is_bipartite": false,
+    "description": "Ciclo impar C_7: mayor que C_5, requiere 3 colores, costo \u00f3ptimo 7",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 2,
+      "4": 1,
+      "5": 0,
+      "6": 2
+    },
+    "is_feasible": true
+  }
+}

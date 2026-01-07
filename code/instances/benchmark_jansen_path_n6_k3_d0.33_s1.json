@@ -1,0 +1,88 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cost_matrix": [
+    [
+      1,
+      5,
+      20
+    ],
+    [
+      5,
+      1,
+      15
+    ],
+    [
+      1,
+      5,
+      20
+    ],
+    [
+      5,
+      1,
+      15
+    ],
+    [
+      1,
+      5,
+      20
+    ],
+    [
+      5,
+      1,
+      15
+    ]
+  ],
+  "n_vertices": 6,
+  "n_edges": 5,
+  "n_colors": 3,
+  "metadata": {
+    "instance_type": "jansen_path",
+    "source": "Jansen, K. CIAC'97 1997 - The Optimal Cost Chromatic Partition Problem",
+    "n_vertices": 6,
+    "n_colors": 3,
+    "known_optimal_cost": 6.0,
+    "graph_type": "path",
+    "year": 1997,
+    "publication": "LNCS 1203, pp. 25-36",
+    "description": "Path graph de Jansen 1997: benchmark acad\u00e9mico seminal",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 1
+    },
+    "is_feasible": true,
+    "chromatic_number": 2
+  }
+}

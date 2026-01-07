@@ -1,0 +1,71 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      0,
+      3
+    ],
+    [
+      0,
+      4
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      100,
+      1
+    ]
+  ],
+  "n_vertices": 5,
+  "n_edges": 4,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "star_graph_small",
+    "n_vertices": 5,
+    "n_colors": 2,
+    "known_optimal_cost": 5.0,
+    "center": 0,
+    "num_leaves": 4,
+    "chromatic_number": 2,
+    "is_bipartite": true,
+    "description": "Estrella S_4: centro + 4 hojas, costo \u00f3ptimo 5",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 1,
+      "3": 1,
+      "4": 1
+    },
+    "is_feasible": true
+  }
+}

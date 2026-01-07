@@ -3,7 +3,7 @@ import itertools
 import numpy as np
 import networkx as nx
 import pulp
-from typing import Dict, List, Optional, Any
+from typing import Dict, Optional, Any, List, Tuple
 from utils.utils import is_proper_coloring
 from utils.utils import convert_numpy_types
 from utils.timeout_handler import check_global_timeout
@@ -20,6 +20,70 @@ def evaluate_cost(coloring: Dict[int, int], cost_matrix: np.ndarray) -> float:
     for vertex, color in coloring.items():
         total_cost += cost_matrix[vertex, color]
     return total_cost
+
+def compute_interval_representation(graph: nx.Graph) -> Optional[Dict[int, Tuple[int, int]]]:
+    """
+    Intenta construir una representación de intervalos para el grafo.
+    Retorna un diccionario vértice -> (inicio, fin) si es posible, None si no es de intervalo.
+    
+    Usa el algoritmo de reconocimiento de grafos de intervalo basado en PQ-trees.
+    Para simplificar, usamos una aproximación: ordenamos por PEO y asignamos intervalos
+    basados en la estructura de vecindad.
+    """
+    if not nx.is_chordal(graph):
+        return None
+    
+    n = graph.number_of_nodes()
+    if n == 0:
+        return {}
+    
+    # Obtener PEO mediante Maximum Cardinality Search
+    vertices = list(graph.nodes())
+    numbered = set()
+    peo = []
+    cardinality = {v: 0 for v in vertices}
+    
+    for _ in range(n):
+        unnumbered = [v for v in vertices if v not in numbered]
+        v = max(unnumbered, key=lambda x: cardinality[x])
+        peo.append(v)
+        numbered.add(v)
+        for neighbor in graph.neighbors(v):
+            if neighbor not in numbered:
+                cardinality[neighbor] += 1
+    
+    peo = list(reversed(peo))
+    
+    # Asignar intervalos basados en el PEO
+    intervals = {}
+    position = {v: i for i, v in enumerate(peo)}
+    
+    for v in vertices:
+        neighbors_pos = [position[u] for u in graph.neighbors(v)]
+        if neighbors_pos:
+            start = min(neighbors_pos + [position[v]])
+            end = max(neighbors_pos + [position[v]])
+        else:
+            start = end = position[v]
+        intervals[v] = (start, end)
+    
+    # Verificar si la representación es válida (esto es una heurística)
+    for u in vertices:
+        for v in vertices:
+            if u >= v:
+                continue
+            u_start, u_end = intervals[u]
+            v_start, v_end = intervals[v]
+            
+            # Los intervalos se solapan si hay intersección
+            overlap = not (u_end < v_start or v_end < u_start)
+            has_edge = graph.has_edge(u, v)
+            
+            if overlap != has_edge:
+                # No es un grafo de intervalo válido
+                return None
+    
+    return intervals
 
 # ============================================================================
 # 1. FUERZA BRUTA 
@@ -505,13 +569,21 @@ def dynamic_programming_tree(graph: nx.Graph, cost_matrix: np.ndarray, root: Opt
         }
 
 # 3.2 PROGRAMACIÓN DINÁMICA PARA GRAFOS DE INTERVALO
-
 def dp_interval_graph_solver(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[str, Any]:
-
+    """
+    Algoritmo de Programación Dinámica EXACTO para MCCPP en grafos de intervalo.
+    
+    Estrategia: Ordena los vértices por el extremo derecho de sus intervalos y procesa
+    de izquierda a derecha. El estado mantiene la coloración de los intervalos "activos"
+    (aquellos que aún se solapan con el punto actual de procesamiento).
+    
+    Complejidad: O(n · k^ω) donde ω es el tamaño de la clique máxima (número máximo
+    de intervalos que se solapan simultáneamente).
+    """
     start_time = time.time()
     operations = 0
     
-    # VALIDACIÓN: Verificar cordalidad
+    # Validar que sea cordal
     operations += graph.number_of_nodes() ** 2
     if not nx.is_chordal(graph):
         return {
@@ -521,23 +593,41 @@ def dp_interval_graph_solver(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[s
             'operations': operations,
             'optimal': False,
             'feasible': False,
-            'error': 'El grafo no es cordal (no puede ser de intervalo)',
-            'algorithm': 'dp_interval_corrected',
-            'complexity': 'O(n·k²·ω)'
+            'error': 'El grafo no es cordal',
+            'algorithm': 'dp_interval_exact',
+            'complexity': 'O(n·k^ω)'
         }
     
-    # Obtener Perfect Elimination Ordering (PEO)
+    n = graph.number_of_nodes()
+    k = cost_matrix.shape[1]
+    
+    if n == 0:
+        return {
+            'solution': {},
+            'cost': 0.0,
+            'execution_time': time.time() - start_time,
+            'operations': operations,
+            'optimal': True,
+            'feasible': True,
+            'algorithm': 'dp_interval_exact'
+        }
+    
+    # Intentar obtener representación de intervalos
     try:
-        operations += graph.number_of_nodes() ** 2
-        peo_cliques = list(nx.chordal_graph_cliques(graph))
-        vertex_order = []
-        seen = set()
-        for clique in peo_cliques:
-            for v in clique:
-                if v not in seen:
-                    vertex_order.append(v)
-                    seen.add(v)
-                    operations += 1
+        operations += n ** 2
+        intervals = compute_interval_representation(graph)
+        if intervals is None:
+            return {
+                'solution': None,
+                'cost': float('inf'),
+                'execution_time': time.time() - start_time,
+                'operations': operations,
+                'optimal': False,
+                'feasible': False,
+                'error': 'El grafo no es de intervalo (es cordal pero no satisface la propiedad de intervalos)',
+                'algorithm': 'dp_interval_exact',
+                'complexity': 'O(n·k^ω)'
+            }
     except Exception as e:
         return {
             'solution': None,
@@ -546,125 +636,175 @@ def dp_interval_graph_solver(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[s
             'operations': operations,
             'optimal': False,
             'feasible': False,
-            'error': f'Error al obtener PEO: {str(e)}',
-            'algorithm': 'dp_interval_corrected',
-            'complexity': 'O(n·k²·ω)'
+            'error': f'Error al verificar propiedad de intervalo: {str(e)}',
+            'algorithm': 'dp_interval_exact'
         }
     
-    n_vertices = len(vertex_order)
-    n_colors = cost_matrix.shape[1]
+    # Ordenar vértices por extremo derecho del intervalo (y por extremo izquierdo como desempate)
+    sorted_vertices = sorted(intervals.keys(), key=lambda v: (intervals[v][1], intervals[v][0]))
     
-    if n_vertices == 0:
-        return {
-            'solution': {},
-            'cost': 0.0,
-            'execution_time': time.time() - start_time,
-            'operations': operations,
-            'optimal': True,
-            'feasible': True,
-            'algorithm': 'dp_interval_corrected'
-        }
+    # Programación dinámica con timeout
+    # DP[i] mapea estado -> (costo, coloración_completa)
+    # estado = tupla con (vértice, color) de los intervalos activos hasta la posición i
+    DP = [dict() for _ in range(n + 1)]
+    DP[0][tuple()] = (0.0, {})
     
-    # NUEVA ESTRUCTURA: DP almacena (costo, coloración_parcial)
-    # DP[i][c] = mejor solución para colorear v_0...v_i con v_i usando color c
-    INF = float('inf')
-    DP_cost = np.full((n_vertices, n_colors), INF, dtype=np.float64)
-    DP_coloring = [[None for _ in range(n_colors)] for _ in range(n_vertices)]
+    timeout_limit = 180.0  # 180 segundos
+    timeout_reached = False
+    last_complete_iteration = 0
     
-    operations += n_vertices * n_colors
-    
-    # CASO BASE: Primer vértice
-    first_vertex = vertex_order[0]
-    for c in range(n_colors):
-        DP_cost[0, c] = cost_matrix[first_vertex, c]
-        DP_coloring[0][c] = {first_vertex: c}
-        operations += 1
-    
-    # LLENAR TABLA DP (Forward Pass con Coloración)
-    for i in range(1, n_vertices):
-        current_vertex = vertex_order[i]
+    for i in range(n):
+        # Verificar timeout antes de cada iteración
+        elapsed_time = time.time() - start_time
+        if elapsed_time >= timeout_limit:
+            timeout_reached = True
+            last_complete_iteration = i
+            break
+        
+        v = sorted_vertices[i]
+        v_start, v_end = intervals[v]
         operations += 1
         
-        # Para cada color del vértice actual
-        for c in range(n_colors):
-            node_cost = cost_matrix[current_vertex, c]
+        # Para cada estado anterior
+        for prev_state, (prev_cost, prev_coloring) in DP[i].items():
+            # Verificar timeout periódicamente durante el procesamiento
+            if time.time() - start_time >= timeout_limit:
+                timeout_reached = True
+                last_complete_iteration = i
+                break
+            
             operations += 1
             
-            # Intentar extender desde cada estado anterior
-            for prev_c in range(n_colors):
+            # Filtrar el estado anterior: eliminar intervalos que ya terminaron
+            # Un intervalo u ha terminado si intervals[u][1] < v_start
+            active_state = tuple((u, c) for u, c in prev_state if intervals[u][1] >= v_start)
+            
+            # Identificar colores prohibidos (vecinos activos)
+            forbidden_colors = set()
+            for u, c in active_state:
+                if graph.has_edge(v, u):
+                    forbidden_colors.add(c)
+                operations += 1
+            
+            # Probar cada color disponible para v
+            for color_v in range(k):
                 operations += 1
                 
-                if DP_cost[i-1, prev_c] >= INF:
+                if color_v in forbidden_colors:
                     continue
                 
-                # Obtener coloración parcial del estado anterior
-                prev_coloring = DP_coloring[i-1][prev_c]
+                # Construir nuevo estado y coloración
+                new_state = active_state + ((v, color_v),)
+                new_coloring = prev_coloring.copy()
+                new_coloring[v] = color_v
+                new_cost = prev_cost + cost_matrix[v, color_v]
                 
-                # CORRECCIÓN CRÍTICA: Verificar compatibilidad con TODOS los vecinos previos
-                valid = True
-                for prev_idx in range(i):
-                    prev_vertex = vertex_order[prev_idx]
-                    
-                    # Si hay arista y tienen el mismo color → conflicto
-                    if graph.has_edge(current_vertex, prev_vertex):
-                        if prev_coloring[prev_vertex] == c:
-                            valid = False
-                            break
-                    
-                    operations += 1
-                
-                if not valid:
-                    continue
-                
-                # Estado válido: calcular nuevo costo
-                new_cost = DP_cost[i-1, prev_c] + node_cost
-                
-                if new_cost < DP_cost[i, c]:
-                    DP_cost[i, c] = new_cost
-                    # Copiar coloración anterior y agregar vértice actual
-                    DP_coloring[i][c] = prev_coloring.copy()
-                    DP_coloring[i][c][current_vertex] = c
+                # Actualizar tabla DP
+                if new_state not in DP[i + 1] or new_cost < DP[i + 1][new_state][0]:
+                    DP[i + 1][new_state] = (new_cost, new_coloring)
+        
+        if timeout_reached:
+            break
     
-    # ENCONTRAR SOLUCIÓN ÓPTIMA
-    last_idx = n_vertices - 1
-    best_last_color = None
-    optimal_cost = INF
+    # Recuperar solución óptima
+    execution_time = time.time() - start_time
     
-    for c in range(n_colors):
-        operations += 1
-        if DP_cost[last_idx, c] < optimal_cost:
-            optimal_cost = DP_cost[last_idx, c]
-            best_last_color = c
+    if timeout_reached:
+        # Si se alcanzó el timeout, buscar la mejor solución parcial en la última iteración completa
+        best_cost = float('inf')
+        best_coloring = None
+        best_iteration = 0
+        
+        # Buscar en todas las iteraciones completadas
+        for iter_idx in range(last_complete_iteration, -1, -1):
+            if len(DP[iter_idx]) > 0:
+                for state, (cost, coloring) in DP[iter_idx].items():
+                    if cost < best_cost:
+                        best_cost = cost
+                        best_coloring = coloring
+                        best_iteration = iter_idx
+        
+        if best_coloring is None:
+            return {
+                'solution': None,
+                'cost': float('inf'),
+                'execution_time': execution_time,
+                'operations': operations,
+                'optimal': False,
+                'feasible': False,
+                'error': 'Timeout alcanzado sin solución factible',
+                'algorithm': 'dp_interval_exact',
+                'timeout': True,
+                'timeout_limit': timeout_limit
+            }
+        
+        # Completar la coloración con vértices faltantes usando una estrategia greedy
+        colored_vertices = set(best_coloring.keys())
+        remaining_vertices = [sorted_vertices[j] for j in range(best_iteration, n)]
+        
+        for v in remaining_vertices:
+            if v not in colored_vertices:
+                # Asignar el color de menor costo que no conflicte con vecinos
+                forbidden_colors = set()
+                for neighbor in graph.neighbors(v):
+                    if neighbor in best_coloring:
+                        forbidden_colors.add(best_coloring[neighbor])
+                
+                best_color = None
+                best_color_cost = float('inf')
+                for c in range(k):
+                    if c not in forbidden_colors and cost_matrix[v, c] < best_color_cost:
+                        best_color = c
+                        best_color_cost = cost_matrix[v, c]
+                
+                if best_color is not None:
+                    best_coloring[v] = best_color
+                    best_cost += best_color_cost
+        
+        is_valid = is_proper_coloring(graph, best_coloring)
+        
+        return convert_numpy_types({
+            'solution': best_coloring,
+            'cost': best_cost,
+            'execution_time': execution_time,
+            'operations': operations,
+            'optimal': False,  # No es óptimo debido al timeout
+            'feasible': is_valid,
+            'algorithm': 'dp_interval_exact',
+            'complexity': 'O(n·k^ω)',
+            'reference': 'DP exacto sobre representación de intervalos (interrumpido por timeout)',
+            'note': f'Timeout alcanzado después de {execution_time:.2f}s. Solución completada con heurística greedy.',
+            'timeout': True,
+            'timeout_limit': timeout_limit,
+            'vertices_processed': best_iteration,
+            'total_vertices': n
+        })
     
-    if optimal_cost == INF or best_last_color is None:
+    # Caso normal: no se alcanzó timeout
+    if len(DP[n]) == 0:
         return {
             'solution': None,
             'cost': float('inf'),
-            'execution_time': time.time() - start_time,
+            'execution_time': execution_time,
             'operations': operations,
             'optimal': False,
             'feasible': False,
             'error': 'No se encontró solución factible',
-            'algorithm': 'dp_interval_corrected',
-            'complexity': 'O(n·k²·ω)'
+            'algorithm': 'dp_interval_exact'
         }
     
-    # La solución ya está construida en DP_coloring
-    solution = DP_coloring[last_idx][best_last_color]
-    
-    execution_time = time.time() - start_time
-    
-    # Verificar validez
-    is_valid = is_proper_coloring(graph, solution)
+    optimal_cost, optimal_coloring = min(DP[n].values(), key=lambda x: x[0])
+    is_valid = is_proper_coloring(graph, optimal_coloring)
     
     return convert_numpy_types({
-        'solution': solution,
+        'solution': optimal_coloring,
         'cost': optimal_cost,
         'execution_time': execution_time,
         'operations': operations,
         'optimal': True,
         'feasible': is_valid,
-        'algorithm': 'dp_interval_corrected',
-        'complexity': 'O(n·k²·ω)',
-        'reference': 'Corrección implementada - Verificación completa de vecinos previos'
+        'algorithm': 'dp_interval_exact',
+        'complexity': 'O(n·k^ω)',
+        'reference': 'DP exacto sobre representación de intervalos con intervalos activos',
+        'note': 'Algoritmo exacto solo para grafos de intervalo, no para grafos cordales generales'
     })

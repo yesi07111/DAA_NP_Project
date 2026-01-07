@@ -1,0 +1,45 @@
+{
+  "graph_edges": [],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cost_matrix": [
+    [
+      1,
+      2
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      5,
+      6
+    ],
+    [
+      7,
+      8
+    ]
+  ],
+  "n_vertices": 4,
+  "n_edges": 0,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "isolated_vertices",
+    "n_vertices": 4,
+    "n_colors": 2,
+    "known_optimal_cost": 16.0,
+    "description": "Grafo sin aristas (v\u00e9rtices aislados), costo \u00f3ptimo 16",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "chromatic_number": 2,
+    "is_feasible": true
+  }
+}

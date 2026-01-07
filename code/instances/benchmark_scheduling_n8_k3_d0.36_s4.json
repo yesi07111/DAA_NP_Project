@@ -1,0 +1,122 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      3
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      3,
+      5
+    ],
+    [
+      4,
+      5
+    ],
+    [
+      4,
+      6
+    ],
+    [
+      5,
+      7
+    ],
+    [
+      6,
+      7
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "cost_matrix": [
+    [
+      1,
+      3,
+      10
+    ],
+    [
+      2,
+      1,
+      10
+    ],
+    [
+      1,
+      3,
+      10
+    ],
+    [
+      2,
+      1,
+      10
+    ],
+    [
+      1,
+      3,
+      10
+    ],
+    [
+      2,
+      1,
+      10
+    ],
+    [
+      1,
+      3,
+      10
+    ],
+    [
+      2,
+      1,
+      10
+    ]
+  ],
+  "n_vertices": 8,
+  "n_edges": 10,
+  "n_colors": 3,
+  "metadata": {
+    "instance_type": "scheduling_application",
+    "source": "Inspirado en problemas de VLSI y scheduling (Barth et al.)",
+    "n_vertices": 8,
+    "n_colors": 3,
+    "known_optimal_cost": 14.0,
+    "application": "VLSI routing / Task scheduling",
+    "authors": "Barth, D., et al.",
+    "year": "1996-2000s",
+    "description": "Instancia de aplicaci\u00f3n en scheduling VLSI: grafo de conflictos entre tareas",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 1,
+      "3": 0,
+      "4": 0,
+      "5": 1,
+      "6": 1,
+      "7": 0
+    },
+    "is_feasible": true,
+    "chromatic_number": 2
+  }
+}

@@ -1,0 +1,64 @@
+{
+  "graph_edges": [],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ]
+  ],
+  "n_vertices": 4,
+  "n_edges": 0,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "interval_non_overlapping",
+    "n_vertices": 4,
+    "n_colors": 2,
+    "known_optimal_cost": 4.0,
+    "chromatic_number": 1,
+    "clique_number": 1,
+    "intervals": [
+      [
+        0,
+        1
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        4,
+        5
+      ],
+      [
+        6,
+        7
+      ]
+    ],
+    "description": "Intervalos no solapantes: \u03c7(G)=1",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0
+    },
+    "is_feasible": true
+  }
+}

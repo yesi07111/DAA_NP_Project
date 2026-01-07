@@ -1,17 +1,76 @@
 import os
 import networkx as nx
 import numpy as np
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from networkx.generators.trees import random_unlabeled_tree
 from utils.utils import generate_structured_cost_matrix, save_instance, get_instance_filename, generate_interval_graph, generate_erdos_renyi_graph, generate_cost_matrix, load_instance
 
+
+def compute_exact_optimal_cost(graph: nx.Graph, cost_matrix: np.ndarray) -> Optional[float]:
+    """
+    Calcula el costo óptimo EXACTO de una instancia usando ILP sin timeout.
+    
+    Args:
+        graph: NetworkX graph
+        cost_matrix: Cost matrix (n_vertices x n_colors)
+    
+    Returns:
+        Optimal cost (float) or None if computation fails
+    """
+    try:
+        # Try to import PuLP for ILP solving
+        try:
+            import pulp
+        except ImportError:
+            # If PuLP not available, fall back to special cases or return None
+            return compute_known_optimal_cost(graph, cost_matrix, "general")
+        
+        n_vertices = graph.number_of_nodes()
+        n_colors = cost_matrix.shape[1]
+        
+        if n_vertices == 0:
+            return 0.0
+        
+        # Create the ILP problem
+        prob = pulp.LpProblem("MCCP", pulp.LpMinimize)
+        
+        # Decision variables: x[v,c] = 1 if vertex v is colored with color c
+        x = {}
+        for v in graph.nodes():
+            for c in range(n_colors):
+                x[(v, c)] = pulp.LpVariable(f"x_{v}_{c}", cat='Binary')
+        
+        # Objective: minimize total cost
+        prob += pulp.lpSum([cost_matrix[v, c] * x[(v, c)] 
+                            for v in graph.nodes() 
+                            for c in range(n_colors)])
+        
+        # Constraint 1: Each vertex must be colored with exactly one color
+        for v in graph.nodes():
+            prob += pulp.lpSum([x[(v, c)] for c in range(n_colors)]) == 1
+        
+        # Constraint 2: Adjacent vertices must have different colors
+        for u, v in graph.edges():
+            for c in range(n_colors):
+                prob += x[(u, c)] + x[(v, c)] <= 1
+        
+        # Solve without time limit
+        prob.solve(pulp.PULP_CBC_CMD(msg=0, timeLimit=None))
+        
+        # Check if optimal solution found
+        if prob.status == pulp.LpStatusOptimal:
+            return float(pulp.value(prob.objective))
+        else:
+            return None
+    
+    except Exception as e:
+        # If anything fails, return None
+        return None
 
 def estimate_feasibility(graph: nx.Graph, n_colors: int, instance_type: str) -> bool:
     """
     Estima si una instancia es factible usando coloreo greedy.
     Una instancia es factible si puede ser coloreada con n_colors colores.
-    
-    CORREGIDO: Manejo especial para árboles y grafos bipartitos
     """
     try:
         # CASO ESPECIAL 1: Árboles - siempre son 2-coloreables
@@ -42,15 +101,15 @@ def estimate_feasibility(graph: nx.Graph, n_colors: int, instance_type: str) -> 
         # Si hay error, asumir infactible
         return False
 
-def compute_known_optimal_cost(graph: nx.Graph, cost_matrix: np.ndarray, instance_type: str) -> float:
-    """
-    Calcula el costo óptimo conocido para instancias especiales donde se conoce la coloración óptima.
-    
-    CORREGIDO: Manejo robusto de árboles y bipartitos
-    
-    Retorna None si no se puede calcular.
-    """
+def compute_known_optimal_cost(graph: nx.Graph, cost_matrix: np.ndarray, instance_type: str) -> Optional[float]:
+
     try:
+        # PRIMERO: Intentar ILP exacto
+        exact_cost = compute_exact_optimal_cost(graph, cost_matrix)
+        if exact_cost is not None:
+            return exact_cost
+        
+        # FALLBACK: Casos especiales
         n_colors = cost_matrix.shape[1]
         
         # CASO 1: Árboles (siempre 2-coloreable)
@@ -101,10 +160,10 @@ def compute_known_optimal_cost(graph: nx.Graph, cost_matrix: np.ndarray, instanc
             
             return best_cost if best_cost != float('inf') else None
         
+        return None        
         return None
     except Exception:
         return None
-
 
 # GENERATORS
 
@@ -117,38 +176,48 @@ def generate_erdos_renyi_instances(
     seed: int = 42,
     output_dir: str = "instances",
 ) -> List[Dict[str, Any]]:
-    """Genera instancias Erdős-Rényi con validación de factibilidad mejorada"""
+    """Genera instancias Erdős-Rényi FACTIBLES. Solo guarda instancias donde chromatic_number <= n_colors"""
     instances_metadata = []
     current_seed = seed
 
     for inx, n_vertices in enumerate(n_vertices_list):
-        for i in range(n_instances):
+        instances_created = 0
+        attempts = 0
+        max_attempts = n_instances * 10  # Intentar hasta 10x más para conseguir instancias factibles
+        
+        while instances_created < n_instances and attempts < max_attempts:
             graph = generate_erdos_renyi_graph(n_vertices, p, seed=current_seed)
             cost_matrix = generate_structured_cost_matrix(
                 n_vertices, n_colors[inx], cost_pattern, seed=current_seed
             )
 
             is_feasible = estimate_feasibility(graph, n_colors[inx], "erdos_renyi")
-            known_opt = compute_known_optimal_cost(graph, cost_matrix, "erdos_renyi") if is_feasible else None
+            
+            # ONLY save if feasible
+            if is_feasible:
+                known_opt = compute_known_optimal_cost(graph, cost_matrix, "erdos_renyi")
 
-            metadata = {
-                "instance_type": "erdos_renyi",
-                "n_vertices": n_vertices,
-                "p": p,
-                "n_colors": n_colors[inx],
-                "cost_pattern": cost_pattern,
-                "seed": current_seed,
-                "density": nx.density(graph),
-                "is_feasible": is_feasible,
-                "known_optimal_cost": known_opt,
-            }
+                metadata = {
+                    "instance_type": "erdos_renyi",
+                    "n_vertices": n_vertices,
+                    "p": p,
+                    "n_colors": n_colors[inx],
+                    "cost_pattern": cost_pattern,
+                    "seed": current_seed,
+                    "density": nx.density(graph),
+                    "is_feasible": is_feasible,
+                    "known_optimal_cost": known_opt,
+                }
 
-            filename = get_instance_filename(
-                "erdos_renyi", n_vertices, n_colors[inx], p, current_seed, output_dir
-            )
-            save_instance(graph, cost_matrix, filename, metadata)
-            instances_metadata.append({"filename": filename, "metadata": metadata})
+                filename = get_instance_filename(
+                    "erdos_renyi", n_vertices, n_colors[inx], p, current_seed, output_dir
+                )
+                save_instance(graph, cost_matrix, filename, metadata)
+                instances_metadata.append({"filename": filename, "metadata": metadata})
+                instances_created += 1
+            
             current_seed += 1
+            attempts += 1
 
     return instances_metadata
 
@@ -161,7 +230,7 @@ def generate_structured_instances(
     seed: int = 42,
     output_dir: str = "instances",
 ) -> List[Dict[str, Any]]:
-    """Genera instancias estructuradas con k suficiente"""
+    """Genera instancias estructuradas FACTIBLES. Solo guarda si chromatic_number <= n_colors"""
     instances_metadata = []
     current_seed = seed
 
@@ -174,9 +243,6 @@ def generate_structured_instances(
                     graph = nx.cycle_graph(n_vertices)
                 elif graph_type == "complete":
                     graph = nx.complete_graph(n_vertices)
-                    # NOTA: Antes se saltaban las instancias completas cuando k < n_vertices.
-                    # Ahora generamos siempre el grafo completo y dejamos que
-                    # `estimate_feasibility` marque la metadada 'is_feasible'.
                 elif graph_type == "star":
                     graph = nx.star_graph(n_vertices - 1)
                 elif graph_type == "wheel":
@@ -202,17 +268,34 @@ def generate_structured_instances(
                     else:
                         graph = graph.subgraph(range(n_vertices)).copy()
 
+                # Determine if we need to increase n_colors to ensure feasibility
+                actual_n_colors = n_colors[inx]
+                is_feasible = estimate_feasibility(graph, actual_n_colors, graph_type)
+                
+                # If not feasible, try increasing n_colors
+                if not is_feasible:
+                    for k_try in range(actual_n_colors + 1, n_vertices + 2):
+                        if estimate_feasibility(graph, k_try, graph_type):
+                            actual_n_colors = k_try
+                            is_feasible = True
+                            break
+                
+                # Only save if feasible
+                if not is_feasible:
+                    print(f"Warning: Could not make {graph_type} with n={n_vertices} feasible even with k={n_vertices+1}")
+                    current_seed += 1
+                    continue
+
                 cost_matrix = generate_structured_cost_matrix(
-                    n_vertices, n_colors[inx], cost_pattern, seed=current_seed
+                    n_vertices, actual_n_colors, cost_pattern, seed=current_seed
                 )
 
-                is_feasible = estimate_feasibility(graph, n_colors[inx], graph_type)
-                known_opt = compute_known_optimal_cost(graph, cost_matrix, graph_type) if is_feasible else None
+                known_opt = compute_known_optimal_cost(graph, cost_matrix, graph_type)
 
                 metadata = {
                     "instance_type": graph_type,
                     "n_vertices": n_vertices,
-                    "n_colors": n_colors[inx],
+                    "n_colors": actual_n_colors,
                     "cost_pattern": cost_pattern,
                     "seed": current_seed,
                     "density": nx.density(graph),
@@ -221,7 +304,7 @@ def generate_structured_instances(
                 }
 
                 filename = get_instance_filename(
-                    graph_type, n_vertices, n_colors[inx], metadata["density"], current_seed, output_dir
+                    graph_type, n_vertices, actual_n_colors, metadata["density"], current_seed, output_dir
                 )
                 save_instance(graph, cost_matrix, filename, metadata)
                 instances_metadata.append({"filename": filename, "metadata": metadata})
@@ -238,9 +321,7 @@ def generate_tree_instances(
     output_dir: str = "instances",
 ) -> List[Dict[str, Any]]:
     """
-    Genera árboles (siempre 2-coloreables)
-    
-    CORREGIDO: Asegura que is_feasible=True siempre (árboles son bipartitos)
+    Genera árboles (siempre 2-coloreables). Asegura que is_feasible=True siempre (árboles son bipartitos)
     """
     instances_metadata = []
     current_seed = seed
@@ -263,7 +344,7 @@ def generate_tree_instances(
 
             density = nx.density(graph)
             
-            # CORRECCIÓN: Los árboles SIEMPRE son factibles con k>=2
+            # Los árboles SIEMPRE son factibles con k>=2
             is_feasible = True  # Los árboles siempre son 2-coloreables
             known_opt = compute_known_optimal_cost(graph, cost_matrix, "tree")
 
@@ -299,15 +380,32 @@ def generate_interval_graph_instances(n_vertices_list: List[int], n_colors: List
     for inx, n_vertices in enumerate(n_vertices_list):
         for i in range(n_instances):
             graph, intervals = generate_interval_graph(n_vertices, max_length, seed=current_seed)
-            cost_matrix = generate_structured_cost_matrix(n_vertices, n_colors[inx], cost_pattern, seed=current_seed)
             
-            is_feasible = estimate_feasibility(graph, n_colors[inx], 'interval_graph')
-            known_opt = compute_known_optimal_cost(graph, cost_matrix, 'interval_graph') if is_feasible else None
+            # Check feasibility and adjust n_colors if needed
+            actual_n_colors = n_colors[inx]
+            is_feasible = estimate_feasibility(graph, actual_n_colors, 'interval_graph')
+            
+            # If not feasible, increase n_colors
+            if not is_feasible:
+                for k_try in range(actual_n_colors + 1, n_vertices + 2):
+                    if estimate_feasibility(graph, k_try, 'interval_graph'):
+                        actual_n_colors = k_try
+                        is_feasible = True
+                        break
+            
+            # Only save if feasible
+            if not is_feasible:
+                print(f"Warning: Could not make interval_graph with n={n_vertices} feasible")
+                current_seed += 1
+                continue
+            
+            cost_matrix = generate_structured_cost_matrix(n_vertices, actual_n_colors, cost_pattern, seed=current_seed)
+            known_opt = compute_known_optimal_cost(graph, cost_matrix, 'interval_graph')
             
             metadata = {
                 'instance_type': 'interval_graph',
                 'n_vertices': n_vertices,
-                'n_colors': n_colors[inx],
+                'n_colors': actual_n_colors,
                 'max_length': max_length,
                 'cost_pattern': cost_pattern,
                 'seed': current_seed,
@@ -317,7 +415,7 @@ def generate_interval_graph_instances(n_vertices_list: List[int], n_colors: List
                 'known_optimal_cost': known_opt,
             }
             
-            filename = get_instance_filename('interval', n_vertices, n_colors[inx], metadata['density'], current_seed, output_dir)
+            filename = get_instance_filename('interval', n_vertices, actual_n_colors, metadata['density'], current_seed, output_dir)
             save_instance(graph, cost_matrix, filename, metadata)
             
             instances_metadata.append({'filename': filename, 'metadata': metadata})
@@ -1188,36 +1286,46 @@ def generate_random_instances(
     seed: int = 42,
     output_dir: str = "instances",
 ) -> List[Dict[str, Any]]:
-    """Genera instancias aleatorias con validación"""
+    """Genera instancias aleatorias FACTIBLES. Solo guarda si chromatic_number <= n_colors"""
     instances_metadata = []
     os.makedirs(output_dir, exist_ok=True)
     current_seed = seed
 
     for n_vertices in n_vertices_list:
         for n_colors in n_colors_list:
-            for i in range(n_instances):
+            instances_created = 0
+            attempts = 0
+            max_attempts = n_instances * 5  # Try up to 5x more to get feasible instances
+            
+            while instances_created < n_instances and attempts < max_attempts:
                 density = float(np.random.uniform(0.1, 0.9))
                 graph = generate_erdos_renyi_graph(n_vertices, density, seed=current_seed)
                 cost_matrix = generate_cost_matrix(n_vertices, n_colors, seed=current_seed)
 
                 is_feasible = estimate_feasibility(graph, n_colors, "random")
-                known_opt = compute_known_optimal_cost(graph, cost_matrix, "random") if is_feasible else None
+                
+                # Only save if feasible
+                if is_feasible:
+                    known_opt = compute_known_optimal_cost(graph, cost_matrix, "random")
 
-                metadata = {
-                    "instance_type": "random",
-                    "n_vertices": n_vertices,
-                    "n_colors": n_colors,
-                    "density": density,
-                    "cost_pattern": "random",
-                    "seed": current_seed,
-                    "is_feasible": is_feasible,
-                    "known_optimal_cost": known_opt,
-                }
+                    metadata = {
+                        "instance_type": "random",
+                        "n_vertices": n_vertices,
+                        "n_colors": n_colors,
+                        "density": density,
+                        "cost_pattern": "random",
+                        "seed": current_seed,
+                        "is_feasible": is_feasible,
+                        "known_optimal_cost": known_opt,
+                    }
 
-                filename = get_instance_filename("random", n_vertices, n_colors, density, current_seed, output_dir)
-                save_instance(graph, cost_matrix, filename, metadata)
-                instances_metadata.append({"filename": filename, "metadata": metadata})
+                    filename = get_instance_filename("random", n_vertices, n_colors, density, current_seed, output_dir)
+                    save_instance(graph, cost_matrix, filename, metadata)
+                    instances_metadata.append({"filename": filename, "metadata": metadata})
+                    instances_created += 1
+                
                 current_seed += 1
+                attempts += 1
 
     return instances_metadata
 
@@ -1333,80 +1441,3 @@ def generate_full_benchmark_set(
     print(f"{'='*80}\n")
 
     return final_list
-
-def print_instances_table():
-    """Imprime tabla de todas las instancias generadas"""
-    table = """
-    ================================================================================
-    TABLA DE INSTANCIAS GENERADAS
-    ================================================================================
-    
-    ID | Tipo                      | Vértices | Colores | χ  | Óptimo | Descripción
-    ---|---------------------------|----------|---------|----|---------|---------------------------------
-    1  | path_known_optimal        | 3        | 2       | 2  | 3.0    | Path: 0->1->2
-    2  | bipartite_known_optimal   | 4        | 2       | 2  | 4.0    | K_{2,2}: completo bipartito
-    3  | triangle_known_optimal    | 3        | 3       | 3  | 3.0    | K_3: triángulo
-    4  | isolated_vertices         | 4        | 2       | 1  | 16.0   | 4 vértices aislados
-    5  | path_5_vertices           | 5        | 2       | 2  | 5.0    | Camino P5: alternancia 2 colores
-    6  | cycle_even_small          | 4        | 2       | 2  | 4.0    | Ciclo par C_4
-    7  | cycle_even                | 6        | 2       | 2  | 6.0    | Ciclo par C_6
-    8  | cycle_even_larger         | 8        | 2       | 2  | 16.0   | Ciclo par C_8
-    9  | cycle_odd                 | 5        | 3       | 3  | 5.0    | Ciclo impar C_5
-    10 | cycle_odd_larger          | 7        | 3       | 3  | 7.0    | Ciclo impar C_7
-    11 | star_graph_small          | 5        | 2       | 2  | 5.0    | Estrella S_4: centro + 4 hojas
-    12 | complete_graph_4          | 4        | 4       | 4  | 4.0    | Grafo completo K4
-    13 | star_graph                | 6        | 2       | 2  | 6.0    | Estrella S_5: centro + 5 hojas
-    14 | star_graph_larger         | 9        | 2       | 2  | 18.0   | Estrella S_8: centro + 8 hojas
-    15 | interval_graph            | 5        | 3       | 3  | 5.0    | Grafo de intervalo simple
-    16 | interval_graph_large      | 7        | 4       | 4  | 7.0    | Grafo de intervalo complejo
-    17 | binary_tree_balanced      | 7        | 2       | 2  | 7.0    | Árbol binario balanceado
-    18 | binary_tree_complete      | 15       | 2       | 2  | 15.0   | Árbol binario completo
-    19 | complete_bipartite        | 7        | 2       | 2  | 7.0    | K_{3,4}: bipartito completo
-    20 | complete_bipartite_large  | 9        | 2       | 2  | 18.0   | K_{4,5}: bipartito completo
-    B1 | jansen_path               | 6        | 3       | 2  | 6.0    | Benchmark Jansen 1997
-    B2 | jansen_cycle              | 10       | 3       | 2  | 10.0   | Benchmark Jansen 1997
-    B3 | dimacs_style              | 10       | 4       | 4  | 10.0   | DIMACS adaptation
-    B4 | scheduling_application    | 8        | 3       | 3  | 14.0   | VLSI/Scheduling
-
-    ================================================================================
-    """
-    print(table)
-
-if __name__ == "__main__":
-    print("=" * 80)
-    print("Generador de Instancias Especiales para MCCPP")
-    print("Proyecto: Diseño de Algoritmos (DAA)")
-    print("=" * 80)
-    print()
-    
-    print("Generando instancias especiales...")
-    instances = generate_special_case_instances(output_dir="instances")
-    print(f"✓ {len(instances)} instancias especiales generadas")
-    print()
-    
-    print("Generando benchmarks académicos...")
-    benchmarks = generate_benchmark_reference_instances(output_dir="instances/benchmarks")
-    print(f"✓ {len(benchmarks)} benchmarks académicos generados")
-    print()
-    
-    print("Generando instancias de grafos de intervalo...")
-    try:
-        intervals = generate_special_interval_graph_instances(output_dir="instances/interval_graphs")
-        print(f"✓ {len(intervals)} instancias de intervalo generadas")
-    except Exception as e:
-        print(f"⚠ No se pudieron generar instancias de intervalo: {e}")
-        intervals = []
-    print()
-    
-    print_instances_table()
-    print()
-    print()
-    
-    print("=" * 80)
-    total_instances = len(instances) + len(benchmarks) + len(intervals)
-    print("TOTAL DE INSTANCIAS GENERADAS:", total_instances)
-    print("Desglose:")
-    print(f"  - Instancias especiales: {len(instances)}")
-    print(f"  - Benchmarks académicos: {len(benchmarks)}")
-    print(f"  - Grafos de intervalo: {len(intervals)}")
-    print("=" * 80)

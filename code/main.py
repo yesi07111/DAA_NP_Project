@@ -18,8 +18,7 @@ from algorithms.exacts_algorithms import (
 )
 from algorithms.approximation_algorithms import (
     weighted_set_cover_approximation,
-    improved_weighted_set_cover,
-    interval_graph_approximation
+    improved_weighted_set_cover
 )
 from algorithms.heuristic_algorithms import (
     largest_first_heuristic,
@@ -44,8 +43,7 @@ from algorithms.exacts_algorithms import (
 )
 from algorithms.approximation_algorithms import (
     weighted_set_cover_approximation,
-    improved_weighted_set_cover,
-    interval_graph_approximation
+    improved_weighted_set_cover
 )
 from algorithms.metaheuristic_algorithms import (
     simulated_annealing,
@@ -116,12 +114,6 @@ ALGORITHMS = {
         'category': 'Aproximación',
         'condition': lambda g, cm: True,
         'description': 'Weighted Set Cover mejorado'
-    },
-    'interval_approx': {
-        'func': interval_graph_approximation,
-        'category': 'Aproximación',
-        'condition': lambda g, cm: nx.is_chordal(g),
-        'description': 'Aproximación para grafos de intervalo'
     },
     'largest_first': {
         'func': largest_first_heuristic,
@@ -208,7 +200,7 @@ def get_algorithm_condition(algo_name: str, graph: nx.Graph, cost_matrix: np.nda
             return n_vertices <= 50
         elif algo_name == 'dp_tree':
             return nx.is_tree(graph)
-        elif algo_name == 'dp_interval':
+        elif algo_name == 'dp_interval' or algo_name == 'peo_greedy':
             return nx.is_chordal(graph)
         elif algo_name in ['simulated_annealing', 'adaptive_sa', 'trajectory_search', 'hybrid', 'adaptive']:
             return n_vertices < 100
@@ -242,14 +234,14 @@ def print_menu():
 {BOLD}{BLUE}┌─────────────────────────────── MENÚ PRINCIPAL ───────────────────────────────┐{RESET}
 │  {YELLOW}Modo:{RESET} {mode_desc:<48}                      │
 │                                                                              │
-│  {CYAN}1.{RESET} {BOLD}Generar instancias de prueba{RESET}                                       │
-│  {CYAN}2.{RESET} Listar instancias disponibles                                        │
-│  {CYAN}3.{RESET} Listar algoritmos disponibles                                       │
-│  {CYAN}4.{RESET} Ejecutar procesamiento completo (todos vs todos)                     │
-│  {CYAN}5.{RESET} Ejecutar procesamiento personalizado                                 │
-│  {CYAN}6.{RESET} Visualizar estadísticas guardadas                                   │
-│  {CYAN}7.{RESET} Cambiar modo de ejecución                                           │
-│  {CYAN}0.{RESET} Salir                                                                  │
+│  {CYAN}1.{RESET} {BOLD}Generar instancias de prueba{RESET}                                             │
+│  {CYAN}2.{RESET} Listar instancias disponibles                                            │
+│  {CYAN}3.{RESET} Listar algoritmos disponibles                                            │
+│  {CYAN}4.{RESET} Ejecutar procesamiento completo (todos vs todos)                         │
+│  {CYAN}5.{RESET} Ejecutar procesamiento personalizado                                     │
+│  {CYAN}6.{RESET} Visualizar estadísticas guardadas                                        │
+│  {CYAN}7.{RESET} Cambiar modo de ejecución                                                │
+│  {CYAN}0.{RESET} Salir                                                                    │
 │                                                                              │
 {BOLD}{BLUE}└──────────────────────────────────────────────────────────────────────────────┘{RESET}
 """
@@ -590,10 +582,7 @@ def generate_test_instances():
     return
 
 def run_processing(instance_files: list, algorithm_names: list, results_dir: str = "results"):
-    """
-    CORREGIDO: Procesa instancias validando factibilidad primero.
-    Respeta el EXECUTION_MODE global.
-    """
+
     from utils.utils import ensure_directory, is_proper_coloring
     ensure_directory(results_dir)
 
@@ -698,16 +687,18 @@ def run_processing(instance_files: list, algorithm_names: list, results_dir: str
                 'solution': sol
             }
 
-            # Marcar optimal si coincide con known_optimal_cost
+            # Detect optimal: algorithm returns optimal=True OR cost matches known_optimal_cost
+            is_optimal = result.get('optimal', False)
             known_opt = metadata.get('known_optimal_cost')
-            opt_flag = False
-            if known_opt is not None and per_instance_results['runs'][algo_name]['feasible']:
-                try:
-                    opt_flag = abs(per_instance_results['runs'][algo_name]['cost'] - float(known_opt)) < 1e-6
-                except Exception:
-                    opt_flag = False
             
-            per_instance_results['runs'][algo_name]['optimal'] = opt_flag
+            if not is_optimal and known_opt is not None:
+                try:
+                    if abs(result.get('cost', float('inf')) - float(known_opt)) < 1e-6:
+                        is_optimal = True
+                except Exception:
+                    pass
+            
+            per_instance_results['runs'][algo_name]['optimal'] = is_optimal
 
             ops_display = per_instance_results['runs'][algo_name]['operations'] if per_instance_results['runs'][algo_name]['operations'] is not None else 'N/A'
             cost_display = f"{per_instance_results['runs'][algo_name]['cost']:.2f}" if per_instance_results['runs'][algo_name]['cost'] != float('inf') else "∞"
@@ -725,24 +716,25 @@ def run_processing(instance_files: list, algorithm_names: list, results_dir: str
         if feasible_runs_list:
             best_cost = min(r['cost'] for r in feasible_runs_list)
 
+        # Detect optimal solutions by comparing with known_optimal_cost
         known_opt = metadata.get('known_optimal_cost')
         tol = 1e-6
 
         for name, r in runs.items():
-            r_opt = r.get('optimal', False)
-            if not r_opt and r.get('feasible'):
-                if known_opt is not None:
-                    try:
-                        if abs(r.get('cost', float('inf')) - float(known_opt)) < tol:
-                            r_opt = True
-                    except Exception:
-                        pass
-                if not r_opt and best_cost is not None:
-                    try:
-                        if abs(r.get('cost', float('inf')) - best_cost) < tol:
-                            r_opt = True
-                    except Exception:
-                        pass
+            r_opt = False
+            
+            # Mark as optimal if:
+            # 1. Algorithm explicitly returns optimal=True, OR
+            # 2. Cost matches the known optimal cost
+            if r.get('optimal', False):
+                r_opt = True
+            elif known_opt is not None and r.get('feasible', False):
+                try:
+                    if abs(r.get('cost', float('inf')) - float(known_opt)) < tol:
+                        r_opt = True
+                except Exception:
+                    pass
+            
             r['optimal'] = bool(r_opt)
 
         # Imprimir tabla ordenada
@@ -869,23 +861,25 @@ def view_statistics(results_dir: str = "results"):
             if feasible_runs:
                 best_cost = min(r['cost'] for r in feasible_runs)
 
+            # Detect optimal solutions by comparing with known_optimal_cost
             known_opt = metadata.get('known_optimal_cost')
             tol = 1e-6
+
             for name, r in runs.items():
-                r_opt = r.get('optimal', False)
-                if not r_opt and r.get('feasible'):
-                    if known_opt is not None:
-                        try:
-                            if abs(r.get('cost', float('inf')) - float(known_opt)) < tol:
-                                r_opt = True
-                        except Exception:
-                            pass
-                    if not r_opt and best_cost is not None:
-                        try:
-                            if abs(r.get('cost', float('inf')) - best_cost) < tol:
-                                r_opt = True
-                        except Exception:
-                            pass
+                r_opt = False
+                
+                # Mark as optimal if:
+                # 1. Algorithm explicitly returns optimal=True, OR
+                # 2. Cost matches the known optimal cost
+                if r.get('optimal', False):
+                    r_opt = True
+                elif known_opt is not None and r.get('feasible', False):
+                    try:
+                        if abs(r.get('cost', float('inf')) - float(known_opt)) < tol:
+                            r_opt = True
+                    except Exception:
+                        pass
+                
                 r['optimal'] = bool(r_opt)
 
             # Print aligned table ordered by (costo, tiempo)

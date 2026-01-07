@@ -1,0 +1,79 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      4
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      1,
+      100
+    ],
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      100,
+      1
+    ],
+    [
+      100,
+      1,
+      100
+    ]
+  ],
+  "n_vertices": 5,
+  "n_edges": 5,
+  "n_colors": 3,
+  "metadata": {
+    "instance_type": "cycle_odd",
+    "n_vertices": 5,
+    "n_colors": 3,
+    "known_optimal_cost": 5.0,
+    "cycle_length": 5,
+    "chromatic_number": 3,
+    "is_bipartite": false,
+    "description": "Ciclo impar C_5: requiere 3 colores (no bipartito), costo \u00f3ptimo 5",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 2,
+      "4": 1
+    },
+    "is_feasible": true
+  }
+}

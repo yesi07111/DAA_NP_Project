@@ -166,24 +166,6 @@ def load_instance(filename: str) -> Tuple[nx.Graph, np.ndarray, Dict[str, Any]]:
     
     return graph, cost_matrix, instance_data.get('metadata', {})
 
-def save_solution(coloring: Dict[int, int], filename: str, 
-                 metrics: Dict[str, Any] = None):
-    """
-    Save coloring solution to file
-    
-    Args:
-        coloring: vertex to color mapping
-        filename: output filename
-        metrics: solution quality metrics
-    """
-    solution_data = {
-        'coloring': coloring,
-        'metrics': metrics or {}
-    }
-    
-    with open(filename, 'w') as f:
-        json.dump(solution_data, f, indent=2)
-
 def ensure_directory(directory: str):
     """
     Ensure directory exists, create if not
@@ -348,18 +330,3 @@ def get_maximal_independent_set(
         remaining -= set(graph.neighbors(node))
 
     return independent_set
-
-def graph_density(graph: nx.Graph) -> float:
-    """
-    Calculate graph density
-
-    Args:
-        graph: networkx Graph
-
-    Returns:
-        density value between 0 and 1
-    """
-    n = graph.number_of_nodes()
-    if n <= 1:
-        return 0.0
-    return (2 * graph.number_of_edges()) / (n * (n - 1))

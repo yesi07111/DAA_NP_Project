@@ -16,42 +16,6 @@ def evaluate_cost(coloring: Dict[int, int], cost_matrix: np.ndarray) -> float:
         return float('inf')
     return sum(cost_matrix[v, c] for v, c in coloring.items())
 
-def _apply_local_search(graph, coloring, cost_matrix, initial_ops, rounds=1):
-
-    if not coloring: 
-        return {'coloring': {}, 'operations': initial_ops}
-    
-    n_colors = cost_matrix.shape[1]
-    operations = initial_ops
-    
-    for _ in range(rounds):
-        improved = False
-        nodes = list(graph.nodes())
-        operations += 1
-        
-        for v in nodes:
-            operations += 1
-            if v not in coloring: 
-                continue
-            current_c = coloring[v]
-            current_cost = cost_matrix[v, current_c]
-            
-            forbidden = {coloring[n] for n in graph.neighbors(v) if n in coloring}
-            operations += graph.degree(v)
-            
-            for c in range(n_colors):
-                operations += 1
-                if c != current_c and c not in forbidden:
-                    if cost_matrix[v, c] < current_cost:
-                        coloring[v] = c
-                        current_cost = cost_matrix[v, c]
-                        improved = True
-                        break 
-        if not improved:
-            break
-            
-    return {'coloring': coloring, 'operations': operations}
-
 # ============================================================================
 # 1. WEIGHTED SET COVER APPROXIMATION - O(ln n)
 # ============================================================================
@@ -154,26 +118,62 @@ def weighted_set_cover_approximation(graph: nx.Graph, cost_matrix: np.ndarray, h
         
         total_cost += best_set_cost
 
-    # Fase de limpieza
+    # Fase de limpieza - MEJORADA para garantizar factibilidad
     for v in list(uncovered):
         operations += 1
+        neighbor_colors = {coloring.get(n) for n in graph.neighbors(v) if n in coloring}
+        operations += graph.degree(v)
+        
+        # Buscar el mejor color disponible (no usado por vecinos)
         best_c = -1
         min_c_cost = float('inf')
         for c in range(n_colors):
             operations += 1
-            if all(coloring.get(n) != c for n in graph.neighbors(v)):
-                operations += graph.degree(v)
+            if c not in neighbor_colors:
                 if cost_matrix[v, c] < min_c_cost:
                     min_c_cost = cost_matrix[v, c]
                     best_c = c
         
-        if best_c != -1:
-            coloring[v] = best_c
-            total_cost += min_c_cost
-            uncovered.remove(v)
+        # Si no hay color disponible, usar el de menor costo (aunque sea conflictivo)
+        # Luego se arreglará en post-procesamiento
+        if best_c == -1:
+            best_c = np.argmin(cost_matrix[v, :])
+            min_c_cost = cost_matrix[v, best_c]
+            operations += n_colors
+        
+        coloring[v] = best_c
+        total_cost += min_c_cost
+        uncovered.remove(v)
 
     execution_time = time.time() - start_time
     is_feasible = is_proper_coloring(graph, coloring) and len(coloring) == n_vertices
+    
+    # Si no es factible, aplicar post-procesamiento para hacerlo factible
+    if not is_feasible and len(coloring) == n_vertices:
+        # Arreglar conflictos
+        for _ in range(10):  # Máximo 10 iteraciones
+            conflicts = []
+            for u, v_node in graph.edges():
+                if u in coloring and v_node in coloring and coloring[u] == coloring[v_node]:
+                    conflicts.append((u, v_node))
+                    operations += 1
+            
+            if not conflicts:
+                is_feasible = True
+                break
+            
+            for u, v_node in conflicts:
+                operations += 1
+                # Intentar mover v_node a un color mejor
+                neighbor_colors = {coloring.get(n) for n in graph.neighbors(v_node) if n in coloring}
+                for c in range(n_colors):
+                    operations += 1
+                    if c not in neighbor_colors:
+                        old_cost = cost_matrix[v_node, coloring[v_node]]
+                        new_cost = cost_matrix[v_node, c]
+                        coloring[v_node] = c
+                        total_cost = total_cost - old_cost + new_cost
+                        break
     
     return convert_numpy_types({
         'solution': coloring,
@@ -246,93 +246,3 @@ def improved_weighted_set_cover(graph: nx.Graph, cost_matrix: np.ndarray, heuris
     result['local_search_iterations'] = ls_iterations
     
     return convert_numpy_types(result)
-
-# ============================================================================
-# 2. APROXIMACIÓN PARA GRAFOS DE INTERVALO (Y CORDALES)
-# ============================================================================
-
-def interval_graph_approximation(graph: nx.Graph, cost_matrix: np.ndarray) -> Dict[str, Any]:
-
-    start_time = time.time()
-    n_vertices = graph.number_of_nodes()
-    n_colors = cost_matrix.shape[1]
-    operations = 0
-
-    # 1. Verificar cordalidad
-    operations += n_vertices * n_vertices
-    if not nx.is_chordal(graph):
-         return {
-            'solution': {}, 
-            'cost': float('inf'), 
-            'execution_time': time.time() - start_time,
-            'operations': operations,
-            'feasible': False,
-            'error': 'El grafo no es cordal', 
-            'algorithm': 'interval_peo_approximation'
-        }
-    
-    # Obtener PEO (Perfect Elimination Ordering)
-    try:
-        operations += n_vertices * n_vertices
-        peo_order = list(nx.chordal_graph_cliques(graph))
-        vertex_order = []
-        seen = set()
-        for clique in peo_order:
-            for v in clique:
-                if v not in seen:
-                    vertex_order.append(v)
-                    seen.add(v)
-    except:
-        # Fallback: Ordenar por grado
-        operations += n_vertices
-        vertex_order = sorted(graph.nodes(), key=lambda n: graph.degree(n))
-
-    # 2. Greedy Coloring sobre el orden PEO
-    coloring = {}
-    
-    for vertex in vertex_order:
-        operations += 1
-        
-        forbidden = {coloring[nbr] for nbr in graph.neighbors(vertex) if nbr in coloring}
-        operations += graph.degree(vertex)
-        
-        best_c = -1
-        min_cost = float('inf')
-        
-        for c in range(n_colors):
-            operations += 1
-            if c not in forbidden:
-                if cost_matrix[vertex, c] < min_cost:
-                    min_cost = cost_matrix[vertex, c]
-                    best_c = c
-        
-        if best_c != -1:
-            coloring[vertex] = best_c
-        else:
-            return {
-                'solution': {}, 
-                'cost': float('inf'), 
-                'execution_time': time.time() - start_time,
-                'operations': operations,
-                'feasible': False, 
-                'error': 'K insuficiente',
-                'algorithm': 'interval_peo_approximation'
-            }
-
-    # 3. Optimización Local
-    final_coloring = _apply_local_search(graph, coloring, cost_matrix, operations)
-    operations = final_coloring['operations']
-    
-    is_feasible = is_proper_coloring(graph, final_coloring['coloring'])
-    total_cost = evaluate_cost(final_coloring['coloring'], cost_matrix)
-
-    return convert_numpy_types({
-        'solution': final_coloring['coloring'],
-        'cost': total_cost,
-        'execution_time': time.time() - start_time,
-        'operations': operations,
-        'algorithm': 'interval_peo_approximation',
-        'feasible': is_feasible,
-        'approximation_factor': 'O(√|V|)',
-        'reference': 'Informe Sección 3.2.2'
-    })

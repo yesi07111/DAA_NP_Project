@@ -1,0 +1,55 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      2
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      1,
+      100
+    ],
+    [
+      100,
+      100,
+      1
+    ]
+  ],
+  "n_vertices": 3,
+  "n_edges": 3,
+  "n_colors": 3,
+  "metadata": {
+    "instance_type": "triangle_known_optimal",
+    "n_vertices": 3,
+    "n_colors": 3,
+    "known_optimal_cost": 3.0,
+    "description": "Grafo tri\u00e1ngulo K_3, costo \u00f3ptimo 3",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 2
+    },
+    "is_feasible": true,
+    "chromatic_number": 3
+  }
+}

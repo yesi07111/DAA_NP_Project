@@ -1,0 +1,84 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      4,
+      5
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ]
+  ],
+  "n_vertices": 6,
+  "n_edges": 6,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "cycle_even",
+    "n_vertices": 6,
+    "n_colors": 2,
+    "known_optimal_cost": 6.0,
+    "cycle_length": 6,
+    "chromatic_number": 2,
+    "is_bipartite": true,
+    "description": "Ciclo par C_6: 2-colorable mediante bipartici\u00f3n, costo \u00f3ptimo 6",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 1
+    },
+    "is_feasible": true
+  }
+}

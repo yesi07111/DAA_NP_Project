@@ -972,60 +972,100 @@ La DP en árboles ofrece una solución exacta y polinomial para MCCPP cuando el 
 
 Los grafos de intervalo son aquellos donde cada vértice corresponde a un intervalo en la recta real, y dos vértices son adyacentes si y solo si sus intervalos se solapan. Esta estructura especial permite algoritmos de programación dinámica eficientes para el MCCPP.
 
-\textbf{Prerrequisito:} El grafo debe ser verificable como grafo de intervalo mediante la propiedad cordal (todo grafo de intervalo es cordal, aunque no todo grafo cordal es de intervalo).\\
+Es fundamental destacar que mientras todo grafo de intervalo es necesariamente cordal, la relación inversa no se cumple. Existen grafos cordales que no admiten una representación válida como grafos de intervalo. El ejemplo más notable es el grafo completo de cuatro o más vértices, que es cordal pero no puede representarse mediante intervalos en la recta real. Esta distinción es crítica para comprender el ámbito de aplicabilidad del algoritmo que se presenta a continuación.
+
+\textbf{Prerrequisitos:} 
+El algoritmo requiere como entrada un grafo que satisfaga dos condiciones necesarias.
+\begin{enumerate}
+	\item \textbf{Condición 1:} El grafo debe ser cordal, lo cual puede verificarse en tiempo $O(n+m)$ mediante algoritmos estándar de reconocimiento de grafos cordales.
+	\item \textbf{Condición 2:} El grafo debe ser efectivamente de intervalo, no simplemente cordal. La verificación de esta segunda propiedad se realiza mediante la construcción explícita de una representación de intervalos y la validación de que dicha representación es consistente con la estructura de adyacencias del grafo.
+\end{enumerate}
+
+Para grafos que no satisfacen estas condiciones, particularmente aquellos que son cordales pero no de intervalo, el algoritmo presentado no es aplicable y debe recurrirse a métodos alternativos.
 
 \textbf{Algoritmo DP para Grafos de Intervalo mediante esquema SRTBOT:\\}
 
-Este algoritmo utiliza un esquema de programación dinámica sobre un Ordenamiento de Eliminación Perfecta (PEO). A diferencia de la DP clásica en árboles, aquí el estado se extiende para garantizar la factibilidad contra todos los vecinos precedentes, aprovechando que la estructura de intervalos mantiene el conflicto acotado.
+El algoritmo utiliza un esquema de programación dinámica que procesa los vértices según un ordenamiento derivado de su representación de intervalos. A diferencia del enfoque clásico de programación dinámica sobre árboles, este método mantiene estados que capturan únicamente los intervalos activos en cada etapa del procesamiento, aprovechando la propiedad fundamental de que en grafos de intervalo, el número de intervalos que se solapan simultáneamente está acotado por el tamaño de la clique máxima.
 
-\textbf{S (Subproblemas):} Dado un Ordenamiento de Eliminación Perfecta (PEO) $v_1, v_2, \ldots, v_n$ (obtenido mediante un test de cordalidad): $DP[i][c] =$ costo mínimo de colorear el subgrafo inducido por los vértices $\{v_1, \ldots, v_i\}$, dado que el vértice $v_i$ tiene asignado el color $c$.\\
-Nota de implementación: Cada estado $DP[i][c]$ mantiene un registro (diccionario) de la coloración parcial $\varphi_{i,c}$ que generó dicho costo mínimo para permitir verificaciones de consistencia en pasos futuros.
+\textbf{S (Subproblemas):} Dada una representación de intervalos válida $I(v) = [l(v), r(v)]$ para cada vértice $v$, ordenamos los vértices por el extremo derecho de sus intervalos, obteniendo la secuencia $v_1, v_2, \dots, v_n$ donde $r(v_1) \leq r(v_2) \leq \dots \leq r(v_n)$.
 
-\textbf{R (Recurrencia):} Para $i > 0$:$$DP[i][c] = c_{v_i, c} + \min DP[i-1][c']$$
+El estado de programación dinámica se define como $DP[i][\sigma]$, que representa el costo mínimo de colorear los primeros $i$ vértices en el ordenamiento, dado que el estado $\sigma$ especifica la coloración de los intervalos que permanecen activos en la posición $i$. Formalmente, un intervalo $v_j$ (con $j < i$) está activo en la posición $i$ si $r(v_j) \geq l(v_i)$, es decir, si su intervalo se solapa con el intervalo del vértice que se está procesando.
 
-Sujeto a que la coloración asociada a $DP[i-1][c']$ sea compatible con la asignación del color $c$ al vértice $v_i$.
-La condición de compatibilidad se define como:
+El estado $\sigma$ se representa como una tupla ordenada de pares $(v_j, c)$ donde $v_j$ es un vértice activo y $c$ es el color asignado a dicho vértice en la solución parcial correspondiente. Esta representación compacta del estado es posible gracias a la propiedad de que solo los intervalos activos son relevantes para determinar las restricciones de coloración de vértices futuros.
 
-$$\forall u \in \text{Adj}(v_i) \cap \{v_0, \dots, v_{i-1}\}, \quad \varphi_{i-1,c'}(u) \neq c$$
+\textbf{R (Recurrencia):} Para $i > 1$, la recurrencia se define mediante el proceso de extensión desde estados anteriores. Para cada estado previo $DP[i-1][\sigma']$, construimos el conjunto de intervalos activos filtrando aquellos que ya han terminado. Específicamente, un intervalo $v_j$ incluido en $\sigma'$ permanece activo si $r(v_j) \geq l(v_i)$.
 
-\textbf{T (Topología):} Orden lineal ascendente según el PEO ($i = 1$ hasta $n$).
+Sea $\sigma'_{\text{activo}}$ el estado resultante tras eliminar los intervalos inactivos de $\sigma'$. Para cada color $c \in F$ disponible para el vértice $v_i$, verificamos la compatibilidad con los intervalos activos. La condición de compatibilidad requiere que para todo $(v_j, c') \in \sigma'_{\text{activo}}$ tal que $v_j$ es adyacente a $v_i$, se cumpla que $c \neq c'$.
 
-\textbf{B (Base):} Para el primer vértice del ordenamiento: $DP[0][c] = c_{v_0, c}$ y $\varphi_{0,c} = \{v_0: c\} \quad \forall c \in F$.
+Si la compatibilidad se satisface, el nuevo estado $\sigma$ se construye como $\sigma = \sigma'_{\text{activo}} \cup \{(v_i, c)\}$, y el costo asociado se calcula como:
 
-\textbf{O (Objetivo):} $$Z^* = \min_{c \in F} DP[n-1][c]$$
+\[
+DP[i][\sigma] = \min\{DP[i-1][\sigma'] + C[v_i, c] : \sigma' \text{ compatible con la asignación de } c \text{ a } v_i\}
+\]
 
-\textbf{T (Tiempo):} $O(n \cdot k^2 \cdot d)$, donde $d$ es el grado máximo (típicamente acotado por la clique máxima $\omega$ en grafos de intervalo).\\
+donde $C[v_i, c]$ denota el costo de asignar el color $c$ al vértice $v_i$ según la matriz de costos de entrada.
+
+\textbf{T (Topología):} El procesamiento sigue un orden lineal ascendente según el ordenamiento de los vértices por el extremo derecho de sus intervalos. Este ordenamiento garantiza que cuando procesamos el vértice $v_i$, todos los vértices $v_j$ con $j < i$ ya han sido considerados, y podemos determinar precisamente cuáles de ellos permanecen activos basándonos en la comparación de sus extremos derechos con el extremo izquierdo de $v_i$.
+
+\textbf{B (Base):} Para el primer vértice $v_1$ en el ordenamiento, no existen vértices previamente procesados, por lo que el conjunto de intervalos activos está vacío. Para cada color $c \in F$, establecemos:
+
+\[
+DP[1][\{(v_1, c)\}] = C[v_1, c]
+\]
+
+Este caso base inicializa la programación dinámica con todas las coloraciones posibles del primer vértice, cada una representando una solución parcial válida que será extendida en las etapas subsiguientes.
+
+\textbf{O (Objetivo):} La solución óptima se obtiene identificando el estado con costo mínimo en la última etapa del procesamiento:
+
+\[
+Z^* = \min\{DP[n][\sigma] : \sigma \text{ es un estado válido en la posición } n\}
+\]
+
+Cada estado $\sigma$ en $DP[n]$ representa una coloración completa y propia del grafo, ya que todos los $n$ vértices han sido procesados. La coloración específica asociada al estado óptimo se recupera mediante el seguimiento de las decisiones tomadas durante la construcción de la tabla de programación dinámica.
+
+\textbf{T (Tiempo):} La complejidad temporal del algoritmo está determinada por tres factores principales. El preprocesamiento, que incluye la verificación de cordalidad, la construcción de la representación de intervalos y el ordenamiento de vértices, requiere $O(n^2 + m)$ operaciones en el peor caso. El cálculo de la tabla de programación dinámica procesa $n$ etapas, una por cada vértice. En cada etapa $i$, el número de estados posibles está acotado por $O(k^{\omega_i})$ donde $\omega_i$ es el número máximo de intervalos que se solapan simultáneamente hasta la posición $i$. Para cada estado, se evalúan $k$ posibles colores para el vértice actual, y la verificación de compatibilidad con los intervalos activos requiere $O(\omega_i)$ operaciones.
+
+En grafos de intervalo típicos, el valor $\omega$ (tamaño de la clique máxima) es mucho menor que $n$, lo que hace el algoritmo eficiente en la práctica. La complejidad total resulta en $O(n^2 + n \cdot k^{\omega+1} \cdot \omega)$, que se simplifica a $O(n \cdot k^{\omega+1} \cdot \omega)$ cuando el grafo es suficientemente denso. Para grafos dispersos con cliques pequeñas, esta complejidad es polinomial en la práctica.
 
 \textbf{Análisis de Complejidad:}
 
-La complejidad del algoritmo de Programación Dinámica para el MCCPP en grafos de intervalo, considerando la verificación exhaustiva de consistencia, es $O(n^2 \cdot k^2)$.
+El análisis de complejidad requiere considerar la estructura específica de los grafos de intervalo y cómo esta afecta el tamaño del espacio de estados en cada etapa de la programación dinámica.
 
 \begin{itemize}
-	\item \textbf{Preprocesamiento:} Verificación de cordalidad y ordenamiento de eliminación perfecta: \(O(n + m)\)
-	\item \textbf{Cálculo DP:} Existen $n$ etapas (una por cada vértice en el PEO). En cada etapa, se evalúan $k$ colores para el vértice actual $v_i$. Para cada color, se intenta extender la solución desde los $k$ estados posibles del nodo anterior $v_{i-1}$.
-	\item \textbf{Verificación de Consistencia:} Para validar la transición, se comprueban las aristas entre $v_i$ y todos los vértices previos $v_j$ ($j < i$). Este proceso es $O(n)$ en el peor caso.
-	\item \textbf{Complejidad total:} $n \cdot k \cdot k \cdot n = O(n^2 \cdot k^2)$.
+	\item \textbf{Preprocesamiento:} La fase de preprocesamiento consta de varias operaciones secuenciales. La verificación de cordalidad mediante Maximum Cardinality Search se ejecuta en tiempo $O(n+m)$. La construcción de la representación de intervalos, que involucra el análisis de las relaciones de vecindad para cada vértice y la asignación de coordenadas de intervalos, requiere $O(n^2)$ operaciones en el peor caso. La validación de que la representación construida es consistente con el grafo original implica verificar para cada par de vértices si la condición de solapamiento de intervalos corresponde a la existencia de una arista, lo cual también requiere $O(n^2)$ comparaciones. Finalmente, el ordenamiento de los vértices por el extremo derecho de sus intervalos se realiza en $O(n \log n)$. El preprocesamiento total es por tanto $O(n^2)$ en el peor caso.
+	
+	\item \textbf{Cálculo DP:} El cálculo de la tabla procede en $n$ etapas, una por cada vértice en el ordenamiento. En la etapa $i$, el algoritmo debe considerar todos los estados válidos de la etapa anterior $DP[i-1]$. El número de estados en $DP[i-1]$ está acotado superiormente por el número de coloraciones distintas posibles de los intervalos que están activos en esa posición. Si hay $\omega_{i-1}$ intervalos activos en la posición $i-1$, existen potencialmente $k^{\omega_{i-1}}$ estados distintos, aunque en la práctica este número es menor debido a restricciones de compatibilidad.
+	
+	Para cada estado $\sigma'$ en $DP[i-1]$, el algoritmo realiza las siguientes operaciones. Primero, filtra los intervalos activos eliminando aquellos cuyo extremo derecho es menor que el extremo izquierdo del vértice actual, lo cual requiere $O(\omega_{i-1})$ comparaciones. Segundo, para cada uno de los $k$ colores posibles del vértice $v_i$, verifica la compatibilidad con los intervalos activos revisando si algún vecino activo tiene el mismo color, operación que requiere $O(\omega_i)$ verificaciones de adyacencia. Tercero, si la asignación es compatible, construye el nuevo estado y actualiza la tabla $DP[i]$.
+	
+	El número de estados en cada etapa $i$ está acotado por $k^{\omega_i}$, y cada transición desde un estado previo a un nuevo estado requiere $O(k \cdot \omega_i)$ operaciones. Sumando sobre todas las etapas, obtenemos una complejidad de $O(n \cdot k^\omega \cdot k \cdot \omega) = O(n \cdot k^{\omega+1} \cdot \omega)$ para el cálculo completo de la tabla de programación dinámica.
+	
+	\item \textbf{Recuperación de la Solución:} Una vez completada la tabla de programación dinámica, la identificación del estado óptimo en $DP[n]$ requiere examinar todos los estados finales, operación que toma $O(k^\omega)$ tiempo. La reconstrucción de la coloración completa a partir del estado óptimo ya está disponible implícitamente en la información almacenada durante la construcción de la tabla, por lo que no añade complejidad asintótica adicional.
 \end{itemize}
 
-NOTA: Aunque en la teoría de grafos de intervalo la verificación podría optimizarse a $O(\omega)$ (donde $\omega$ es el tamaño de la clique máxima) limitando la búsqueda a intervalos activos, la implementación actual asegura correctitud general sobre el PEO mediante una revisión histórica completa, resultando en la cota $O(n^2 \cdot k^2)$.
+La complejidad total del algoritmo es $O(n^2 + n \cdot k^{\omega+1} \cdot \omega)$. Para grafos de intervalo con cliques pequeñas, específicamente cuando $\omega$ es constante o crece logarítmicamente con $n$, esta expresión es polinomial en $n$ y $k$. Sin embargo, para grafos de intervalo densos donde $\omega$ es proporcional a $n$, la complejidad se vuelve exponencial, reflejando la naturaleza inherentemente difícil del problema en tales instancias.
 
 \paragraph{Demostración de Correctitud:}
 
-El algoritmo calcula el costo mínimo de la partición cromática para un grafo de intervalo $G$ siguiendo un PEO. Procederemos por inducción sobre el número de vértices procesados $i$.
+Demostraremos que el algoritmo calcula el costo mínimo de coloración para un grafo de intervalo $G$ utilizando inducción sobre el número de vértices procesados.
 	
-	\textbf{Base ($i=1$):} $DP[1][c] = C[v_1, c]$. Al haber un solo vértice, no hay restricciones de vecindad. El costo mínimo es, por definición, el costo del color asignado. $P(1)$ es cierto.
+	\textbf{Preposición:} Para cada $i \in \{1, 2, \dots, n\}$ y cada estado $\sigma$ en $DP[i]$, el valor $DP[i][\sigma]$ representa el costo mínimo de colorear los vértices $\{v_1, v_2, \dots, v_i\}$ de manera propia, sujeto a que los intervalos activos en la posición $i$ tengan exactamente las coloraciones especificadas por $\sigma$.
 	
-	\textbf{Paso Inductivo:} Supongamos que para $i-1$, $DP[i-1][c']$ contiene el costo mínimo de una coloración propia del subgrafo inducido por los primeros $i-1$ vértices donde $v_{i-1}$ tiene el color $c'$. Queremos probar que $DP[i][c]$ es factible y óptimo para $i$ vértices.
+	\textbf{Base ($i=1$):} Para el primer vértice $v_1$, el algoritmo establece $DP[1][\{(v_1, c)\}] = C[v_1, c]$ para cada color $c$. Esta asignación es correcta porque $v_1$ es el único vértice procesado, no tiene restricciones de vecindad previas, y el costo de esta solución parcial es precisamente el costo de asignar el color $c$ al vértice $v_1$. Por tanto, la proposición se cumple para $i = 1$.
 	
-	\begin{enumerate}
-		\item \textbf{Factibilidad:} Sea $v_i$ el vértice actual al que se le asigna el color $c$. La implementación verifica explícitamente que $\forall v_j \in \text{Adj}(v_i)$ con $j < i$, se cumpla $\varphi_{i-1, c'}(v_j) \neq c$. Por la propiedad del PEO, los vecinos precedentes de $v_i$ forman una clique; al verificar el historial completo almacenado en el estado de la DP, el algoritmo garantiza que la extensión de la coloración sigue siendo propia. Solo las transiciones que cumplen esta restricción de vecindad actualizan la tabla.
-		
-		\item \textbf{Optimalidad:} El costo total de colorear hasta $v_i$ es la suma del costo individual $C[v_i, c]$ y el costo de colorear el resto del grafo anterior. Dado que ya sabemos que los valores del paso $i-1$ son los mínimos posibles (por nuestra hipótesis) y que el algoritmo elige el menor de todos los resultados válidos tras probar todas las combinaciones de colores, el nuevo valor resultante en $DP[i][c]$ es necesariamente el costo mínimo para el prefijo de $i$ nodos.
-	\end{enumerate}
+	\textbf{Paso Inductivo:} Supongamos que la proposición es cierta para $i-1$. Queremos demostrar que es cierta para $i$. Sea $\sigma$ un estado en $DP[i]$. Por construcción del algoritmo, $\sigma$ se obtiene al extender algún estado $\sigma'$ de $DP[i-1]$ mediante la asignación de un color $c$ al vértice $v_i$.
 	
-Al llegar al último vértice ($i=n$), el algoritmo simplemente selecciona el valor más bajo de la última fila, lo que garantiza que hemos encontrado la solución óptima para el grafo completo.
+	Demostraremos primero la factibilidad. El estado $\sigma'$ representa una coloración propia de $\{v_1, \dots, v_{i-1}\}$ por la hipótesis de inducción. Al agregar $v_i$ con color $c$, el algoritmo verifica que $c$ sea diferente del color asignado a cada vecino de $v_i$ que está incluido en $\sigma'_{\text{activo}}$. Dado que $\sigma'_{\text{activo}}$ contiene precisamente los vértices cuyo intervalo se solapa con el intervalo de $v_i$, y dado que en un grafo de intervalo dos vértices son adyacentes si y solo si sus intervalos se solapan, la verificación de compatibilidad garantiza que la coloración extendida sigue siendo propia. Por tanto, $\sigma$ representa una coloración factible.
+	
+	Demostraremos ahora la optimalidad. El costo asociado a $\sigma$ es $DP[i][\sigma] = DP[i-1][\sigma'] + C[v_i, c]$, donde $\sigma'$ es el estado previo desde el cual se extendió. Por la hipótesis de inducción, $DP[i-1][\sigma']$ es el costo mínimo de colorear $\{v_1, \dots, v_{i-1}\}$ con las coloraciones especificadas en $\sigma'$. El costo total de extender esta solución agregando $v_i$ con color $c$ es precisamente la suma de estos dos términos. El algoritmo considera todas las combinaciones válidas de estados previos y colores para $v_i$, y retiene el costo mínimo para cada estado resultante $\sigma$. Por tanto, $DP[i][\sigma]$ es efectivamente el costo mínimo de alcanzar el estado $\sigma$ en la posición $i$.
+	
+Al llegar a la posición $n$, todos los vértices han sido procesados. El algoritmo identifica el estado $\sigma^*$ en $DP[n]$ con costo mínimo. Por el argumento inductivo, este estado representa una coloración propia completa del grafo con costo mínimo. Ninguna otra coloración propia puede tener menor costo, porque cualquier coloración propia debe pasar por algún estado en $DP[n]$, y el algoritmo ha considerado todos ellos. Por tanto, el algoritmo es correcto y encuentra la solución óptima.\\
 
-\textbf{Limitación Práctica:} Este algoritmo requiere conocer o poder computar un ordenamiento de eliminación perfecta válido. Para grafos que no son cordales, el algoritmo no es aplicable directamente.
+\textbf{Limitación Práctica:} La limitación más fundamental es que el algoritmo solo es aplicable a grafos de intervalo genuinos, no a grafos cordales arbitrarios. Para grafos cordales que no admiten representación de intervalos, el algoritmo rechazará la instancia en la fase de preprocesamiento.
+
+\textbf{Dependencia del Tamaño de la Clique Máxima:} El desempeño del algoritmo depende críticamente del tamaño de la clique máxima $\omega$ del grafo. Para grafos de intervalo con cliques pequeñas, el algoritmo es eficiente y práctico. Sin embargo, para grafos de intervalo densos donde $\omega$ se aproxima a $n$, la complejidad $k^{\omega+1}$ hace que el algoritmo sea impracticable incluso para valores moderados de $n$ y $k$. Esta sensibilidad a la densidad del grafo debe considerarse al seleccionar instancias apropiadas para este método.
+
+\textbf{Construcción de la Representación de Intervalos:} La verificación de si un grafo cordal es efectivamente de intervalo y la construcción de una representación válida de intervalos son problemas no triviales. El algoritmo presentado utiliza una heurística basada en el ordenamiento de eliminación perfecta para construir esta representación.
 
 
 \subsection{Algoritmos de Aproximación}

@@ -1,0 +1,48 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2
+  ],
+  "cost_matrix": [
+    [
+      1,
+      10
+    ],
+    [
+      10,
+      1
+    ],
+    [
+      1,
+      10
+    ]
+  ],
+  "n_vertices": 3,
+  "n_edges": 2,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "path_known_optimal",
+    "n_vertices": 3,
+    "n_colors": 2,
+    "known_optimal_cost": 3.0,
+    "description": "Grafo camino con 3 v\u00e9rtices, costo \u00f3ptimo 3",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0
+    },
+    "chromatic_number": 2,
+    "is_feasible": true
+  }
+}

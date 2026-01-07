@@ -1,0 +1,84 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      0,
+      2
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100,
+      100,
+      100
+    ],
+    [
+      100,
+      1,
+      100,
+      100
+    ],
+    [
+      100,
+      100,
+      1,
+      100
+    ],
+    [
+      100,
+      100,
+      100,
+      1
+    ],
+    [
+      1,
+      100,
+      100,
+      100
+    ]
+  ],
+  "n_vertices": 5,
+  "n_edges": 5,
+  "n_colors": 4,
+  "metadata": {
+    "instance_type": "interval_with_max_clique",
+    "n_vertices": 5,
+    "n_colors": 4,
+    "known_optimal_cost": 5.0,
+    "chromatic_number": 3,
+    "clique_number": 3,
+    "max_clique_size": 3,
+    "description": "Intervalo con clique m\u00e1xima tama\u00f1o 3",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 2,
+      "3": 0,
+      "4": 1
+    },
+    "is_feasible": true
+  }
+}

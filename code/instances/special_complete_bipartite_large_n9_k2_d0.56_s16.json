@@ -1,0 +1,159 @@
+{
+  "graph_edges": [
+    [
+      0,
+      4
+    ],
+    [
+      0,
+      5
+    ],
+    [
+      0,
+      6
+    ],
+    [
+      0,
+      7
+    ],
+    [
+      0,
+      8
+    ],
+    [
+      1,
+      4
+    ],
+    [
+      1,
+      5
+    ],
+    [
+      1,
+      6
+    ],
+    [
+      1,
+      7
+    ],
+    [
+      1,
+      8
+    ],
+    [
+      2,
+      4
+    ],
+    [
+      2,
+      5
+    ],
+    [
+      2,
+      6
+    ],
+    [
+      2,
+      7
+    ],
+    [
+      2,
+      8
+    ],
+    [
+      3,
+      4
+    ],
+    [
+      3,
+      5
+    ],
+    [
+      3,
+      6
+    ],
+    [
+      3,
+      7
+    ],
+    [
+      3,
+      8
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "cost_matrix": [
+    [
+      2,
+      100
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      2,
+      100
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      100,
+      2
+    ],
+    [
+      100,
+      2
+    ]
+  ],
+  "n_vertices": 9,
+  "n_edges": 20,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "complete_bipartite_large",
+    "n_vertices": 9,
+    "n_colors": 2,
+    "known_optimal_cost": 18.0,
+    "partition_1_size": 4,
+    "partition_2_size": 5,
+    "chromatic_number": 2,
+    "is_bipartite": true,
+    "description": "Grafo bipartito completo K_{4,5}: mayor que K_{3,4}, costo \u00f3ptimo 18",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 0,
+      "2": 0,
+      "3": 0,
+      "4": 1,
+      "5": 1,
+      "6": 1,
+      "7": 1,
+      "8": 1
+    },
+    "is_feasible": true
+  }
+}

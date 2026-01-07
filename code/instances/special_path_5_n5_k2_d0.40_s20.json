@@ -1,0 +1,68 @@
+{
+  "graph_edges": [
+    [
+      0,
+      1
+    ],
+    [
+      1,
+      2
+    ],
+    [
+      2,
+      3
+    ],
+    [
+      3,
+      4
+    ]
+  ],
+  "graph_nodes": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "cost_matrix": [
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      1,
+      100
+    ],
+    [
+      100,
+      1
+    ],
+    [
+      1,
+      100
+    ]
+  ],
+  "n_vertices": 5,
+  "n_edges": 4,
+  "n_colors": 2,
+  "metadata": {
+    "instance_type": "path_5_vertices",
+    "n_vertices": 5,
+    "n_colors": 2,
+    "known_optimal_cost": 5.0,
+    "chromatic_number": 2,
+    "description": "Camino P5: alternancia de 2 colores, costo \u00f3ptimo 5",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 0
+    },
+    "is_feasible": true
+  }
+}
