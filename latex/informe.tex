@@ -803,14 +803,14 @@ Analizamos cada componente del algoritmo:
 	\item \textbf{Línea 3:} Genera $k^n$ configuraciones $\Rightarrow O(k^n)$ iteraciones.
 	\item \textbf{Líneas 5--8:} Verifica $m$ aristas $\Rightarrow O(m)$ por iteración.
 	\item \textbf{Línea 10:} Suma $n$ costos $\Rightarrow O(n)$ por iteración.
-	\item \textbf{Complejidad total:} $k^n \cdot (m + n) = k^n \cdot O(m) = \Theta(k^n \cdot m)$ para $m \geq n$.
+	\item \textbf{Complejidad total:} $k^n \cdot (m + n) = k^n \cdot O(m + n) = \Theta(k^n \cdot (m + n))$
 \end{itemize}
 
 \textbf{Cota inferior ($\Omega$):}
 \begin{itemize}
 	\item Cualquier algoritmo que garantice optimalidad debe examinar al menos una solución óptima.
 	\item En el peor caso (costos aleatorios), no hay forma de podar sin examinar todas las $k^n$ configuraciones.
-	\item Por tanto: $\Omega(k^n \cdot m)$. \qedhere
+	\item Por tanto: $\Omega(k^n \cdot (m + n))$.
 \end{itemize}
 
 Esta dependencia exponencial confirma que el algoritmo solo es viable para valores de \(n\) y \(k\) extremadamente pequeños.
@@ -887,13 +887,6 @@ No obstante, en la práctica el número de nodos explorados se reduce considerab
 \textbf{Conclusión:} el algoritmo mantiene correctitud exacta con mejoras prácticas significativas.
 
 
-
-
-
-
-
-
-
 \subsubsection{Resolución mediante Programación Entera Lineal (ILP)}
 
 El modelo de Programación Entera Lineal presentado en la Sección 1 se implementa utilizando un solver de ILP para obtener soluciones óptimas en instancias de tamaño moderado. Este enfoque representa una mejora significativa respecto a la fuerza bruta al aprovechar técnicas de poda, relajación y planos de corte.
@@ -921,7 +914,7 @@ El MCCPP (Problema de Partición Cromática de Costo Mínimo) se vuelve tratable
 
 \subsubsection*{Modelado del Problema en Árboles}
 
-Sea \(G=(V,E)\) un árbol con \(n=|V|\) vértices. Disponemos de un conjunto de colores (frecuencias) \(F\) de tamaño \(k\). Para cada vértice \(v\in V\) y color \(f\in F\) existe un coste no negativo \(c_{v,f}\). El objetivo es asignar a cada vértice un color tal que cualquiera par de vértices adyacentes tengan colores distintos (coloración propia) minimizando la suma de los costos. Para este propósito vamos a modelar este problema a través del esquema SRT-BOT:
+Sea \(G=(V,E)\) un árbol con \(n=|V|\) vértices. Disponemos de un conjunto de colores (frecuencias) \(F\) de tamaño \(k\). Para cada vértice \(v\in V\) y color \(f\in F\) existe un coste no negativo \(c_{v,f}\). El objetivo es asignar a cada vértice un color tal que cualquiera par de vértices adyacentes tengan colores distintos (coloración propia) minimizando la suma de los costos. Para este propósito vamos a modelar este problema a través del esquema SRTBOT:
 
 \textbf{S (Subproblemas):} Fijamos una raíz arbitraria $r$ del árbol y consideramos la orientación padre–hijo. Para cada vértice $v \in V$ y cada color $c \in \{1, \dots, k\}$, definimos el estado:
 $DP[v][c] =$ coste mínimo para colorear todo el subárbol con raíz $v$, dado que el nodo $v$ utiliza el color $c$.
@@ -936,7 +929,7 @@ $DP[v][c] =$ coste mínimo para colorear todo el subárbol con raíz $v$, dado q
 
 Construcción de la solución: Tras calcular todos los \(DP[v][c]\) en post-orden, reconstruimos la coloración seleccionando para la raíz el color $c$ que minimiza el valor total acumulado $DP[r][c]$. Es importante notar que este color no es necesariamente el de menor peso intrínseco ($w_c$), sino aquel que optimiza la suma total del subárbol. Luego, recursivamente, para cada hijo seleccionamos el color mínimo compatible (diferente del color del padre) según la tabla \(DP\).
 
-\textbf{T (Tiempo de Ejecución):} Cálculo directo: Para cada uno de los $n$ vértices y $k$ colores, sumamos sobre los hijos. La complejidad es $O(n \cdot k^2)$. Si además mantenemos el mínimo y el segundo mínimo de los costos de los hijos, se puede reducir a $O(n \cdot k)$.
+\textbf{T (Tiempo de Ejecución):} Para cada uno de los $n$ vértices y $k$ colores, sumamos sobre los hijos. La complejidad es $O(n \cdot k^2)$. Si además mantenemos el mínimo y el segundo mínimo de los costos de los hijos, se puede reducir a $O(n \cdot k)$.
 
 
 \subsubsection*{Correctitud del DP en árboles}
@@ -947,24 +940,29 @@ Prueba por inducción sobre la altura del subárbol raíz en \(v\).
 
 Base: si \(v\) es hoja, la única elección es colorear \(v\) con \(c\) y el coste es \(c_{v,c}\), que coincide con \(DP[v][c]\).
 
-Paso inductivo: supongamos cierto para todos los nodos con altura menor que la de \(v\). Cualquier coloración óptima del subárbol de \(v\) donde \(v\) usa color \(c\) induce para cada hijo \(u\) una coloración óptima del subárbol de \(u\) con la restricción de no usar \(c\) en \(u\). Por la hipótesis inductiva, el coste óptimo de cada subárbol \(u\) con esa restricción es \(\min_{c' \neq c} DP[u][c']\). Sumando y añadiendo \(c_{v,c}\) obtenemos precisamente la expresión de la recurrencia.
+Paso inductivo: Supongamos cierta la premisa para todos los nodos con altura menor que la de \(v\). Cualquier coloración óptima del subárbol de \(v\) donde \(v\) usa color \(c\) induce para cada hijo \(u\) una coloración óptima del subárbol de \(u\) con la restricción de no usar \(c\) en \(u\). Por la hipótesis inductiva, el coste óptimo de cada subárbol \(u\) con esa restricción es \(\min_{c' \neq c} DP[u][c']\). Sumando y añadiendo \(c_{v,c}\) obtenemos precisamente la expresión de la recurrencia.
 
 \subsubsection*{Análisis de la Complejidad Temporal}
 
 Sea \(n\) el número de vértices y \(k\) el número de colores.
 
-- Preprocesamiento: construir la orientación padre–hijo y el post-orden toma \(O(n)\).
-- Cálculo de \(DP\): para cada vértice \(v\) y cada color \(c\) se debe sumar sobre los hijos \(u\) el término \(\min_{c'\neq c} DP[u][c']\). Para un hijo \(u\) obtener \(\min_{c'\neq c} DP[u][c']\) cuesta \(O(k)\) con una implementación directa. Por cada par \((v,c)\) se evalúan esto para todos los hijos de \(v\). Como \(\sum_v \deg(v) = O(n)\), la complejidad total es:
+\begin{itemize}
+	\item Preprocesamiento: construir la orientación padre–hijo y el post-orden toma \(O(n)\).
+	\item Cálculo de \(DP\): para cada vértice \(v\) y cada color \(c\) se debe sumar sobre los hijos \(u\) el término \(\min_{c'\neq c} DP[u][c']\). Para un hijo \(u\) obtener \(\min_{c'\neq c} DP[u][c']\) cuesta \(O(k)\) con una implementación directa. Por cada par \((v,c)\) se evalúan esto para todos los hijos de \(v\). Como \(\sum_v \deg(v) = O(n)\), la complejidad total es:
 
-\[
-T(n,k) = O(n k^2).
-\]
+	\[
+	T(n,k) = O(n k^2).
+	\]
 
-Existe una optimización estándar (mantener para cada hijo el mínimo y segundo mínimo y el correspondiente color), que reduce cada consulta a \(O(1)\) y lleva la complejidad a:
 
-\[
-T(n,k) = O(n k).
-\]
+
+	\item Existe una optimización estándar (mantener para cada hijo el mínimo y segundo mínimo y el correspondiente color), que reduce cada consulta a \(O(1)\) y lleva la complejidad a:
+	
+	\[
+	T(n,k) = O(n k).
+	\]
+
+\end{itemize}
 
 \subsubsection*{Conclusión teórica}
 
@@ -974,66 +972,42 @@ La DP en árboles ofrece una solución exacta y polinomial para MCCPP cuando el 
 
 Los grafos de intervalo son aquellos donde cada vértice corresponde a un intervalo en la recta real, y dos vértices son adyacentes si y solo si sus intervalos se solapan. Esta estructura especial permite algoritmos de programación dinámica eficientes para el MCCPP.
 
-\textbf{Prerrequisito:} El grafo debe ser verificable como grafo de intervalo mediante la propiedad cordal (todo grafo de intervalo es cordal, aunque no todo grafo cordal es de intervalo).
+\textbf{Prerrequisito:} El grafo debe ser verificable como grafo de intervalo mediante la propiedad cordal (todo grafo de intervalo es cordal, aunque no todo grafo cordal es de intervalo).\\
 
-\textbf{Algoritmo DP para Grafos de Intervalo:}
+\textbf{Algoritmo DP para Grafos de Intervalo mediante esquema SRTBOT:\\}
 
-\begin{enumerate}
-	\item \textbf{Verificación y Ordenamiento:} Verificar que \(G\) es cordal usando el test de eliminación perfecta. Obtener un ordenamiento de eliminación perfecta de los vértices: \(v_1, v_2, \ldots, v_n\).
-	
-	\item \textbf{Definición de Estados DP:} Para cada posición \(i \in \{1, \ldots, n\}\) y cada color \(c \in F\):
-	\[
-	DP[i][c] = \text{costo mínimo de colorear vértices } \{v_1, \ldots, v_i\} \text{ con } v_i \text{ usando color } c
-	\]
-	
-	\item \textbf{Caso Base:} Para el primer vértice:
-	\[
-	DP[1][c] = c_{v_1, c} \quad \forall c \in F
-	\]
-	
-	\item \textbf{Recurrencia:} Para \(i > 1\):
-	\[
-	DP[i][c] = c_{v_i, c} + \min_{c' \in \text{Compatible}(i, c)} DP[i-1][c']
-	\]
-	donde \(\text{Compatible}(i, c)\) es el conjunto de colores \(c'\) tales que si \(v_{i-1}\) y \(v_i\) son adyacentes, entonces \(c' \neq c\); si no son adyacentes, \(c'\) puede ser cualquier color.
-	
-	\item \textbf{Solución Óptima:} 
-	\[
-	Z^* = \min_{c \in F} DP[n][c]
-	\]
-	
-	\item \textbf{Reconstrucción:} Mediante backtracking desde \(DP[n][c^*]\) donde \(c^* = \arg\min_c DP[n][c]\).
-\end{enumerate}
+Este algoritmo utiliza un esquema de programación dinámica sobre un Ordenamiento de Eliminación Perfecta (PEO). A diferencia de la DP clásica en árboles, aquí el estado se extiende para garantizar la factibilidad contra todos los vecinos precedentes, aprovechando que la estructura de intervalos mantiene el conflicto acotado.
 
-\textbf{Esquema SRT-BOT:}
+\textbf{S (Subproblemas):} Dado un Ordenamiento de Eliminación Perfecta (PEO) $v_1, v_2, \ldots, v_n$ (obtenido mediante un test de cordalidad): $DP[i][c] =$ costo mínimo de colorear el subgrafo inducido por los vértices $\{v_1, \ldots, v_i\}$, dado que el vértice $v_i$ tiene asignado el color $c$.\\
+Nota de implementación: Cada estado $DP[i][c]$ mantiene un registro (diccionario) de la coloración parcial $\varphi_{i,c}$ que generó dicho costo mínimo para permitir verificaciones de consistencia en pasos futuros.
 
-\textbf{S (Subproblemas):} Dado un Ordenamiento de Eliminación Perfecta (PEO) $v_1, v_2, \ldots, v_n$ (obtenido mediante un test de cordalidad):$DP[i][c] =$ costo mínimo de colorear el subgrafo inducido por los vértices $\{v_1, \ldots, v_i\}$, dado que el vértice $v_i$ tiene asignado el color $c$.
+\textbf{R (Recurrencia):} Para $i > 0$:$$DP[i][c] = c_{v_i, c} + \min DP[i-1][c']$$
 
-\textbf{R (Recurrencia):} Para $i > 1$:$$DP[i][c] = c_{v_i, c} + \min_{c' \in \text{Compatible}(i, c)} DP[i-1][c']$$Donde $\text{Compatible}(i, c)$ es el conjunto de colores $c'$ tales que si $v_{i-1}$ y $v_i$ son adyacentes, $c' \neq c$; de lo contrario, $c'$ es libre.
+Sujeto a que la coloración asociada a $DP[i-1][c']$ sea compatible con la asignación del color $c$ al vértice $v_i$.
+La condición de compatibilidad se define como:
+
+$$\forall u \in \text{Adj}(v_i) \cap \{v_0, \dots, v_{i-1}\}, \quad \varphi_{i-1,c'}(u) \neq c$$
 
 \textbf{T (Topología):} Orden lineal ascendente según el PEO ($i = 1$ hasta $n$).
 
-\textbf{B (Base):} Para el primer vértice del ordenamiento: $DP[1][c] = c_{v_1, c} \quad \forall c \in F$.
+\textbf{B (Base):} Para el primer vértice del ordenamiento: $DP[0][c] = c_{v_0, c}$ y $\varphi_{0,c} = \{v_0: c\} \quad \forall c \in F$.
 
-\textbf{O (Objetivo):} $$Z^* = \min_{c \in F} DP[n][c]$$
+\textbf{O (Objetivo):} $$Z^* = \min_{c \in F} DP[n-1][c]$$
 
 \textbf{T (Tiempo):} $O(n \cdot k^2 \cdot d)$, donde $d$ es el grado máximo (típicamente acotado por la clique máxima $\omega$ en grafos de intervalo).\\
 
 \textbf{Análisis de Complejidad:}
 
-La complejidad del algoritmo depende de la estructura del grafo:
+La complejidad del algoritmo de Programación Dinámica para el MCCPP en grafos de intervalo, considerando la verificación exhaustiva de consistencia, es $O(n^2 \cdot k^2)$.
 
 \begin{itemize}
 	\item \textbf{Preprocesamiento:} Verificación de cordalidad y ordenamiento de eliminación perfecta: \(O(n + m)\)
-	\item \textbf{Cálculo DP:} Para cada par \((i, c)\) se evalúan a lo sumo \(k\) transiciones, y se deben verificar vecinos anteriores en el ordenamiento
-	\item \textbf{Complejidad total:} \(O(n \cdot k^2 \cdot d)\) donde \(d\) es el grado máximo del grafo
+	\item \textbf{Cálculo DP:} Existen $n$ etapas (una por cada vértice en el PEO). En cada etapa, se evalúan $k$ colores para el vértice actual $v_i$. Para cada color, se intenta extender la solución desde los $k$ estados posibles del nodo anterior $v_{i-1}$.
+	\item \textbf{Verificación de Consistencia:} Para validar la transición, se comprueban las aristas entre $v_i$ y todos los vértices previos $v_j$ ($j < i$). Este proceso es $O(n)$ en el peor caso.
+	\item \textbf{Complejidad total:} $n \cdot k \cdot k \cdot n = O(n^2 \cdot k^2)$.
 \end{itemize}
 
-Para grafos de intervalo, el grado máximo \(d\) está típicamente acotado por el tamaño de la clique máxima \(\omega\) del grafo. En muchas aplicaciones prácticas (como scheduling temporal de tareas), \(\omega\) y \(d\) son pequeños, haciendo este enfoque muy eficiente.
-
-\textbf{Ventaja sobre Árboles:}
-
-Mientras que los árboles tienen treewidth 1, los grafos de intervalo pueden tener treewidth arbitrariamente grande (proporcional a \(\omega\)). A pesar de esto, el algoritmo DP mantiene complejidad polinomial aprovechando la estructura de eliminación perfecta, sin sufrir la exponencialidad en treewidth que afecta al problema general.
+NOTA: Aunque en la teoría de grafos de intervalo la verificación podría optimizarse a $O(\omega)$ (donde $\omega$ es el tamaño de la clique máxima) limitando la búsqueda a intervalos activos, la implementación actual asegura correctitud general sobre el PEO mediante una revisión histórica completa, resultando en la cota $O(n^2 \cdot k^2)$.
 
 \paragraph{Demostración de Correctitud:}
 
@@ -1041,18 +1015,17 @@ El algoritmo calcula el costo mínimo de la partición cromática para un grafo 
 	
 	\textbf{Base ($i=1$):} $DP[1][c] = C[v_1, c]$. Al haber un solo vértice, no hay restricciones de vecindad. El costo mínimo es, por definición, el costo del color asignado. $P(1)$ es cierto.
 	
-	\textbf{Paso Inductivo:} Supongamos que para $i-1$, $DP[i-1][c']$ contiene el costo mínimo del subgrafo inducido por los primeros $i-1$ vértices. Queremos probar que $DP[i][c]$ es óptimo para $i$ vértices.
+	\textbf{Paso Inductivo:} Supongamos que para $i-1$, $DP[i-1][c']$ contiene el costo mínimo de una coloración propia del subgrafo inducido por los primeros $i-1$ vértices donde $v_{i-1}$ tiene el color $c'$. Queremos probar que $DP[i][c]$ es factible y óptimo para $i$ vértices.
 	
 	\begin{enumerate}
-		\item \textbf{Factibilidad:} Sea $v_i$ el vértice actual. Por la propiedad del PEO, todos sus vecinos ya coloreados $P(v_i)$ forman una clique. Esto implica que todos los vértices en $P(v_i)$ tienen colores distintos entre sí. Al elegir un color $c$ para $v_i$ tal que $c \notin \{\text{colores de } P(v_i)\}$, garantizamos que la coloración sigue siendo propia.
+		\item \textbf{Factibilidad:} Sea $v_i$ el vértice actual al que se le asigna el color $c$. La implementación verifica explícitamente que $\forall v_j \in \text{Adj}(v_i)$ con $j < i$, se cumpla $\varphi_{i-1, c'}(v_j) \neq c$. Por la propiedad del PEO, los vecinos precedentes de $v_i$ forman una clique; al verificar el historial completo almacenado en el estado de la DP, el algoritmo garantiza que la extensión de la coloración sigue siendo propia. Solo las transiciones que cumplen esta restricción de vecindad actualizan la tabla.
 		
-		\item \textbf{Optimalidad:} El costo total de colorear hasta $v_i$ es la suma del costo individual $C[v_i, c]$ y el costo de colorear el resto del grafo anterior. Como la estructura de intervalos asegura que las decisiones de color para $v_i$ solo dependen de los intervalos que aún están "abiertos" (sus vecinos en el PEO), y la hipótesis inductiva garantiza que los valores de $DP[i-1]$ ya son mínimos, la elección del mínimo sobre los estados compatibles en la recurrencia produce el valor mínimo global para el prefijo $i$.
+		\item \textbf{Optimalidad:} El costo total de colorear hasta $v_i$ es la suma del costo individual $C[v_i, c]$ y el costo de colorear el resto del grafo anterior. Dado que ya sabemos que los valores del paso $i-1$ son los mínimos posibles (por nuestra hipótesis) y que el algoritmo elige el menor de todos los resultados válidos tras probar todas las combinaciones de colores, el nuevo valor resultante en $DP[i][c]$ es necesariamente el costo mínimo para el prefijo de $i$ nodos.
 	\end{enumerate}
-	Al completar el proceso para $i=n$, el valor $Z^* = \min_{c \in F} DP[n][c]$ representa el costo mínimo total.
+	
+Al llegar al último vértice ($i=n$), el algoritmo simplemente selecciona el valor más bajo de la última fila, lo que garantiza que hemos encontrado la solución óptima para el grafo completo.
 
-\textbf{Limitación Práctica:}
-
-Este algoritmo requiere conocer o poder computar un ordenamiento de eliminación perfecta válido. Para grafos que no son cordales, el algoritmo no es aplicable directamente y se requieren las aproximaciones generales discutidas en la Sección 3.2.
+\textbf{Limitación Práctica:} Este algoritmo requiere conocer o poder computar un ordenamiento de eliminación perfecta válido. Para grafos que no son cordales, el algoritmo no es aplicable directamente.
 
 
 \subsection{Algoritmos de Aproximación}
@@ -1138,119 +1111,35 @@ requiere resolver una variante del \textit{Maximum Weight Independent Set} (MWIS
 
 La complejidad $O(k \cdot n^2 \cdot d)$ mencionada anteriormente corresponde a la versión donde se utiliza una \textbf{heurística greedy de construcción de conjuntos independientes}. En este caso, la garantía teórica $O(\ln |V|)$ se mantiene de forma aproximada si la heurística de construcción garantiza una fracción constante del tamaño del conjunto independiente máximo.
 
-\subsubsection{Heurística Estructural para Grafos Cordales (Intervalo)}
 
-Los grafos de intervalo son una clase especial de grafos cordales donde cada vértice representa un intervalo en la recta real, y dos vértices son adyacentes si y solo si sus intervalos se solapan. Esta estructura topológica permite explotar propiedades de eliminación perfecta para diseñar algoritmos más eficientes que los enfoques generales.
+\textbf{\\WSC-Greedy mejorado:\\}
 
-\paragraph{Heurística PEO (Perfect Elimination Ordering):}
+Si bien el algoritmo WSC-Greedy ofrece una garantía teórica robusta en términos de aproximación asintótica, su naturaleza voraz implica que las decisiones tomadas en etapas tempranas son irrevocables, lo que puede conducir a ineficiencias locales en la asignación final de colores. Para mitigar este efecto y mejorar la calidad práctica de la solución, se implementa una segunda etapa de optimización basada en Búsqueda Local.
 
-Proponemos una \textbf{heurística constructiva} que aprovecha la estructura cordal mediante:
+\textbf{Descripción del Algoritmo:}Este procedimiento toma como entrada la solución factible $S_{greedy}$ generada por el algoritmo de aproximación anterior y busca iterativamente mejoras incrementales explorando el vecindario de la solución actual. El algoritmo sigue una estrategia de \textit{Hill Climbing} (escalada de colinas) con descenso estricto en el costo. 
 
+Sea $\mathcal{C}: V \to \{1, \dots, k\}$ la coloración actual. En cada iteración, el algoritmo explora, para cada vértice $v \in V$, si existe un color alternativo $f' \neq \mathcal{C}(v)$ tal que:
 \begin{enumerate}
-	\item \textbf{Verificación de Cordalidad}: Confirmar que $G$ es cordal usando el algoritmo de eliminación perfecta.
-	\item \textbf{Obtención del PEO}: Extraer un ordenamiento de eliminación perfecta $v_1, v_2, \ldots, v_n$.
-	\item \textbf{Coloración Greedy Cost-Aware}: Colorear vértices secuencialmente según el PEO, eligiendo en cada paso el color de costo mínimo compatible con vecinos ya coloreados.
-	\item \textbf{Refinamiento Local}: Aplicar búsqueda local (Hill Climbing) para mejorar la solución inicial.
+	\item \textbf{Factibilidad:} El cambio de color es válido, es decir, ningún vecino de $v$ tiene el color $f'$:$$ \forall u \in N(v), \mathcal{C}(u) \neq f' $$
+	\item \textbf{Mejora de Costo:} El costo de asignar el color $f'$ a $v$ es estrictamente menor al costo actual:$$ c_{v, f'} < c_{v, \mathcal{C}(v)} $$
 \end{enumerate}
 
-\paragraph{Análisis de Complejidad Temporal}
+Si se encuentran múltiples colores que satisfacen estas condiciones para un vértice $v$, se selecciona aquel que minimiza el costo local (estrategia \textit{Best-Improvement} a nivel de vértice). Si el cambio se efectúa, la solución actual y el costo total se actualizan inmediatamente.\\
 
+\textbf{Convergencia y Complejidad:} El algoritmo itera sobre todos los vértices del grafo repetidamente hasta que se cumple uno de los siguientes criterios de parada:
 \begin{itemize}
-	\item Verificación de cordalidad: $O(|V| + |E|)$ [algoritmo de Rose-Tarjan-Lueker]
-	\item Obtención del PEO: $O(|V|\cdot|E|)$
-	\item Coloración greedy: $O(|V|\cdot k \cdot \bar{d})$ donde $\bar{d}$ es el grado promedio
-	\item Hill Climbing: $O(r\cdot|V|\cdot k \cdot \bar{d})$ con $r$ rondas (típicamente $r = 2$)
+	\item \textbf{Óptimo Local:} Se completa una pasada completa sobre todos los vértices sin realizar ningún cambio (la solución ha alcanzado un mínimo local).
+	\item \textbf{Límite de Iteraciones:} Se alcanza un número máximo de pasadas predefinido (en la implementación, $MaxIter = 50$) para evitar ciclos o tiempos de ejecución excesivos en instancias muy grandes.
 \end{itemize}
 
-\textbf{Complejidad Total}: $T = O(|V|\cdot k \cdot \bar{d})$ en grafos cordales sparse.
+La complejidad de cada iteración de búsqueda local es $O(n \cdot d \cdot k)$, donde $n$ es el número de vértices, $d$ el grado promedio (para verificar vecinos) y $k$ el número de colores disponibles. Dado que el número de iteraciones está acotado por una constante baja, el impacto en el tiempo total de ejecución es marginal en comparación con la construcción inicial, mientras que la reducción del costo objetivo suele ser significativa.
 
-Para grafos de intervalo específicamente, $\bar{d}$ está acotado por el tamaño de la clique máxima $\omega(G)$, resultando en:
+\textbf{Justificación Teórica:} Aunque la Búsqueda Local no mejora la cota teórica del peor caso ($O(\ln |V|)$) establecida por el algoritmo WSC-Greedy, es fundamental en la práctica porque corrige decisiones miopes del algoritmo voraz. Por ejemplo, un vértice pudo haber sido coloreado con un color costoso en una etapa temprana porque los colores baratos estaban bloqueados por vecinos que, posteriormente, podrían haber cambiado de color, liberando la opción económica. La búsqueda local explota estas oportunidades de re-optimización.
 
-$$T_{\text{intervalo}} = O(|V|\cdot k \cdot \omega(G))$$
+\begin{equation}Z_{Final} = Z_{Greedy} - \sum_{t=1}^{T} \Delta_{cost}^{(t)} \le Z_{Greedy}
+\end{equation}
 
-\paragraph{Garantías de Rendimiento\\}
-
-\textbf{Esta es una heurística sin factor de aproximación teóricamente probado.}
-
-No afirmamos garantía $R \leq O(\sqrt{|V|})$ ni ninguna otra cota peor-caso demostrable. Los intentos de derivar tal garantía desde la estructura PEO no han sido exitosos en la literatura para el MCCPP.
-
-\subparagraph{Rendimiento Empírico Esperado}
-
-Basándonos en análisis experimental sobre las instancias de grafos de intervalo en nuestro benchmark:
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|l|r|}
-		\hline
-		\textbf{Métrica} & \textbf{Valor} \\
-		\hline
-		Desviación promedio sobre óptimo & \textbf{8.2\%} \\
-		Desviación máxima observada & 15.7\% \\
-		Tasa de óptimo alcanzado & 23\% (3/13 instancias) \\
-		Aceleración vs Fuerza Bruta & 100--1000$\times$ \\
-		\hline
-	\end{tabular}
-	\caption{Rendimiento empírico de Heurística PEO en grafos de intervalo}
-\end{table}
-
-\textbf{Conclusión Empírica}: La heurística PEO produce soluciones de alta calidad práctica (90--95\% del óptimo) en tiempo polinomial bajo, siendo especialmente efectiva cuando:
-\begin{itemize}
-	\item $\omega(G) \leq 4$ (cliques pequeñas)
-	\item La matriz de costos $C$ presenta heterogeneidad moderada
-	\item $|F| \geq \chi(G) + 2$ (suficiente holgura de colores)
-\end{itemize}
-
-\paragraph{Comparación con Programación Dinámica Exacta}
-
-Para grafos de intervalo, existe un algoritmo de \textbf{Programación Dinámica exacto} con complejidad $O(|V|\cdot k^2 \cdot \omega)$ que garantiza la solución óptima (ver Sección 3.1.3). La heurística PEO se justifica cuando:
-
-\begin{enumerate}
-	\item \textbf{Escalabilidad}: Para $\omega > 6$, el DP exacto se vuelve prohibitivo.
-	\item \textbf{Soluciones Rápidas}: Cuando se requiere respuesta en $< 1$ segundo.
-	\item \textbf{Inicialización}: Como semilla para metaheurísticas.
-\end{enumerate}
-
-\begin{table}[H]
-	\centering
-	\begin{tabular}{|l|c|c|}
-		\hline
-		\textbf{Aspecto} & \textbf{DP Exacto} & \textbf{Heurística PEO} \\
-		\hline
-		Optimalidad & \checkmark Garantizada & $\times$ No garantizada \\
-		Complejidad & $O(|V|\cdot k^2 \cdot \omega)$ & $O(|V|\cdot k \cdot \omega)$ \\
-		Límite práctico & $\omega \leq 6$, $|V| \leq 50$ & $\omega \leq 15$, $|V| \leq 500$ \\
-		Calidad típica & 100\% & 90--95\% \\
-		Tiempo ($|V|=20$, $\omega=4$) & $\sim$5s & $\sim$0.05s \\
-		\hline
-	\end{tabular}
-	\caption{Comparación DP Exacto vs Heurística PEO}
-\end{table}
-
-\paragraph{Justificación Teórica de la Efectividad}
-
-Aunque no tenemos garantía de aproximación formal, podemos analizar por qué la heurística funciona bien en la práctica:
-
-\textbf{Lema Informal (Propiedad del PEO)}: 
-En un grafo cordal con PEO $v_1,\ldots,v_n$, cada vértice $v_i$ tiene todos sus vecinos ``hacia atrás'' (en $\{v_1,\ldots,v_{i-1}\}$) formando una clique. Esto implica que al colorear $v_i$, el número de colores prohibidos es exactamente el número cromático de esa clique de vecinos.
-
-\textbf{Consecuencia}: Si $\chi(G) = \omega(G)$ (caso común en grafos de intervalo), entonces:
-\begin{itemize}
-	\item La heurística usa a lo sumo $\omega(G)$ colores
-	\item La elección greedy de costo mínimo en cada paso localiza bien el costo
-\end{itemize}
-
-\textbf{Peor Caso Conocido}: 
-Grafos de intervalo con distribuciones de costo adversariales pueden forzar la heurística a tomar decisiones subóptimas que se propagan. Ejemplo: costos muy bajos en colores que crean conflictos futuros.
-
-\paragraph{Referencias y Notas}
-
-\begin{itemize}
-	\item La estructura PEO ha sido estudiada extensamente para coloración clásica, pero la variante con costos (MCCPP) tiene literatura limitada.
-	\item Para grafos cordales generales, \textbf{no se conoce} algoritmo de aproximación con factor constante o polilogarítmico para MCCPP.
-	\item La W[1]-hardness parametrizada por treewidth [Araújo et al., 2020] sugiere límites fundamentales en la aproximabilidad estructural.
-\end{itemize}
-
-\textbf{Referencia Principal}: J. Araújo, J. Baste, I. Sau, ``Ruling Out FPT Algorithms for Weighted Coloring on Forests'', \textit{Discrete Applied Mathematics}, vol. 283, 2020.
+Donde $\Delta_{cost}^{(t)}$ representa la reducción de costo en el paso $t$. Por tanto, esta etapa garantiza que la solución final es monotónicamente no inferior a la solución de la etapa de aproximación.
 
 \subsection{Heurísticas Greedy Cost-Aware}
 
@@ -1303,14 +1192,6 @@ La complejidad total está dominada por:
 \mathbf{T_{LF}} = \mathbf{O(|V| \log |V| + |E| + |V||F|)}
 \]
 
-\textbf{Demostración Formal de Cota Superior (\(|V|^2\)):}
-
-En el peor caso, donde el grafo es denso (\(|E| = O(|V|^2)\)) y el número de frecuencias disponibles es grande (\(|F| = O(|V|)\)), la cota se simplifica:
-
-\[
-T_{LF} = O(|V| \log |V| + |V|^2 + |V|^2) = \mathbf{O(|V|^2)}
-\]
-
 \textbf{Resultados Esperados e Implicaciones (Calidad y Limitaciones):}
 
 LF es la heurística más rápida, pero su estrategia estática conlleva una \textbf{baja eficiencia cromática}; es decir, a menudo utiliza un número de colores \(\chi_{Alg}\) significativamente mayor que el número cromático óptimo \(\chi(G)\). Esta deficiencia estructural limita la capacidad de la adaptación Cost-Aware para optimizar el costo total. Si los vértices de alto grado que se colorean primero tienen costos uniformemente bajos, el algoritmo podría forzar a los vértices de bajo grado (coloreados al final) a usar frecuencias muy costosas, resultando en una solución final subóptima.
@@ -1319,7 +1200,7 @@ LF es la heurística más rápida, pero su estrategia estática conlleva una \te
 
 \textbf{Descripción y Mecanismo:}
 
-DSATUR (Degree of Saturation) es una heurística dinámica que prioriza la selección del vértice \textbf{más restringido} en cada paso. El grado de saturación \(d_{\text{sat}}(v)\) es el número de colores distintos ya utilizados por los vecinos de \(v\). Se selecciona el vértice no coloreado \(v\) con el \(d_{\text{sat}}(v)\) máximo. En caso de empate, se desempata eligiendo el vértice con el grado \(d(v)\) máximo en el subgrafo de vértices no coloreados. Este criterio dinámico se enfoca en resolver los conflictos más inminentes, buscando minimizar la probabilidad de que se requieran nuevos colores, lo que se traduce en una mayor eficiencia cromática que LF y ha sido base de numerosas variantes modernas \cite{trailingpath2019,deepmemetic2022}.
+DSATUR (Degree of Saturation) es una heurística dinámica que prioriza la selección del vértice más restringido en cada paso. El grado de saturación \(d_{\text{sat}}(v)\) es el número de colores distintos ya utilizados por los vecinos de \(v\). Se selecciona el vértice no coloreado \(v\) con el \(d_{\text{sat}}(v)\) máximo. En caso de empate, se desempata eligiendo el vértice con el grado \(d(v)\) máximo en el subgrafo de vértices no coloreados. Este criterio dinámico se enfoca en resolver los conflictos más inminentes, buscando minimizar la probabilidad de que se requieran nuevos colores, lo que se traduce en una mayor eficiencia cromática que LF y ha sido base de numerosas variantes modernas \cite{trailingpath2019,deepmemetic2022}.
 
 \textbf{Criterio de Selección:}
 
@@ -1431,6 +1312,120 @@ El algoritmo extrae un conjunto independiente $I$ del subgrafo no coloreado $G'$
 
 RLF posee la \textbf{mejor calidad estructural} entre las heurísticas voraces, utilizando un \(\chi_{Alg}\) más cercano a \(\chi(G)\). La capacidad de optimizar los costos de asignación en grandes conjuntos independientes (clases de color) le confiere el mayor potencial para obtener la mejor solución \(Z_{Alg}\) de costo total. Su principal limitación es su complejidad temporal \(O(|V||E|)\), lo que la hace inadecuada como algoritmo de producción para instancias muy grandes, pero es valiosa para generar soluciones iniciales de alta calidad para metaheurísticas o como referencia empírica \cite{trailingpath2019,deepmemetic2022}.
 
+\subsubsection{Heurística Estructural para Grafos Cordales (Intervalo)}
+
+Los grafos de intervalo son una clase especial de grafos cordales donde cada vértice representa un intervalo en la recta real, y dos vértices son adyacentes si y solo si sus intervalos se solapan. Esta estructura topológica permite explotar propiedades de eliminación perfecta para diseñar algoritmos más eficientes que los enfoques generales.
+
+\paragraph{Heurística PEO (Perfect Elimination Ordering):}
+
+Proponemos una \textbf{heurística constructiva} que aprovecha la estructura cordal mediante:
+
+\begin{enumerate}
+	\item \textbf{Verificación de Cordalidad}: Confirmar que $G$ es cordal usando el algoritmo de eliminación perfecta.
+	\item \textbf{Obtención del PEO}: Extraer un ordenamiento de eliminación perfecta $v_1, v_2, \ldots, v_n$.
+	\item \textbf{Coloración Greedy Cost-Aware}: Colorear vértices secuencialmente según el PEO, eligiendo en cada paso el color de costo mínimo compatible con vecinos ya coloreados.
+	\item \textbf{Refinamiento Local}: Aplicar búsqueda local (Hill Climbing) para mejorar la solución inicial.
+\end{enumerate}
+
+\paragraph{Análisis de Complejidad Temporal}
+
+\begin{itemize}
+	\item Verificación de cordalidad: $O(|V| + |E|)$ [algoritmo de Rose-Tarjan-Lueker]
+	\item Obtención del PEO: $O(|V|\cdot|E|)$
+	\item Coloración greedy: $O(|V|\cdot k \cdot \bar{d})$ donde $\bar{d}$ es el grado promedio
+	\item Hill Climbing: $O(r\cdot|V|\cdot k \cdot \bar{d})$ con $r$ rondas (típicamente $r = 2$)
+\end{itemize}
+
+\textbf{Complejidad Total}: $T = O(|V|\cdot k \cdot \bar{d})$ en grafos cordales sparse.
+
+Para grafos de intervalo específicamente, $\bar{d}$ está acotado por el tamaño de la clique máxima $\omega(G)$, resultando en:
+
+$$T_{\text{intervalo}} = O(|V|\cdot k \cdot \omega(G))$$
+
+\paragraph{Garantías de Rendimiento\\}
+
+\textbf{Esta es una heurística sin factor de aproximación teóricamente probado.}
+
+No afirmamos garantías ni cotas peor-caso demostrable. Los intentos de derivar tal garantía desde la estructura PEO no han sido exitosos en la literatura para el MCCPP.
+
+\subparagraph{Rendimiento Empírico Esperado}
+
+Basándonos en análisis experimental sobre las instancias de grafos de intervalo en nuestro benchmark:
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|r|}
+		\hline
+		\textbf{Métrica} & \textbf{Valor} \\
+		\hline
+		Desviación promedio sobre óptimo & \textbf{8.2\%} \\
+		Desviación máxima observada & 15.7\% \\
+		Tasa de óptimo alcanzado & 23\% (3/13 instancias) \\
+		Aceleración vs Fuerza Bruta & 100--1000$\times$ \\
+		\hline
+	\end{tabular}
+	\caption{Rendimiento empírico de Heurística PEO en grafos de intervalo}
+\end{table}
+
+\textbf{Conclusión Empírica}: La heurística PEO produce soluciones de alta calidad práctica (90--95\% del óptimo) en tiempo polinomial bajo, siendo especialmente efectiva cuando:
+\begin{itemize}
+	\item $\omega(G) \leq 4$ (cliques pequeñas)
+	\item La matriz de costos $C$ presenta heterogeneidad moderada
+	\item $|F| \geq \chi(G) + 2$ (suficiente holgura de colores)
+\end{itemize}
+
+\paragraph{Comparación con Programación Dinámica Exacta}
+
+Para grafos de intervalo, existe un algoritmo de \textbf{Programación Dinámica exacto} con complejidad $O(|V|\cdot k^2 \cdot \omega)$ que garantiza la solución óptima (ver Sección 3.1.3). La heurística PEO se justifica cuando:
+
+\begin{enumerate}
+	\item \textbf{Escalabilidad}: Para $\omega > 6$, el DP exacto se vuelve prohibitivo.
+	\item \textbf{Soluciones Rápidas}: Cuando se requiere respuesta en $< 1$ segundo.
+	\item \textbf{Inicialización}: Como semilla para metaheurísticas.
+\end{enumerate}
+
+\begin{table}[H]
+	\centering
+	\begin{tabular}{|l|c|c|}
+		\hline
+		\textbf{Aspecto} & \textbf{DP Exacto} & \textbf{Heurística PEO} \\
+		\hline
+		Optimalidad & \checkmark Garantizada & $\times$ No garantizada \\
+		Complejidad & $O(|V|\cdot k^2 \cdot \omega)$ & $O(|V|\cdot k \cdot \omega)$ \\
+		Límite práctico & $\omega \leq 6$, $|V| \leq 50$ & $\omega \leq 15$, $|V| \leq 500$ \\
+		Calidad típica & 100\% & 90--95\% \\
+		Tiempo ($|V|=20$, $\omega=4$) & $\sim$5s & $\sim$0.05s \\
+		\hline
+	\end{tabular}
+	\caption{Comparación DP Exacto vs Heurística PEO}
+\end{table}
+
+\paragraph{Justificación Teórica de la Efectividad}
+
+Aunque no tenemos garantía de aproximación formal, podemos analizar por qué la heurística funciona bien en la práctica:
+
+\textbf{Lema Informal (Propiedad del PEO)}: 
+En un grafo cordal con PEO $v_1,\ldots,v_n$, cada vértice $v_i$ tiene todos sus vecinos ``hacia atrás'' (en $\{v_1,\ldots,v_{i-1}\}$) formando una clique. Esto implica que al colorear $v_i$, el número de colores prohibidos es exactamente el número cromático de esa clique de vecinos.
+
+\textbf{Consecuencia}: Si $\chi(G) = \omega(G)$ (caso común en grafos de intervalo), entonces:
+\begin{itemize}
+	\item La heurística usa a lo sumo $\omega(G)$ colores
+	\item La elección greedy de costo mínimo en cada paso localiza bien el costo
+\end{itemize}
+
+\textbf{Peor Caso Conocido}: 
+Grafos de intervalo con distribuciones de costo adversariales pueden forzar la heurística a tomar decisiones subóptimas que se propagan. Ejemplo: costos muy bajos en colores que crean conflictos futuros.
+
+\paragraph{Referencias y Notas}
+
+\begin{itemize}
+	\item La estructura PEO ha sido estudiada extensamente para coloración clásica, pero la variante con costos (MCCPP) tiene literatura limitada.
+	\item Para grafos cordales generales, \textbf{no se conoce} algoritmo de aproximación con factor constante o polilogarítmico para MCCPP.
+	\item La W[1]-hardness parametrizada por treewidth [Araújo et al., 2020] sugiere límites fundamentales en la aproximabilidad estructural.
+\end{itemize}
+
+\textbf{Referencia Principal}: J. Araújo, J. Baste, I. Sau, ``Ruling Out FPT Algorithms for Weighted Coloring on Forests'', \textit{Discrete Applied Mathematics}, vol. 283, 2020.
+
 \subsection{Metaheurísticas: Exploración del Espacio de Soluciones}
 
 Las metaheurísticas no tienen garantías de rendimiento teórico en tiempo polinomial, pero son esenciales para obtener soluciones de alta calidad empírica en instancias grandes y complejas. En el contexto de MCCPP y problemas de coloreo relacionados, enfoques como Simulated Annealing y las trayectorias con Path Relinking han mostrado resultados competitivos \cite{simann2017coloring,saSparseInference2022,araujo2020heuristicMCCPP}.
@@ -1439,257 +1434,558 @@ Las metaheurísticas no tienen garantías de rendimiento teórico en tiempo poli
 
 \textbf{Funcionamiento y Base Termodinámica:} El Simulated Annealing (SA) es una metaheurística probabilística inspirada en el proceso de recocido metalúrgico. Su función principal es escapar de los óptimos locales mediante la aceptación controlada de movimientos que empeoran la solución. En problemas de coloreo de grafos, incluidas variantes ponderadas, SA ha sido estudiado y aplicado de forma sistemática \cite{simann2017coloring,saSparseInference2022}.
 
-\textbf{Criterio de Aceptación (Metropolis):}
+\textbf{Componentes del Algoritmo:}
 
-El cambio de costo se define como \(\Delta C = C_{\text{new}} - C_{\text{current}}\).
-
-\begin{itemize}
-
-\item Si \(\Delta C \le 0\) (mejora o mantiene), el movimiento se acepta con probabilidad 1.
-
-\item Si \(\Delta C > 0\) (empeoramiento), el movimiento se acepta con una probabilidad \(P\) que depende de la temperatura \(T\):
-
-\[
-P = e^{-\Delta C / T}
-\]
-
-\end{itemize}
+\begin{enumerate}
+	\item \textbf{Espacio de Estados:} $\mathcal{S}$ es el conjunto de todas las coloraciones propias válidas $\phi: V \to F$.
+	
+	\item \textbf{Función de Costo:} $C: \mathcal{S} \to \mathbb{R}^+$ donde $C(\phi) = \sum_{v \in V} c_{v,\phi(v)}$.
+	
+	\item \textbf{Vecindario:} Una coloración $\phi'$ es vecina de $\phi$ si difieren en exactamente un vértice y $\phi'$ es factible. Formalmente:
+	\[
+	\mathcal{N}(\phi)
+	=
+	\left\{
+	\phi' \in \mathcal{S}
+	\;:\;
+	\left|\left\{ v \in V \;:\; \phi(v) \neq \phi'(v) \right\}\right| = 1
+	\;\wedge\;
+	\forall (u,w) \in E,\; \phi'(u) \neq \phi'(w)
+	\right\}
+	\]
+	
+	\item \textbf{Criterio de Aceptación (Metropolis):} El cambio de costo se define como $\Delta C = C(\phi') - C(\phi)$.
+	\begin{itemize}
+		\item Si $\Delta C \le 0$ (mejora o mantiene), el movimiento se acepta con probabilidad 1.
+		\item Si $\Delta C > 0$ (empeoramiento), el movimiento se acepta con probabilidad:
+		\[
+		P_{\text{accept}} = e^{-\Delta C / T}
+		\]
+	\end{itemize}
+	
+	\item \textbf{Esquema de Enfriamiento:} La temperatura $T$ se reduce según:
+	\[
+	T_{k+1} = \alpha \cdot T_k, \quad 0 < \alpha < 1
+	\]
+	donde típicamente $\alpha \in [0.8, 0.99]$ en implementaciones prácticas.
+\end{enumerate}
 
 \textbf{Control de Exploración e Intensificación:} La temperatura \(T\) se reduce lentamente según un esquema de enfriamiento predefinido. A temperaturas altas (\(T \to \infty\)), \(P \to 1\), permitiendo una exploración amplia del espacio de soluciones. A medida que \(T\) disminuye (enfriamiento), \(P\) se reduce, forzando al algoritmo a concentrarse en la búsqueda de óptimos locales (intensificación). Una curva de enfriamiento suficientemente lenta garantiza la convergencia al óptimo global en tiempo teórico exponencial; en la práctica, se adoptan esquemas heurísticos balanceando calidad y tiempo \cite{simann2017coloring,saSparseInference2022}.
 
-\paragraph{Garantías Teóricas de Convergencia}
+\paragraph{Análisis de Correctitud}
 
-\begin{theorem}[Convergencia Asintótica - Geman y Geman 1984]
-	\label{thm:sa-convergence-asymptotic}
-	Sea $\mathcal{S}$ el espacio de estados factibles del MCCPP y sea $C: \mathcal{S} \to \mathbb{R}^+$ la función de costo. Si el esquema de enfriamiento satisface:
-	\[
-	T(k) \geq \frac{c}{\log(1 + k)}
-	\]
-	para una constante $c$ suficientemente grande (específicamente, $c \geq \Delta^* / \ln 2$, donde $\Delta^*$ es la máxima diferencia de energía para escapar del peor óptimo local), entonces:
-	\[
-	\lim_{k \to \infty} \mathbb{P}\left[\text{SA está en estado óptimo global en paso } k\right] = 1
-	\]
-\end{theorem}
+\begin{proposition}[Terminación Determinística]
+	\label{prop:sa-termination}
+	El algoritmo Simulated Annealing con enfriamiento geométrico $T_{k+1} = \alpha \cdot T_k$, temperatura inicial $T_0 > 0$, temperatura mínima $T_{\min} > 0$, y límite máximo de iteraciones $\texttt{MAX\_ITER}$, termina en tiempo finito.
+\end{proposition}
 
-\begin{proof}[Idea de la demostración:]
-	El proceso de SA se modela como una cadena de Markov no homogénea $\{X_k\}_{k \geq 0}$ sobre $\mathcal{S}$. La matriz de transición en el paso $k$ es $P_k$, dependiente de $T(k)$. 
+\begin{proof}
+	El algoritmo termina cuando se cumple alguna de las siguientes condiciones:
 	
-	\textbf{Propiedades clave:}
-	\begin{enumerate}
-		\item \textbf{Irreducibilidad:} Para todo $T > 0$, cualquier estado es alcanzable desde cualquier otro estado con probabilidad no nula (por la aceptación probabilística con $P > 0$).
-		
-		\item \textbf{Aperiodicidad:} La cadena es aperiódica ya que existe probabilidad no nula de permanecer en el mismo estado.
-		
-		\item \textbf{Distribución estacionaria:} En cada temperatura fija $T$, existe una distribución de Boltzmann:
-		\[
-		\pi_T(s) = \frac{e^{-C(s)/T}}{Z(T)}, \quad Z(T) = \sum_{s' \in \mathcal{S}} e^{-C(s')/T}
-		\]
-		
-		\item \textbf{Convergencia bajo enfriamiento logarítmico:} Cuando $T \to 0$ con el esquema logarítmico, la distribución $\pi_T$ concentra toda su masa en el conjunto de estados óptimos globales $\mathcal{S}^* = \arg\min_{s \in \mathcal{S}} C(s)$.
-	\end{enumerate}
+	\textbf{Caso 1 (Temperatura mínima):} El número de niveles de temperatura $L$ hasta alcanzar $T_{\min}$ es:
+	\[
+	L = \left\lceil \frac{\log(T_{\min}/T_0)}{\log(\alpha)} \right\rceil
+	\]
+	
+	Demostración: Después de $k$ iteraciones del bucle externo, la temperatura es $T_k = T_0 \cdot \alpha^k$. El bucle termina cuando:
+	\[
+	T_k < T_{\min} \iff T_0 \cdot \alpha^k < T_{\min} \iff k > \frac{\log(T_{\min}/T_0)}{\log(\alpha)}
+	\]
+	
+	Por tanto, el bucle externo ejecuta a lo sumo $L$ iteraciones.
+	
+	\textbf{Caso 2 (Iteraciones máximas):} El bucle externo termina si $k \geq \texttt{MAX\_ITER}$, garantizando terminación por construcción.
+	
+	\textbf{Caso 3 (No mejora):} El algoritmo termina si no hay mejora en $\texttt{MAX\_NON\_IMPROVING}$ iteraciones consecutivas.
+	
+	Como al menos una de estas condiciones se cumple en tiempo finito, el algoritmo termina.
 \end{proof}
 
-\begin{corollary}[Limitación Práctica]
-	Para esquemas de enfriamiento geométrico \emph{rápido} utilizados en la práctica ($T_{k+1} = \alpha \cdot T_k$ con $0.8 < \alpha < 0.99$), \textbf{NO existe garantía} de convergencia al óptimo global en tiempo polinomial. La calidad de la solución depende de:
-	\begin{itemize}
-		\item La temperatura inicial $T_0$
-		\item El factor de enfriamiento $\alpha$
-		\item El número de iteraciones por temperatura $\texttt{MAX\_ITER}$
-		\item La estructura del vecindario
-	\end{itemize}
+\begin{lemma}[Preservación de Factibilidad con Vecindario Restringido]
+	\label{lem:sa-feasibility}
+	Sea $\phi_0 \in \mathcal{S}$ una coloración propia inicial. Si el vecindario $\mathcal{N}(\phi)$ solo contiene coloraciones propias, entonces para todo $k \geq 0$, la solución $\phi_k$ visitada en la iteración $k$ es una coloración propia.
+\end{lemma}
+
+\begin{proof}
+	Procederemos por inducción sobre $k$.
+	
+	\textbf{Base ($k=0$):} Por hipótesis, $\phi_0 \in \mathcal{S}$ es una coloración propia.
+	
+	\textbf{Paso inductivo:} Supongamos que $\phi_k \in \mathcal{S}$ es una coloración propia. En la iteración $k+1$, el algoritmo genera un vecino $\phi' \in \mathcal{N}(\phi_k)$.
+	
+	Por definición del vecindario restringido:
+	\[
+	\mathcal{N}(\phi_k) \subseteq \mathcal{S}
+	\]
+	
+	Por tanto, $\phi' \in \mathcal{S}$ es una coloración propia. El algoritmo acepta o rechaza $\phi'$ según el criterio, pero en cualquier caso:
+	\[
+	\phi_{k+1} \in \{\phi_k, \phi'\} \subseteq \mathcal{S}
+	\]
+	
+	Por inducción, $\phi_k \in \mathcal{S}$ para todo $k \geq 0$.
+\end{proof}
+
+\begin{corollary}[Garantía de Salida Factible]
+	Si la solución inicial $\phi_0$ es una coloración propia y el vecindario está restringido a $\mathcal{S}$, entonces el algoritmo SA retorna una coloración propia válida.
 \end{corollary}
 
+\begin{proof}
+	Consecuencia directa de la Proposición \ref{prop:sa-termination} (el algoritmo termina) y el Lema \ref{lem:sa-feasibility} (todas las soluciones visitadas son factibles).
+\end{proof}
 
-\textbf{Importante:} Si el espacio de búsqueda $\mathcal{S}$ incluye soluciones infactibles (coloraciones con conflictos), el algoritmo SA \textbf{no garantiza} devolver una solución factible en tiempo finito, a menos que:
-\begin{enumerate}
-	\item El vecindario esté restringido a preservar factibilidad, o
-	\item Se utilice una función objetivo penalizada $C(s) + M \cdot \text{conflictos}(s)$ con penalización $M$ suficientemente grande, o
-	\item Se aplique un post-procesamiento de reparación tras la convergencia.
-\end{enumerate}
-En nuestra implementación para MCCPP, utilizamos la estrategia (1): el vecindario solo genera coloraciones propias válidas.
+\textbf{Nota sobre Convergencia Asintótica:} Existe un resultado teórico clásico de Geman y Geman (1984) que establece convergencia al óptimo global bajo enfriamiento logarítmico $T(k) \geq c/\log(1+k)$. Sin embargo, este esquema requiere tiempo exponencial y no es aplicable a implementaciones prácticas. El enfriamiento geométrico usado en la práctica ($T_{k+1} = \alpha \cdot T_k$ con $\alpha \in [0.8, 0.99]$) \textbf{no garantiza} convergencia al óptimo global en tiempo polinomial. La calidad de la solución depende empíricamente de:
+
+\begin{itemize}
+	\item La temperatura inicial $T_0$ y el factor de enfriamiento $\alpha$
+	\item El número de iteraciones por temperatura $\texttt{MAX\_ITER}$
+	\item La estructura del vecindario y la topología del grafo
+	\item La distribución de la matriz de costos $C$
+\end{itemize}
 
 
-\paragraph{Análisis de Complejidad Temporal\\}
+\paragraph{Análisis de Complejidad Temporal}
 
-Con un esquema de enfriamiento geométrico $T_{k+1} = \alpha \cdot T_k$, el algoritmo SA para MCCPP tiene complejidad temporal:
+\begin{theorem}[Complejidad Temporal de SA]
+	\label{thm:sa-complexity}
+	Con un esquema de enfriamiento geométrico $T_{k+1} = \alpha \cdot T_k$, el algoritmo SA para MCCPP tiene complejidad temporal en el peor caso:
 	\[
-	O\left(L \cdot \texttt{MAX\_ITER} \cdot (n + m)\right)
+	T_{\text{SA}} = O\left(L \cdot \texttt{MAX\_ITER} \cdot (n + m)\right)
 	\]
-	donde:
-	\begin{itemize}
-		\item $L = \left\lceil \frac{\log(T_{\min}/T_0)}{\log(\alpha)} \right\rceil$ es el número de \emph{niveles de temperatura} (etapas de enfriamiento).
-		\item $\texttt{MAX\_ITER}$ es el número de iteraciones (movimientos) por nivel de temperatura.
-		\item $n = |V|$ y $m = |E|$ son el número de vértices y aristas.
-	\end{itemize}
+	donde $L = \left\lceil \frac{\log(T_{\min}/T_0)}{\log(\alpha)} \right\rceil$ es el número de niveles de temperatura, $n = |V|$ y $m = |E|$.
+\end{theorem}
 
-	Analizamos cada componente del algoritmo:
+\begin{proof}
+	Analizamos cada componente del algoritmo por separado:
 	
 	\textbf{Bucle externo (niveles de temperatura):}
-	\begin{itemize}
-		\item El número de iteraciones del bucle externo es:
-		\[
-		L = \left\lceil \frac{\log(T_{\min}) - \log(T_0)}{\log(\alpha)} \right\rceil = \left\lceil \frac{\log(T_{\min}/T_0)}{\log(\alpha)} \right\rceil
-		\]
-		\item Con parámetros típicos ($T_0 = 100$, $T_{\min} = 0.01$, $\alpha = 0.95$):
-		\[
-		L = \left\lceil \frac{\log(0.0001)}{\log(0.95)} \right\rceil \approx \left\lceil \frac{-9.21}{-0.051} \right\rceil \approx 181
-		\]
-	\end{itemize}
+	
+	El número de iteraciones del bucle externo es exactamente $L$ (ver Proposición \ref{prop:sa-termination}). Con parámetros típicos ($T_0 = 100$, $T_{\min} = 0.01$, $\alpha = 0.95$):
+	\[
+	L = \left\lceil \frac{\log(0.0001)}{\log(0.95)} \right\rceil \approx \left\lceil \frac{-9.21}{-0.051} \right\rceil \approx 181
+	\]
 	
 	\textbf{Bucle interno (iteraciones por temperatura):}
-	\begin{itemize}
-		\item Se ejecutan $\texttt{MAX\_ITER}$ movimientos por nivel de temperatura.
-		\item Típicamente, $\texttt{MAX\_ITER} = 100 \cdot n$ para asegurar suficiente exploración.
-	\end{itemize}
+	
+	Por cada nivel de temperatura, se ejecutan exactamente $\texttt{MAX\_ITER}$ movimientos. En implementaciones típicas, $\texttt{MAX\_ITER} = 100 \cdot n$ para asegurar suficiente exploración.
 	
 	\textbf{Costo por movimiento:}
-	\begin{itemize}
-		\item \textbf{Generar vecino:} Seleccionar un vértice $v$ aleatorio y un color $c$ aleatorio: $O(1)$.
+	
+	Para cada iteración del bucle interno, se realizan las siguientes operaciones:
+	
+	\begin{enumerate}
+		\item \textbf{Generar vecino:} 
+		\begin{itemize}
+			\item Seleccionar vértice $v$ aleatorio: $O(1)$
+			\item Seleccionar color $c$ aleatorio: $O(1)$
+			\item Verificar factibilidad contra vecinos $N(v)$: $O(\deg(v))$
+		\end{itemize}
+		Costo total: $O(\deg(v)) \leq O(m/n)$ en promedio, $O(n)$ en el peor caso (si el grafo es completo).
+		
 		\item \textbf{Calcular cambio de costo $\Delta C$:}
 		\begin{itemize}
-			\item Si se recalcula el costo completo: $O(n)$.
-			\item Si se calcula \emph{incrementalmente} (solo el cambio): $O(1)$ (diferencia entre $C[v, c_{\text{new}}]$ y $C[v, c_{\text{old}}]$).
+			\item Cálculo incremental: $\Delta C = c_{v,c_{\text{new}}} - c_{v,c_{\text{old}}}$ es $O(1)$
+			\item Recalculo completo (si necesario): $O(n)$
 		\end{itemize}
-		\item \textbf{Verificar factibilidad:} Revisar que el nuevo color $c$ no conflicta con los vecinos $N(v)$: $O(d(v)) \leq O(m/n)$ en promedio.
-		\item \textbf{En el peor caso:} $O(n + m)$ si se verifica factibilidad completa del grafo.
-	\end{itemize}
+		
+		\item \textbf{Criterio de aceptación:}
+		\begin{itemize}
+			\item Calcular probabilidad y generar número aleatorio: $O(1)$
+		\end{itemize}
+	\end{enumerate}
+	
+	En el peor caso (verificación completa de factibilidad y recálculo de costo), cada movimiento requiere $O(n + m)$ operaciones.
+	
+	\textbf{Complejidad total:}
+	
+	\[
+	T_{\text{SA}} = L \cdot \texttt{MAX\_ITER} \cdot O(n + m) = O(L \cdot \texttt{MAX\_ITER} \cdot (n + m))
+	\]
+	
+	Con $L = O(\log(T_0/T_{\min})/\log(1/\alpha))$ y $\texttt{MAX\_ITER} = O(n)$ típicamente, obtenemos:
+	\[
+	T_{\text{SA}} = O(n \cdot \log(T_0/T_{\min}) \cdot (n + m) / \log(1/\alpha))
+	\]
+	
+	Para valores fijos de los parámetros de temperatura, esto se simplifica a $O(n(n+m))$. \qed
+\end{proof}
+
+\textbf{Optimizaciones Prácticas:}
+En implementaciones eficientes, el costo por movimiento se puede reducir a $O(1)$ amortizado mediante:
+\begin{itemize}
+	\item Cálculo incremental de costos manteniendo $\sum_{v} c_{v,\phi(v)}$
+	\item Verificación local de factibilidad solo en vecinos inmediatos
+	\item Estructuras de datos auxiliares para colores disponibles
+\end{itemize}
+
+Con estas optimizaciones, la complejidad práctica es:
+\[
+T_{\text{SA}}^{\text{opt}} = O(L \cdot \texttt{MAX\_ITER}) = O(n \cdot \log(T_0/T_{\min}) / \log(1/\alpha))
+\]
+
+\textbf{Garantías Teóricas:} No existen garantías de factor de aproximación constante o logarítmico para SA con enfriamiento geométrico en grafos generales.
+
+\textbf{Comportamiento Empírico:} En instancias de prueba del benchmark (ver Sección 4), SA con parámetros bien calibrados produce soluciones con calidad típica del 95-99\% respecto al óptimo conocido en instancias pequeñas, y competitivas con otras metaheurísticas en instancias grandes.
+
+\textbf{Peores Casos Conocidos:} SA puede quedar atrapado en óptimos locales en:
+\begin{itemize}
+	\item Grafos con paisaje energético de "mesetas" (muchas soluciones con costo similar)
+	\item Matrices de costo adversariales donde movimientos locales no correlacionan con mejora global
+	\item Enfriamiento demasiado rápido ($\alpha > 0.95$) que causa convergencia prematura
+\end{itemize}
 	
 
 \subsubsection{Trajectory Search Heuristic + Path Relinking (TSH+PR)}
 
 TSH+PR es una metaheurística avanzada que combina la búsqueda local intensa con estrategias de diversificación y recombinación. Este tipo de enfoque ha sido específicamente propuesto para el MCCPP, obteniendo resultados de alta calidad en instancias de tamaño medio y grande \cite{araujo2020heuristicMCCPP}.
 
-\textbf{Función Objetivo Penalizada (Manejo de Infactibilidad):}
+\textbf{Componentes Principales:}
 
-TSH+PR utiliza una función de evaluación que permite la exploración de soluciones infactibles (coloraciones que violan la restricción cromática). Esto es crucial, ya que permite que la búsqueda local pase por regiones “prohibidas” del espacio de soluciones para alcanzar óptimos factibles mejores.
+\begin{enumerate}
+	\item \textbf{Población Elite:} Conjunto $\mathcal{E}$ de a lo sumo $\ell$ soluciones de alta calidad:
+	\[
+	\mathcal{E} = \{(\phi_i, C(\phi_i)) : i \in [1,\ell], \phi_i \in \mathcal{S}, C(\phi_1) \leq \cdots \leq C(\phi_\ell)\}
+	\]
+	
+	\item \textbf{Función Objetivo Penalizada:} Para manejar soluciones temporalmente infactibles:
+	\[
+	f(\phi) = \sum_{v \in V} c_{v,\phi(v)} + M \cdot |\{(u,v) \in E : \phi(u) = \phi(v)\}|
+	\]
+	donde $M > 0$ es un peso de penalización suficientemente grande. Esto es crucial, ya que permite que la búsqueda local pase por regiones prohibidas del espacio de soluciones para alcanzar óptimos factibles mejores.
+	
+	\item \textbf{Búsqueda Local Tabú:} Explora el vecindario $\mathcal{N}(\phi)$ manteniendo una lista tabú $\mathcal{T}$ de movimientos recientes prohibidos (tamaño $\tau \approx 10$).
+	
+	\item \textbf{Path Relinking (PR):} Genera una trayectoria entre dos soluciones elite $\phi_{\text{inicio}}, \phi_{\text{fin}} \in \mathcal{E}$:
+	\[
+	\text{PR}(\phi_{\text{inicio}}, \phi_{\text{fin}}) = \{\phi^{(0)}, \phi^{(1)}, \ldots, \phi^{(d)}\}
+	\]
+	donde $\phi^{(0)} = \phi_{\text{inicio}}$, $\phi^{(d)} = \phi_{\text{fin}}$, y cada $\phi^{(i)}$ difiere de $\phi^{(i-1)}$ en exactamente un vértice. PR es una técnica de alto nivel que explora la conectividad entre soluciones de alta calidad (soluciones élite). Genera trayectorias de búsqueda al “recombinar” las características de dos soluciones élite, buscando soluciones intermedias que hereden las mejores propiedades de ambas. Esto aumenta la intensificación y previene la convergencia prematura \cite{araujo2020heuristicMCCPP}.
+	
+	\item \textbf{Diversificación:} Perturbación controlada aplicada cada $\delta$ iteraciones sin mejora para alejar la solución actual de un óptimo local, forzando la exploración de nuevas regiones del espacio. Una \textit{tabu list} de corta duración evita revertir inmediatamente la perturbación. Los reinicios se realizan si no hay mejora tras un número \(\kappa\) de iteraciones.
+\end{enumerate}
 
+\textbf{Estructura del Algoritmo:}
+
+El algoritmo TSH+PR ejecuta un bucle principal de longitud $\texttt{MAX\_ITER}$ donde en cada iteración $t$ se realizan las siguientes operaciones:
+
+\begin{itemize}
+	\item Se selecciona una solución actual $\phi_t$ del conjunto elite $\mathcal{E}$
+	\item Se aplica búsqueda local tabú sobre $\phi_t$ para obtener $\phi_t'$
+	\item Si $C(\phi_t') < C(\phi_{\text{best}})$, se actualiza la mejor solución global
+	\item Se actualiza el conjunto elite $\mathcal{E}$ con $\phi_t'$ si su calidad lo justifica
+	\item Cada $\kappa$ iteraciones, se aplica Path Relinking entre dos soluciones de $\mathcal{E}$
+	\item Cada $\delta$ iteraciones sin mejora, se aplica diversificación
+	\item El algoritmo termina cuando $t = \texttt{MAX\_ITER}$ o si se detecta convergencia
+\end{itemize}
+
+\paragraph{Análisis de Correctitud}
+
+\begin{theorem}[Terminación de TSH+PR]
+	\label{thm:tshpr-termination}
+	El algoritmo TSH+PR con parámetros $\texttt{MAX\_ITER}$, $\tau$ (tamaño lista tabú), $\kappa$ (frecuencia PR), y $\delta$ (frecuencia diversificación) termina en exactamente $\texttt{MAX\_ITER}$ iteraciones o antes.
+\end{theorem}
+
+\begin{proof}
+	El algoritmo ejecuta un bucle principal controlado por un contador de iteraciones $t$ que se inicializa en $t = 0$ y se incrementa en cada iteración: $t \gets t + 1$. El bucle continúa mientras $t < \texttt{MAX\_ITER}$.
+	
+	Cada iteración ejecuta un número finito y acotado de operaciones:
+	\begin{itemize}
+		\item \textbf{Selección de solución actual:} Una operación de selección sobre $\mathcal{E}$ con $|\mathcal{E}| \leq \ell$ es finita.
+		
+		\item \textbf{Búsqueda local:} Explora a lo sumo $n \cdot k$ vecinos (número finito), donde cada evaluación requiere operaciones finitas de verificación de factibilidad y cálculo de costo.
+		
+		\item \textbf{Path Relinking:} Cuando se ejecuta (cada $\kappa$ iteraciones), genera a lo sumo $n$ soluciones intermedias, cada una requiriendo operaciones finitas.
+		
+		\item \textbf{Diversificación:} Cuando se ejecuta (cada $\delta$ iteraciones), modifica a lo sumo $0.25n$ vértices, operación finita.
+		
+		\item \textbf{Actualización de estructuras:} Inserción en lista tabú (tamaño acotado $\tau$), actualización de elite pool (tamaño acotado $\ell$), operaciones finitas.
+	\end{itemize}
+	
+	Como cada iteración requiere tiempo finito y el contador $t$ se incrementa monótonamente hasta alcanzar $\texttt{MAX\_ITER}$, el algoritmo termina después de a lo sumo $\texttt{MAX\_ITER}$ iteraciones.
+	
+	\textbf{Terminación anticipada:} El algoritmo incluye una condición adicional de parada: si en las últimas 50 iteraciones no ha habido cambio en $C(\phi_{\text{best}})$, el bucle termina. Esta condición solo puede evaluarse después de al menos 50 iteraciones, y si se cumple, causa terminación inmediata. Por tanto, esta condición también garantiza terminación en tiempo finito (a lo sumo en iteración $t = 100$ si la convergencia es perfecta desde el inicio). \qed
+\end{proof}
+
+\begin{lemma}[Mantenimiento de Mejor Solución Factible]
+	\label{lem:tshpr-feasibility}
+	Sea $\phi_{\text{best}}$ la mejor solución encontrada por TSH+PR. Si la población inicial $\{\phi_1^{(0)}, \ldots, \phi_p^{(0)}\}$ contiene al menos una solución factible $\phi_i^{(0)} \in \mathcal{S}$, entonces al terminar el algoritmo, $\phi_{\text{best}} \in \mathcal{S}$ es una coloración propia.
+\end{lemma}
+
+\begin{proof}
+	Analizamos la evolución de $\phi_{\text{best}}$ durante la ejecución del algoritmo mediante un argumento de invariante.
+	
+	\textbf{Estado inicial (iteración $t=0$):}
+	
+	La población inicial se genera mediante heurísticas constructivas (DSATUR, LF, RLF, WSC mejorado) que garantizan coloraciones propias. Por hipótesis, existe al menos un $\phi_i^{(0)} \in \mathcal{S}$. Durante la fase de selección de elite, se filtran todas las soluciones infactibles:
+	
+	Para cada solución candidata $\phi$ de la población inicial, se verifica la condición:
+	\[
+	\text{is\_proper\_coloring}(G, \phi) \iff \forall (u,v) \in E, \phi(u) \neq \phi(v)
+	\]
+	
+	Solo las soluciones que satisfacen esta condición se añaden al conjunto elite $\mathcal{E}$. Por tanto:
+	\[
+	\mathcal{E} \subseteq \mathcal{S} \text{ en } t = 0
+	\]
+	
+	La mejor solución inicial se define como:
+	\[
+	\phi_{\text{best}} = \arg\min_{\phi \in \mathcal{E}} C(\phi)
+	\]
+	
+	Por tanto, $\phi_{\text{best}} \in \mathcal{E} \subseteq \mathcal{S}$ en $t = 0$.
+	
+	\textbf{Invariante de bucle:} Demostraremos que para toda iteración $t \geq 0$:
+	\[
+	I(t): \phi_{\text{best}}^{(t)} \in \mathcal{S} \land C(\phi_{\text{best}}^{(t)}) \leq C(\phi_{\text{best}}^{(t-1)})
+	\]
+	
+	\textbf{Base ($t=0$):} Ya demostramos que $\phi_{\text{best}}^{(0)} \in \mathcal{S}$.
+	
+	\textbf{Paso inductivo:} Supongamos $I(t-1)$ cierto. En la iteración $t$, $\phi_{\text{best}}$ puede actualizarse en tres momentos:
+	
+	\textbf{Caso 1 - Tras búsqueda local:}
+	
+	La búsqueda local genera una solución mejorada $\phi_t'$ a partir de la solución actual $\phi_t \in \mathcal{E} \subseteq \mathcal{S}$. La actualización de $\phi_{\text{best}}$ ocurre únicamente si:
+	\[
+	\text{is\_proper\_coloring}(G, \phi_t') = \text{True} \land C(\phi_t') < C(\phi_{\text{best}}^{(t-1)})
+	\]
+	
+	Esta condición se verifica explícitamente en el código mediante la función \texttt{is\_proper\_coloring}. Por tanto, si la actualización ocurre:
+	\[
+	\phi_{\text{best}}^{(t)} = \phi_t' \in \mathcal{S} \land C(\phi_{\text{best}}^{(t)}) < C(\phi_{\text{best}}^{(t-1)})
+	\]
+	
+	Si la condición no se cumple, $\phi_{\text{best}}$ no se modifica y $I(t)$ se mantiene por $I(t-1)$.
+	
+	\textbf{Caso 2 - Tras Path Relinking:}
+	
+	El procedimiento Path Relinking genera una secuencia de soluciones intermedias $\{\phi^{(0)}, \phi^{(1)}, \ldots, \phi^{(d)}\}$ entre dos soluciones elite $\phi_{\text{inicio}}, \phi_{\text{fin}} \in \mathcal{E} \subseteq \mathcal{S}$.
+	
+	Para cada paso $i$ en la trayectoria, se modifica exactamente un vértice $v_i$:
+	\[
+	\phi^{(i)}[v] = \begin{cases}
+		\phi_{\text{fin}}[v] & \text{si } v = v_i \\
+		\phi^{(i-1)}[v] & \text{si } v \neq v_i
+	\end{cases}
+	\]
+	
+	Antes de aceptar esta modificación, se verifica:
+	\[
+	\text{is\_proper\_coloring}(G, \phi^{(i)}) = \text{True}
+	\]
+	
+	Si la verificación falla, el movimiento se revierte: $\phi^{(i)} \gets \phi^{(i-1)}$, y se continúa con el siguiente vértice.
+	
+	La actualización de $\phi_{\text{best}}$ durante PR ocurre únicamente si:
+	\[
+	\exists i \in [0,d]: \text{is\_proper\_coloring}(G, \phi^{(i)}) \land C(\phi^{(i)}) < C(\phi_{\text{best}}^{(t-1)})
+	\]
+	
+	Si tal $i$ existe, se actualiza:
+	\[
+	\phi_{\text{best}}^{(t)} = \phi^{(i)} \in \mathcal{S} \land C(\phi_{\text{best}}^{(t)}) < C(\phi_{\text{best}}^{(t-1)})
+	\]
+	
+	Si ninguna solución en la trayectoria mejora $\phi_{\text{best}}$ o todas son infactibles, $\phi_{\text{best}}$ no se modifica y $I(t)$ se mantiene.
+	
+	\textbf{Caso 3 - Tras diversificación:}
+	
+	La diversificación genera una solución perturbada $\phi_{\text{div}}$ modificando aleatoriamente colores de vértices. Esta solución se evalúa y se actualiza el conjunto elite mediante el procedimiento:
+	
+	\texttt{\_update\_elite\_pool}$(\mathcal{E}, \phi_{\text{div}}, C(\phi_{\text{div}}), G, C, \ell)$
+	
+	Este procedimiento verifica explícitamente:
+	\[
+	\text{is\_proper\_coloring}(G, \phi_{\text{div}}) = \text{True}
+	\]
+	
+	Si la verificación falla, $\phi_{\text{div}}$ se descarta inmediatamente y no se añade a $\mathcal{E}$. Solo si es factible y de calidad suficiente se añade a $\mathcal{E}$.
+	
+	Como $\phi_{\text{best}}$ solo se actualiza con soluciones de $\mathcal{E}$, y todas las soluciones en $\mathcal{E}$ son factibles, se mantiene $I(t)$.
+	
+	\textbf{Conclusión:} En todos los casos posibles de actualización, $\phi_{\text{best}}^{(t)} \in \mathcal{S}$ se mantiene. Por inducción, $I(t)$ es verdadero para todo $t \in [0, \texttt{MAX\_ITER}]$. Al terminar el algoritmo en iteración $T$, tenemos:
+	\[
+	\phi_{\text{best}}^{(T)} \in \mathcal{S}
+	\]
+	\qed
+\end{proof}
+
+\textbf{Sobre Path Relinking e Infactibilidad Temporal:}
+Es importante notar que Path Relinking \textbf{puede generar soluciones intermedias infactibles} durante la trayectoria entre $\phi_{\text{inicio}}$ y $\phi_{\text{fin}}$. Específicamente, si $\phi_{\text{inicio}}$ y $\phi_{\text{fin}}$ difieren en el color de un vértice $v$ que tiene vecinos, entonces al cambiar el color de $v$ de $\phi_{\text{inicio}}[v]$ a $\phi_{\text{fin}}[v]$ sin modificar otros vértices, puede crearse temporalmente un conflicto:
 \[
-f(S) = \sum_{c=1}^{n} (w_c \cdot |V_c| + M \cdot |E(V_c)|)
+\exists u \in N(v): \phi^{(i)}[u] = \phi^{(i)}[v] = \phi_{\text{fin}}[v]
 \]
 
-Donde \(w_c\) es el costo asociado al color \(C_c\), \(|V_c|\) es el número de vértices con ese color, y \(|E(V_c)|\) es el número de aristas conflictivas dentro de esa clase de color \(V_c\). El parámetro \(M\) es una penalización suficientemente grande para garantizar que, si existe una solución factible, el proceso de optimización la favorecerá sobre cualquier solución infactible.
+Sin embargo, estas soluciones infactibles:
 
-\textbf{Mecanismo Híbrido:}
-
-\begin{itemize}
-
-\item \textbf{Construcción Inicial}: Se utiliza una heurística \textit{greedy} modificada (RLF modificado) para obtener una coloración inicial (posiblemente infactible).
-
-\item \textbf{Feasibility Search}: Se aplica una búsqueda local en el vecindario de un movimiento crítico (moviendo un vértice conflictivo a una clase no conflictiva) guiada por la minimización de \(f(S)\) para alcanzar rápidamente una solución factible (propia).
-
-\item \textbf{Path Relinking (PR)}: PR es una técnica de alto nivel que explora la conectividad entre soluciones de alta calidad (soluciones élite). Genera trayectorias de búsqueda al “recombinar” las características de dos soluciones élite, buscando soluciones intermedias que hereden las mejores propiedades de ambas. Esto aumenta la intensificación y previene la convergencia prematura \cite{araujo2020heuristicMCCPP}.
-
-\item \textbf{Diversificación y Reinicios}: Se aplican perturbaciones controladas (movimientos aleatorios) para alejar la solución actual de un óptimo local, forzando la exploración de nuevas regiones del espacio. Una \textit{tabu list} de corta duración evita revertir inmediatamente la perturbación. Los reinicios se realizan si no hay mejora tras un número \(\kappa\) de iteraciones.
-
-\end{itemize}
-
-\paragraph{Propiedades de Correctitud y Terminación}
-
-El algoritmo TSH+PR garantiza terminación en tiempo finito debido a:
 \begin{enumerate}
-	\item \textbf{Contador de iteraciones:} El bucle principal ejecuta exactamente $\texttt{MAX\_ITER}$ iteraciones.
-	\item \textbf{Tabu list de tamaño acotado:} La lista tabú mantiene a lo sumo $\tau$ movimientos recientes ($\tau \approx 10$), evitando ciclos \emph{inmediatos} pero no ciclos de período largo.
-	\item \textbf{Criterio de parada por convergencia:} Si no hay mejora en las últimas $\delta$ iteraciones ($\delta \approx 50$), se ejecuta una perturbación o reinicio.
+	\item Se detectan inmediatamente mediante la verificación $\text{is\_proper\_coloring}(G, \phi^{(i)})$
+	\item Se revierten antes de continuar: el algoritmo mantiene la solución factible anterior
+	\item No se consideran para actualizar $\phi_{\text{best}}$
+	\item Se evalúan con la función objetivo penalizada $f(\phi) = C(\phi) + M \cdot \text{conflictos}(\phi)$ únicamente para propósitos de guiar la búsqueda hacia regiones factibles
 \end{enumerate}
 
-\textbf{NOTA:} El Path Relinking \textbf{NO garantiza} que todas las soluciones intermedias en la trayectoria entre $S_{\text{inicio}}$ y $S_{\text{fin}}$ sean factibles. 
+Por tanto, aunque la exploración de PR puede visitar soluciones infactibles, la garantía del Lema \ref{lem:tshpr-feasibility} no se ve afectada, ya que ninguna solución infactible puede ser asignada a $\phi_{\text{best}}$.
 
-\textbf{\\Comportamiento:}
-\begin{itemize}
-	\item PR genera una secuencia de soluciones $S_{\text{inicio}} = S^{(0)}, S^{(1)}, \ldots, S^{(d)} = S_{\text{fin}}$, donde cada $S^{(i)}$ difiere de $S^{(i-1)}$ en exactamente un vértice que cambia de color.
-	\item Si $S_{\text{inicio}}$ y $S_{\text{fin}}$ son ambas factibles pero difieren en el color de un vértice $v$ que tiene vecinos, entonces las soluciones intermedias pueden \emph{temporalmente} violar la restricción de coloración propia.
-	\item \textbf{Manejo de infactibilidad:} TSH+PR utiliza la función objetivo penalizada $f(S)$ para evaluar soluciones intermedias infactibles. El término $M \cdot |E(V_c)|$ penaliza fuertemente los conflictos, incentivando al algoritmo a encontrar caminos que minimicen o eviten la infactibilidad.
-	\item \textbf{Post-procesamiento:} Tras el PR, si la mejor solución encontrada en la trayectoria es infactible, se aplica la \emph{feasibility search} para repararla.
-\end{itemize}
+\begin{corollary}[Garantía de Salida Válida]
+	Si TSH+PR recibe una población inicial con al menos una solución factible, entonces el algoritmo retorna una coloración propia $\phi_{\text{best}} \in \mathcal{S}$ con costo finito $C(\phi_{\text{best}}) < \infty$.
+\end{corollary}
 
-\textbf{Conclusión:} La garantía de factibilidad proviene de:
-\begin{enumerate}
-	\item La penalización $M$ suficientemente grande.
-	\item La fase de \emph{feasibility search} que siempre busca minimizar conflictos.
-	\item El mantenimiento del mejor factible encontrado ($\varphi_{\text{best}}$) que solo se actualiza con soluciones válidas.
-\end{enumerate}
+\begin{proof}
+	Consecuencia directa del Teorema \ref{thm:tshpr-termination} (el algoritmo termina en tiempo finito) y el Lema \ref{lem:tshpr-feasibility} ($\phi_{\text{best}}$ es siempre una coloración propia). Como $\phi_{\text{best}} \in \mathcal{S}$, su costo es:
+	\[
+	C(\phi_{\text{best}}) = \sum_{v \in V} c_{v,\phi_{\text{best}}(v)} < \infty
+	\]
+	ya que todos los costos $c_{v,f}$ son finitos por definición del problema.
+\end{proof}
 
-\paragraph{Análisis de Complejidad Temporal:\\}
+\paragraph{Análisis de Complejidad Temporal}
 
+\begin{theorem}[Complejidad Temporal de TSH+PR]
+	\label{thm:tshpr-complexity}
 	La complejidad temporal del algoritmo TSH+PR para MCCPP es:
 	\[
-	O\left(\texttt{MAX\_ITER} \cdot n \cdot k \cdot (n + m)\right)
+	T_{\text{TSH+PR}} = O(\texttt{MAX\_ITER} \cdot n \cdot k \cdot (n + m))
 	\]
 	donde $n = |V|$, $k = |F|$, $m = |E|$, y $\texttt{MAX\_ITER}$ es el número de iteraciones del bucle principal.
+\end{theorem}
 
-
-	Analizamos cada componente del algoritmo:\\
+\begin{proof}
+	Analizamos la complejidad de cada fase del algoritmo:
 	
-	\textbf{Construcción inicial (RLF modificado):}
+	\textbf{Fase 1: Construcción inicial (una sola vez)}
 	\begin{itemize}
-		\item Complejidad: $O(n \cdot m)$ (una sola vez, despreciable respecto al bucle principal).
+		\item Generar población inicial con heurísticas: $O(\text{population\_size} \cdot n \cdot m)$
+		\item Seleccionar soluciones elite: $O(\text{population\_size} \cdot \log(\text{elite\_size}))$
+		\item Total: $O(n \cdot m)$ (despreciable comparado con el bucle principal)
 	\end{itemize}
 	
-	\textbf{Feasibility search inicial:}
-	\begin{itemize}
-		\item Complejidad: $O(n \cdot k \cdot m)$ en el peor caso (una sola vez).
-	\end{itemize}
+	\textbf{Fase 2: Bucle principal ($\texttt{MAX\_ITER}$ iteraciones)}
 	
-	\textbf{Bucle principal ($\texttt{MAX\_ITER}$ iteraciones):}
-	
-	Por cada iteración:
+	Por cada iteración, se ejecutan las siguientes operaciones:
 	
 	\begin{enumerate}
-		\item \textbf{Búsqueda local (Best Improvement):}
+		\item \textbf{Búsqueda Local (Best Improvement):}
 		\begin{itemize}
-			\item Explorar todos los vecinos en el vecindario de 1-intercambio: $n$ vértices $\times$ $k$ colores.
+			\item Explorar vecindario de 1-intercambio: $n$ vértices $\times$ $k$ colores = $nk$ vecinos
 			\item Por cada vecino:
 			\begin{itemize}
-				\item Calcular costo: $O(n)$ si se recalcula completo, $O(1)$ si es incremental.
-				\item Verificar factibilidad (opcional): $O(m)$ en el peor caso.
+				\item Calcular costo incremental: $O(1)$ 
+				\item Verificar factibilidad (revisar vecinos): $O(\deg(v)) \leq O(m/n)$ en promedio
 			\end{itemize}
-			\item Complejidad total de búsqueda local: $O(n \cdot k \cdot n) = O(n^2 k)$ con cálculo incremental.
+			\item En implementación práctica, se limita a explorar $\min(10, n)$ vértices y $\min(10, k)$ colores
+			\item Complejidad total: $O(nk \cdot \deg_{\text{avg}}) = O(nk \cdot m/n) = O(km)$
+			\item Peor caso (sin limitación): $O(nk \cdot n) = O(n^2k)$
 		\end{itemize}
 		
 		\item \textbf{Actualización de lista tabú:}
 		\begin{itemize}
-			\item Inserción y eliminación en lista de tamaño acotado $\tau$: $O(1)$ amortizado.
+			\item Inserción en deque de tamaño acotado $\tau$: $O(1)$ amortizado
 		\end{itemize}
 		
 		\item \textbf{Actualización de conjunto elite:}
 		\begin{itemize}
-			\item Comparación con soluciones en Elite (tamaño $\ell \approx 10$): $O(\ell) = O(1)$.
+			\item Verificar factibilidad: $O(m)$
+			\item Insertar y ordenar (tamaño $\ell \approx 10$): $O(\ell \log \ell) = O(1)$
 		\end{itemize}
 		
 		\item \textbf{Path Relinking (cada $\kappa$ iteraciones):}
 		\begin{itemize}
-			\item Frecuencia: ejecutado cada $\kappa$ iteraciones (típicamente $\kappa = 50$).
-			\item Complejidad de PR entre $S_1$ y $S_2$:
+			\item Frecuencia: $1/\kappa$ de las iteraciones (típicamente $\kappa = 50$)
+			\item Distancia entre soluciones: $d = |\{v : \phi_1[v] \neq \phi_2[v]\}| \leq n$
+			\item Por cada paso en la trayectoria (hay $d$ pasos):
 			\begin{itemize}
-				\item Distancia entre soluciones: $d = |\{v : S_1[v] \neq S_2[v]\}| \leq n$.
-				\item Por cada paso en la trayectoria: evaluar costo $O(n)$ y seleccionar siguiente vértice $O(d) \leq O(n)$.
-				\item Total PR: $O(d \cdot n) = O(n^2)$.
+				\item Modificar un vértice: $O(1)$
+				\item Verificar factibilidad: $O(\deg(v)) \leq O(m/n)$
+				\item Evaluar costo: $O(1)$ (incremental)
 			\end{itemize}
-			\item Amortizado por iteración: $O(n^2 / \kappa) = O(n^2 / 50) = O(n^2)$ (constante pequeña).
+			\item Complejidad total de un PR: $O(d \cdot m/n) = O(m)$
+			\item Amortizado por iteración: $O(m/\kappa) = O(m/50)$
 		\end{itemize}
 		
-		\item \textbf{Perturbación/Diversificación (cuando no hay mejora):}
+		\item \textbf{Diversificación (cada $\delta$ iteraciones):}
 		\begin{itemize}
-			\item Ejecutado cada $\delta$ iteraciones sin mejora ($\delta \approx 50$).
-			\item Perturbar $p$ vértices aleatorios: $O(p) = O(0.15n)$ típicamente.
-			\item Amortizado: $O(n / \delta) = O(n / 50) = O(n)$ (constante pequeña).
+			\item Frecuencia: $1/\delta$ de las iteraciones (típicamente $\delta = 50$)
+			\item Perturbar $p = 0.15n$ vértices aleatorios: $O(p) = O(n)$
+			\item Amortizado: $O(n/\delta) = O(n/50)$
 		\end{itemize}
 	\end{enumerate}
 	
 	\textbf{Complejidad por iteración del bucle principal:}
+	
+	Sumando todos los componentes y considerando el peor caso (sin limitaciones en búsqueda local):
 	\[
-	O(n^2 k + n^2 + n) = O(n^2 k)
+	T_{\text{iter}} = O(n^2k) + O(1) + O(m) + O(m/\kappa) + O(n/\delta) = O(n^2k + m)
 	\]
+	
+	Para grafos densos ($m = \Theta(n^2)$), esto se simplifica a $O(n^2k)$.
 	
 	\textbf{Complejidad total:}
 	\[
-	\texttt{MAX\_ITER} \cdot O(n^2 k) = O(\texttt{MAX\_ITER} \cdot n^2 k)
+	T_{\text{TSH+PR}} = \texttt{MAX\_ITER} \cdot O(n^2k + m) = O(\texttt{MAX\_ITER} \cdot n \cdot k \cdot (n + m))
 	\]
 	
-	Sin embargo, si se incluye la verificación de factibilidad completa (examinar todas las aristas) en cada evaluación:
+	\textbf{Análisis alternativo (verificación completa de factibilidad):}
+	
+	Si en cada evaluación se verifica la factibilidad completa del grafo (examinar todas las aristas), el costo por vecino en la búsqueda local es $O(m)$, resultando en:
 	\[
-	O(\texttt{MAX\_ITER} \cdot n \cdot k \cdot (n + m))
+	T_{\text{iter}} = O(nk \cdot m) = O(nkm)
 	\]
+	\[
+	T_{\text{TSH+PR}} = O(\texttt{MAX\_ITER} \cdot nkm)
+	\]
+	
+	En la implementación práctica, se usa verificación local, por lo que la complejidad efectiva es la primera.
+\end{proof}
+
+\textbf{Optimizaciones de Implementación:}
+	La complejidad práctica se reduce significativamente mediante:
+	\begin{itemize}
+		\item Limitar la exploración de vecindario a $\min(10, n)$ vértices
+		\item Limitar colores probados a $\min(10, k)$
+		\item Verificación local de factibilidad solo en vecinos inmediatos
+		\item Cálculo incremental de costos
+		\item Terminación anticipada en búsqueda local cuando se encuentra primera mejora
+	\end{itemize}
+	
+	Con estas optimizaciones, la complejidad práctica es:
+	\[
+	T_{\text{TSH+PR}}^{\text{opt}} = O(\texttt{MAX\_ITER} \cdot \text{const} \cdot m)
+	\]
+	donde la constante es típicamente $\leq 100$.
+
+\textbf{Garantías Teóricas:} TSH+PR no tiene un factor de aproximación probado analíticamente para grafos generales.
+
+\textbf{Comportamiento Empírico:} Según el estudio de Araújo et al. \cite{araujo2020heuristicMCCPP}, TSH+PR alcanza soluciones con calidad del 97-99.5\% respecto al óptimo en instancias de benchmark, superando consistentemente a SA y otras metaheurísticas en instancias medianas y grandes ($n \geq 50$).
+
+\textbf{Ventajas sobre SA:}
+\begin{itemize}
+	\item Exploración más dirigida mediante población elite
+	\item Recombinación de características de buenas soluciones (PR)
+	\item Menor sensibilidad a parámetros que SA
+\end{itemize}
+
+\textbf{Limitaciones:}
+\begin{itemize}
+	\item Mayor complejidad de implementación
+	\item Requiere más memoria ($O(\ell \cdot n)$ para elite pool)
+	\item Puede converger prematuramente si la diversidad de la población elite es baja
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 \subsection{Conclusiones}
 
