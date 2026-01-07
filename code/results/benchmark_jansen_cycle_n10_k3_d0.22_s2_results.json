@@ -1,0 +1,305 @@
+{
+  "instance": "benchmark_jansen_cycle_n10_k3_d0.22_s2",
+  "metadata": {
+    "instance_type": "jansen_cycle",
+    "source": "Jansen, K. CIAC'97 1997",
+    "n_vertices": 10,
+    "n_colors": 3,
+    "known_optimal_cost": 10.0,
+    "graph_type": "cycle_even",
+    "year": 1997,
+    "publication": "LNCS 1203",
+    "description": "Ciclo par C_10 de Jansen 1997: benchmark acad\u00e9mico",
+    "optimal_coloring": {
+      "0": 0,
+      "1": 1,
+      "2": 0,
+      "3": 1,
+      "4": 0,
+      "5": 1,
+      "6": 0,
+      "7": 1,
+      "8": 0,
+      "9": 1
+    },
+    "is_feasible": true,
+    "chromatic_number": 2
+  },
+  "runs": {
+    "brute_force": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "backtracking": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.009866476058959961,
+      "operations": 2560,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "intelligent_backtracking": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "ilp_solver": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.019808530807495117,
+      "operations": 1200,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "dp_tree": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "dp_interval": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "wsc": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.00011539459228515625,
+      "operations": 229,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "wsc_improved": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.00010156631469726562,
+      "operations": 290,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "largest_first": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 5.745887756347656e-05,
+      "operations": 105,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "dsatur": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 7.748603820800781e-05,
+      "operations": 89,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "rlf": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.00015783309936523438,
+      "operations": 113,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "peo_greedy": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "simulated_annealing": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.004014015197753906,
+      "operations": 405,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "adaptive_sa": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.015955686569213867,
+      "operations": 1615,
+      "solution": {
+        "0": 0,
+        "1": 1,
+        "2": 0,
+        "3": 1,
+        "4": 0,
+        "5": 1,
+        "6": 0,
+        "7": 1,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "trajectory_search": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.011135578155517578,
+      "operations": 101,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "hybrid": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.011286258697509766,
+      "operations": 101,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "adaptive": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 10.0,
+      "execution_time": 0.06811833381652832,
+      "operations": 1817,
+      "solution": {
+        "0": 0,
+        "2": 0,
+        "4": 0,
+        "6": 0,
+        "8": 0,
+        "1": 1,
+        "3": 1,
+        "5": 1,
+        "7": 1,
+        "9": 1
+      },
+      "optimal": true
+    }
+  }
+}

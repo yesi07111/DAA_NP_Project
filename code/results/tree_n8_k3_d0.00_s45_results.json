@@ -1,0 +1,292 @@
+{
+  "instance": "tree_n8_k3_d0.00_s45",
+  "metadata": {
+    "instance_type": "tree",
+    "n_vertices": 8,
+    "n_colors": 3,
+    "p": 0.0,
+    "cost_pattern": "uniform",
+    "seed": 45,
+    "density": 0.25,
+    "is_feasible": true,
+    "known_optimal_cost": 227.04022062011634,
+    "chromatic_number": 2
+  },
+  "runs": {
+    "brute_force": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "backtracking": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.0022172927856445312,
+      "operations": 766,
+      "solution": {
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3": 2,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "intelligent_backtracking": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "ilp_solver": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.021491289138793945,
+      "operations": 696,
+      "solution": {
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3": 2,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "dp_tree": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.0001544952392578125,
+      "operations": 95,
+      "solution": {
+        "4": 1,
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3": 2,
+        "5": 0,
+        "6": 1,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "dp_interval": {
+      "skipped": false,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.00022482872009277344,
+      "operations": 128,
+      "solution": null,
+      "optimal": false
+    },
+    "wsc": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011637,
+      "execution_time": 5.6743621826171875e-05,
+      "operations": 172,
+      "solution": {
+        "1": 0,
+        "2": 0,
+        "5": 0,
+        "7": 0,
+        "0": 2,
+        "3": 2,
+        "4": 1,
+        "6": 1
+      },
+      "optimal": true
+    },
+    "wsc_improved": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011637,
+      "execution_time": 9.870529174804688e-05,
+      "operations": 219,
+      "solution": {
+        "1": 0,
+        "2": 0,
+        "5": 0,
+        "7": 0,
+        "0": 2,
+        "3": 2,
+        "4": 1,
+        "6": 1
+      },
+      "optimal": true
+    },
+    "largest_first": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 8.106231689453125e-05,
+      "operations": 80,
+      "solution": {
+        "0": 2,
+        "2": 0,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "1": 0,
+        "3": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "dsatur": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 6.771087646484375e-05,
+      "operations": 69,
+      "solution": {
+        "0": 2,
+        "2": 0,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "1": 0,
+        "3": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "rlf": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 236.1572998030671,
+      "execution_time": 0.0002796649932861328,
+      "operations": 87,
+      "solution": {
+        "1": 0,
+        "3": 0,
+        "5": 0,
+        "7": 0,
+        "2": 1,
+        "4": 1,
+        "6": 1,
+        "0": 2
+      },
+      "optimal": false
+    },
+    "peo_greedy": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.0004260540008544922,
+      "operations": 230,
+      "solution": {
+        "0": 2,
+        "1": 0,
+        "2": 0,
+        "3": 2,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "simulated_annealing": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.0039250850677490234,
+      "operations": 405,
+      "solution": {
+        "0": 2,
+        "2": 0,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "1": 0,
+        "3": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "adaptive_sa": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.011306285858154297,
+      "operations": 1600,
+      "solution": {
+        "0": 2,
+        "2": 0,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "1": 0,
+        "3": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "trajectory_search": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011637,
+      "execution_time": 0.006264925003051758,
+      "operations": 101,
+      "solution": {
+        "1": 0,
+        "2": 0,
+        "5": 0,
+        "7": 0,
+        "0": 2,
+        "3": 2,
+        "4": 1,
+        "6": 1
+      },
+      "optimal": true
+    },
+    "hybrid": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011637,
+      "execution_time": 0.009289979934692383,
+      "operations": 101,
+      "solution": {
+        "1": 0,
+        "2": 0,
+        "5": 0,
+        "7": 0,
+        "0": 2,
+        "3": 2,
+        "4": 1,
+        "6": 1
+      },
+      "optimal": true
+    },
+    "adaptive": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 227.04022062011634,
+      "execution_time": 0.05386829376220703,
+      "operations": 1802,
+      "solution": {
+        "0": 2,
+        "2": 0,
+        "4": 1,
+        "5": 0,
+        "6": 1,
+        "1": 0,
+        "3": 2,
+        "7": 0
+      },
+      "optimal": true
+    }
+  }
+}

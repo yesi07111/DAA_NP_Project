@@ -1,0 +1,319 @@
+{
+  "instance": "path_n10_k6_d0.20_s43",
+  "metadata": {
+    "instance_type": "path",
+    "n_vertices": 10,
+    "n_colors": 6,
+    "cost_pattern": "uniform",
+    "seed": 43,
+    "density": 0.2,
+    "is_feasible": true,
+    "known_optimal_cost": 156.49604956369518,
+    "chromatic_number": 2
+  },
+  "runs": {
+    "brute_force": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "backtracking": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 59.22802114486694,
+      "operations": 14648437,
+      "solution": {
+        "0": 0,
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "intelligent_backtracking": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "ilp_solver": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.02219843864440918,
+      "operations": 3840,
+      "solution": {
+        "0": 0,
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "dp_tree": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369515,
+      "execution_time": 0.0002219676971435547,
+      "operations": 394,
+      "solution": {
+        "4": 2,
+        "3": 0,
+        "2": 1,
+        "1": 2,
+        "0": 0,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "dp_interval": {
+      "skipped": false,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.00029659271240234375,
+      "operations": 200,
+      "solution": null,
+      "optimal": false
+    },
+    "wsc": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.0001087188720703125,
+      "operations": 424,
+      "solution": {
+        "0": 0,
+        "8": 0,
+        "3": 0,
+        "5": 0,
+        "1": 2,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "7": 5,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "wsc_improved": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.00010347366333007812,
+      "operations": 513,
+      "solution": {
+        "0": 0,
+        "8": 0,
+        "3": 0,
+        "5": 0,
+        "1": 2,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "7": 5,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "largest_first": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 5.412101745605469e-05,
+      "operations": 163,
+      "solution": {
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "0": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "dsatur": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 5.53131103515625e-05,
+      "operations": 117,
+      "solution": {
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "0": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "rlf": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369515,
+      "execution_time": 0.0002040863037109375,
+      "operations": 120,
+      "solution": {
+        "0": 0,
+        "3": 0,
+        "5": 0,
+        "7": 5,
+        "9": 1,
+        "8": 0,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "1": 2
+      },
+      "optimal": true
+    },
+    "peo_greedy": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.0005807876586914062,
+      "operations": 388,
+      "solution": {
+        "0": 0,
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "simulated_annealing": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.0033981800079345703,
+      "operations": 405,
+      "solution": {
+        "1": 2,
+        "2": 1,
+        "3": 0,
+        "4": 2,
+        "5": 0,
+        "6": 2,
+        "7": 5,
+        "8": 0,
+        "0": 0,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "adaptive_sa": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369515,
+      "execution_time": 0.011859416961669922,
+      "operations": 1615,
+      "solution": {
+        "0": 0,
+        "3": 0,
+        "5": 0,
+        "7": 5,
+        "9": 1,
+        "8": 0,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "1": 2
+      },
+      "optimal": true
+    },
+    "trajectory_search": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.021764278411865234,
+      "operations": 101,
+      "solution": {
+        "0": 0,
+        "8": 0,
+        "3": 0,
+        "5": 0,
+        "1": 2,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "7": 5,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "hybrid": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369518,
+      "execution_time": 0.024085044860839844,
+      "operations": 101,
+      "solution": {
+        "0": 0,
+        "8": 0,
+        "3": 0,
+        "5": 0,
+        "1": 2,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "7": 5,
+        "9": 1
+      },
+      "optimal": true
+    },
+    "adaptive": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 156.49604956369515,
+      "execution_time": 0.08854198455810547,
+      "operations": 1817,
+      "solution": {
+        "0": 0,
+        "3": 0,
+        "5": 0,
+        "7": 5,
+        "9": 1,
+        "8": 0,
+        "2": 1,
+        "4": 2,
+        "6": 2,
+        "1": 2
+      },
+      "optimal": true
+    }
+  }
+}

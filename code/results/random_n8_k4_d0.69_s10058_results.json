@@ -1,0 +1,267 @@
+{
+  "instance": "random_n8_k4_d0.69_s10058",
+  "metadata": {
+    "instance_type": "random",
+    "n_vertices": 8,
+    "n_colors": 4,
+    "density": 0.6869114585700672,
+    "cost_pattern": "random",
+    "seed": 10058,
+    "is_feasible": true,
+    "known_optimal_cost": 179.10611992909938,
+    "chromatic_number": 4
+  },
+  "runs": {
+    "brute_force": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "backtracking": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.0018298625946044922,
+      "operations": 593,
+      "solution": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "6": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "intelligent_backtracking": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "ilp_solver": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.02526998519897461,
+      "operations": 2560,
+      "solution": {
+        "0": 1,
+        "1": 2,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "6": 2,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "dp_tree": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "dp_interval": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "wsc": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 8.702278137207031e-05,
+      "operations": 349,
+      "solution": {
+        "1": 2,
+        "6": 2,
+        "0": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "wsc_improved": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 9.107589721679688e-05,
+      "operations": 426,
+      "solution": {
+        "1": 2,
+        "6": 2,
+        "0": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "largest_first": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 6.842613220214844e-05,
+      "operations": 106,
+      "solution": {
+        "4": 1,
+        "0": 1,
+        "2": 3,
+        "5": 0,
+        "6": 2,
+        "1": 2,
+        "7": 0,
+        "3": 3
+      },
+      "optimal": true
+    },
+    "dsatur": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 6.556510925292969e-05,
+      "operations": 108,
+      "solution": {
+        "4": 1,
+        "2": 3,
+        "5": 0,
+        "1": 2,
+        "0": 1,
+        "6": 2,
+        "7": 0,
+        "3": 3
+      },
+      "optimal": true
+    },
+    "rlf": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 288.83374806515917,
+      "execution_time": 0.00022172927856445312,
+      "operations": 146,
+      "solution": {
+        "1": 0,
+        "3": 3,
+        "7": 0,
+        "0": 1,
+        "4": 1,
+        "2": 2,
+        "6": 2,
+        "5": 3
+      },
+      "optimal": false
+    },
+    "peo_greedy": {
+      "skipped": true,
+      "feasible": false,
+      "cost": Infinity,
+      "execution_time": 0.0,
+      "operations": 0
+    },
+    "simulated_annealing": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.0036172866821289062,
+      "operations": 405,
+      "solution": {
+        "4": 1,
+        "2": 3,
+        "5": 0,
+        "1": 2,
+        "0": 1,
+        "6": 2,
+        "7": 0,
+        "3": 3
+      },
+      "optimal": true
+    },
+    "adaptive_sa": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.013057708740234375,
+      "operations": 1600,
+      "solution": {
+        "4": 1,
+        "0": 1,
+        "2": 3,
+        "5": 0,
+        "6": 2,
+        "1": 2,
+        "7": 0,
+        "3": 3
+      },
+      "optimal": true
+    },
+    "trajectory_search": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.007776498794555664,
+      "operations": 101,
+      "solution": {
+        "1": 2,
+        "6": 2,
+        "0": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "hybrid": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.007252931594848633,
+      "operations": 101,
+      "solution": {
+        "1": 2,
+        "6": 2,
+        "0": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "7": 0
+      },
+      "optimal": true
+    },
+    "adaptive": {
+      "skipped": false,
+      "feasible": true,
+      "cost": 179.10611992909938,
+      "execution_time": 0.05933070182800293,
+      "operations": 1802,
+      "solution": {
+        "1": 2,
+        "6": 2,
+        "0": 1,
+        "2": 3,
+        "3": 3,
+        "4": 1,
+        "5": 0,
+        "7": 0
+      },
+      "optimal": true
+    }
+  }
+}
