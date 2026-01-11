@@ -313,59 +313,131 @@ La APX-Hardness establece que, si \(P \neq NP\), el MCCPP no admite un PTAS. Est
 
 \subsubsection{Análisis Riguroso de Pertenencia a APX (MCCPP)}
 
-Un problema es APX-Complete si es APX-Hard y también pertenece a la clase APX (es decir, admite un algoritmo de aproximación de factor constante \(c\)).
+Un problema es APX-Complete si es APX-Hard y, además, pertenece a la clase APX (admite un algoritmo de aproximación de factor constante $c$). Ya establecimos que el MCCPP es APX-Hard (Sección 2.5.1). Ahora demostraremos que \textbf{no pertenece a APX}, lo cual tiene consecuencias fundamentales sobre su aproximabilidad.
 
-Aunque el MCCPP es APX-Hard, su pertenencia a APX no está universalmente establecida para grafos generales.
+\paragraph{Teorema (MCCPP no pertenece a APX):} El Problema de Partición Cromática de Costo Mínimo no admite un algoritmo de aproximación de factor constante $c$ en tiempo polinomial, a menos que P = NP. Por tanto, MCCPP $\notin$ APX.
 
-Como la pertenencia de un problema APX-Hard a la clase APX requiere demostrar la existencia de un algoritmo de aproximación con un factor de rendimiento constante \(c \ge 1\) en tiempo polinomial, para el MCCPP esta demostración se considera altamente improbable para grafos generales.
+\paragraph{Demostración:}
 
-\textbf{Modelado Formal como Cobertura de Conjuntos Ponderada (WSC)}
+La demostración se realiza mediante una reducción desde el problema de Maximum Weight Independent Set (MWIS), cuya inaproximabilidad está bien establecida en la literatura.
 
-El MCCPP se puede modelar como el \textbf{Problema de Cobertura de Conjuntos Ponderada} (Weighted Set Cover, WSC), un problema fundamental de optimización ampliamente estudiado tanto desde el punto de vista algorítmico como de inaproximabilidad \cite{feige1998setcover,setcoverChronology2021}.
+\textbf{Paso 1: Conexión entre MCCPP y Maximum Weight Independent Set}
 
+Consideremos una instancia del MCCPP con la siguiente estructura particular:
 \begin{itemize}
-
-\item \textbf{Definición Formal de WSC}: Dada una instancia \(\langle U, \mathcal{S}, w \rangle\), donde \(U\) es el universo de elementos a cubrir (\(|U|=n\)), \(\mathcal{S} = \{S_1, \ldots, S_m\}\) es una familia de subconjuntos de \(U\), y \(w: \mathcal{S} \to \mathbb{R}^+\) es la función de peso (costo) de cada subconjunto \(S_i\). El objetivo es encontrar una subcolección \(\mathcal{C} \subseteq \mathcal{S}\) tal que \(\bigcup_{S_i \in \mathcal{C}} S_i = U\), minimizando el costo total \(\sum_{S_i \in \mathcal{C}} w(S_i)\).
-
+	\item Grafo $G = (V, E)$ arbitrario
+	\item Conjunto de frecuencias $F = \{f_0, f_1, \ldots, f_n\}$ donde $|F| = n + 1$
+	\item Matriz de costos definida como:
+	\begin{equation}
+		c_{v,f} = \begin{cases}
+			0 & \text{si } f = f_0 \\
+			M & \text{si } f \neq f_0
+		\end{cases}
+	\end{equation}
+	donde $M$ es una constante arbitrariamente grande (por ejemplo, $M = n \cdot \max_{v,f'} c_{v,f'} + 1$).
 \end{itemize}
 
-\textbf{Mapeo MCCPP a WSC:}
-
-Una instancia \(\langle G, F, C \rangle\) del MCCPP se transforma en una instancia \(\langle U, \mathcal{S}, w \rangle\) del WSC:
-
+En esta instancia, cualquier solución óptima del MCCPP debe:
 \begin{enumerate}
-
-\item \textbf{Universo (\(U\))}: El conjunto de vértices \(V\) del grafo \(G\). El objetivo es “cubrir” todos los vértices, es decir, asignarles un color \cite{feige1998setcover,setcoverChronology2021}.
-
-\item \textbf{Conjuntos Candidatos (\(\mathcal{S}\))}: Cada conjunto \(S \in \mathcal{S}\) es un par \(\langle I, f \rangle\), donde \(I \subseteq V\) es un \textit{Conjunto Independiente} (IS) válido en \(G\) y \(f \in F\) es una frecuencia (color) disponible \cite{feige1998setcover,setcoverChronology2021}.
-
-\item \textbf{Costo del Conjunto \(w(S)\)}: El costo de elegir el conjunto \(S = \langle I, f \rangle\) es el costo total de asignar la frecuencia \(f\) a todos los vértices en \(I\):
-\[
-w(S) = \sum_{v \in I} c_{v,f}
-\]
-
+	\item Asignar el color $f_0$ (costo cero) al máximo número posible de vértices.
+	\item Los vértices restantes recibirán algún color $f_i \neq f_0$ con costo $M$.
 \end{enumerate}
 
-Una solución válida del WSC (una subcolección de conjuntos independientes que cubre \(V\)) corresponde directamente a una partición cromática válida de \(G\) con el mismo costo total.
+Sea $I^*$ el conjunto de vértices que reciben el color $f_0$ en la solución óptima. Por la restricción de coloración propia:
+\begin{equation}
+	\forall u, v \in I^*: \{u, v\} \notin E
+\end{equation}
 
-\textbf{Demostración de Inaproximabilidad Constante (MCCPP \(\notin\) APX)}
+Es decir, $I^*$ es un conjunto independiente. El costo óptimo de esta instancia es:
+\begin{equation}
+	Z^* = 0 \cdot |I^*| + M \cdot (n - |I^*|) = M(n - |I^*|)
+\end{equation}
 
-El mejor algoritmo de aproximación conocido para el WSC es el algoritmo \textbf{Greedy}, que alcanza una cota asintótica óptima en términos del factor logarítmico \(\Theta(\ln n)\) tanto para Set Cover como para su versión ponderada \cite{feige1998setcover,setcoverChronology2021}.
+Minimizar $Z^*$ es equivalente a \textbf{maximizar} $|I^*|$, que es precisamente el problema de Maximum Independent Set.
 
-Sea \(Z_{WSC}^*\) el costo óptimo del WSC y \(Z_{WSC}^{Alg}\) el costo de la solución obtenida por el algoritmo voraz.
+\textbf{Paso 2: Extensión a Maximum Weight Independent Set}
+
+Generalizamos la construcción anterior asignando pesos a los vértices mediante la matriz de costos:
+\begin{equation}
+	c_{v,f} = \begin{cases}
+		M - w(v) & \text{si } f = f_0 \\
+		M & \text{si } f \neq f_0
+	\end{cases}
+\end{equation}
+
+donde $w(v) > 0$ es el peso del vértice $v$ en la instancia de MWIS. Ahora el costo óptimo es:
+\begin{equation}
+	Z^* = \sum_{v \in I^*}(M - w(v)) + M \cdot (n - |I^*|) = Mn - \sum_{v \in I^*} w(v)
+\end{equation}
+
+Minimizar $Z^*$ es equivalente a maximizar $\sum_{v \in I^*} w(v)$, que es MWIS.
+
+\textbf{Paso 3: Resultados de Inaproximabilidad de MWIS}
+
+Maximum Weight Independent Set es uno de los problemas canónicos de inaproximabilidad. Los resultados fundamentales establecen:
 
 \begin{itemize}
-
-\item \textbf{Factor de Aproximación Logarítmico}: El algoritmo Greedy garantiza un factor de aproximación \(R\) que está acotado superiormente por el número armónico \(H(|U|)\), donde \(|U|=|V|=n\):
-\[
-R = \frac{Z_{WSC}^{Alg}}{Z_{WSC}^*} \le H(|U|) = O(\ln n)
-\]
-
-\item \textbf{Límite Inferior de Inaproximabilidad}: Se ha demostrado rigurosamente que el WSC (y por extensión el Set Cover estándar) no admite un algoritmo de aproximación de factor constante \(c\). Específicamente, a menos que \(NP \subseteq DTIME(n^{\log \log n})\), no existe un algoritmo que garantice un factor de aproximación mejor que \((1 - \epsilon)\ln n\), para cualquier \(\epsilon > 0\) \cite{feige1998setcover,setcoverChronology2021}.
-
+	\item \textbf{Håstad (1999):} Independent Set no puede aproximarse en factor $n^{1-\epsilon}$ para cualquier $\epsilon > 0$, a menos que P = NP \cite{hastad1999clique}.
+	
+	\item \textbf{Zuckerman (2007):} Bajo la conjetura de que NP $\nsubseteq$ BPTIME($2^{n^{O(1)}}$), Independent Set no puede aproximarse en factor $n / (\log n)^c$ para cualquier constante $c$ \cite{zuckerman2007linear}.
 \end{itemize}
 
-Dado que la mejor aproximación garantizada para el MCCPP es logarítmica \(O(\ln |V|)\), y existe un límite inferior que excluye factores constantes, se concluye formalmente que el MCCPP \textbf{no pertenece} a la clase APX, y por lo tanto, no es APX-Complete. En términos de la jerarquía de aproximación, el MCCPP se clasifica en la clase \(\mathbf{log}\)-APX.
+Estos resultados se extienden directamente a la versión ponderada (MWIS) mediante reducciones estándar.
+
+\textbf{Paso 4: Conclusión por Contradicción}
+
+Supongamos, por contradicción, que existe un algoritmo de aproximación de factor constante $\alpha \geq 1$ para el MCCPP que produce una solución $Z_{Alg}$ tal que:
+\begin{equation}
+	Z_{Alg} \leq \alpha \cdot Z^*
+\end{equation}
+
+Para la instancia construida en el Paso 2:
+\begin{align}
+	Z_{Alg} &= Mn - \sum_{v \in I_{Alg}} w(v) \\
+	Z^* &= Mn - \sum_{v \in I^*} w(v)
+\end{align}
+
+donde $I_{Alg}$ es el conjunto independiente implícito en la solución del algoritmo e $I^*$ es el conjunto independiente óptimo.
+
+De la condición de aproximación:
+\begin{align}
+	Mn - \sum_{v \in I_{Alg}} w(v) &\leq \alpha \left(Mn - \sum_{v \in I^*} w(v)\right) \\
+	Mn - \sum_{v \in I_{Alg}} w(v) &\leq \alpha Mn - \alpha \sum_{v \in I^*} w(v) \\
+	\alpha \sum_{v \in I^*} w(v) - \sum_{v \in I_{Alg}} w(v) &\leq (\alpha - 1)Mn
+\end{align}
+
+Para $M$ suficientemente grande (específicamente, $M > \frac{\alpha \cdot W_{max}}{\alpha - 1}$ donde $W_{max} = \max_v w(v) \cdot n$), el término $(\alpha - 1)Mn$ domina, y podemos reorganizar:
+\begin{equation}
+	\sum_{v \in I_{Alg}} w(v) \geq \frac{1}{\alpha} \sum_{v \in I^*} w(v) - O(1)
+\end{equation}
+
+Para instancias donde $\sum_{v \in I^*} w(v) \gg 1$, esto implica que $I_{Alg}$ es una $\alpha$-aproximación para MWIS.
+
+Pero esto contradice los resultados de inaproximabilidad de MWIS, que establecen que no existe aproximación de factor constante para MWIS a menos que P = NP.
+
+Por tanto, no puede existir un algoritmo de aproximación de factor constante para el MCCPP. $\square$
+
+\paragraph{Corolario (Clasificación en la Jerarquía de Aproximabilidad):}
+
+\begin{enumerate}
+	\item \textbf{MCCPP $\notin$ APX:} Como no admite aproximación de factor constante, el MCCPP no pertenece a la clase APX.
+	
+	\item \textbf{MCCPP $\in$ log-APX:} Aunque no pertenece a APX, existen algoritmos de aproximación con factor logarítmico. Específicamente, mediante técnicas de Set Cover y relajación primal-dual, se pueden obtener algoritmos con garantía $O(\ln |V|)$ \cite{feige1998threshold}.
+	
+	\item \textbf{No es APX-Complete:} Para ser APX-Complete, un problema debe estar en APX. Como MCCPP $\notin$ APX, no puede ser APX-Complete, aunque sí es APX-Hard.
+\end{enumerate}
+
+\paragraph{Implicaciones Prácticas:}
+
+La clasificación del MCCPP en log-APX (pero fuera de APX) tiene consecuencias importantes para el diseño de algoritmos:
+
+\begin{itemize}
+	\item \textbf{Imposibilidad de PTAS:} No existe un esquema de aproximación en tiempo polinomial que alcance $(1+\epsilon)$-aproximación para cualquier $\epsilon > 0$.
+	
+	\item \textbf{Mejor garantía alcanzable:} Los algoritmos deben conformarse con factores logarítmicos $O(\ln n)$ o metaheurísticas sin garantías teóricas.
+	
+	\item \textbf{Enfoque pragmático:} Para instancias realistas, las metaheurísticas (Simulated Annealing, búsqueda tabú, algoritmos genéticos) son la opción más viable, ya que los algoritmos con garantía logarítmica pueden tener constantes multiplicativas prohibitivamente grandes.
+\end{itemize}
 
 \subsection{Análisis de Complejidad Parametrizada}
 
