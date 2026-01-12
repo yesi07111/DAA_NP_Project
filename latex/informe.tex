@@ -315,117 +315,58 @@ La APX-Hardness establece que, si \(P \neq NP\), el MCCPP no admite un PTAS. Est
 
 Un problema es APX-Complete si es APX-Hard y, además, pertenece a la clase APX (admite un algoritmo de aproximación de factor constante $c$). Ya establecimos que el MCCPP es APX-Hard (Sección 2.5.1). Ahora demostraremos que \textbf{no pertenece a APX}, lo cual tiene consecuencias fundamentales sobre su aproximabilidad.
 
-\paragraph{Teorema (MCCPP no pertenece a APX):} El Problema de Partición Cromática de Costo Mínimo no admite un algoritmo de aproximación de factor constante $c$ en tiempo polinomial, a menos que P = NP. Por tanto, MCCPP $\notin$ APX.
+\begin{theorem}[Inaproximabilidad Fuerte del MCCPP]
+	El Problema de Partición Cromática de Costo Mínimo (MCCPP) no pertenece a la clase APX. Específicamente, para cualquier constante $C > 1$, no existe un algoritmo de aproximación de factor $C$ en tiempo polinomial para el MCCPP, a menos que $P = NP$.
+\end{theorem}
 
-\paragraph{Demostración:}
-
-La demostración se realiza mediante una reducción desde el problema de Maximum Weight Independent Set (MWIS), cuya inaproximabilidad está bien establecida en la literatura.
-
-\textbf{Paso 1: Conexión entre MCCPP y Maximum Weight Independent Set}
-
-Consideremos una instancia del MCCPP con la siguiente estructura particular:
-\begin{itemize}
-	\item Grafo $G = (V, E)$ arbitrario
-	\item Conjunto de frecuencias $F = \{f_0, f_1, \ldots, f_n\}$ donde $|F| = n + 1$
-	\item Matriz de costos definida como:
-	\begin{equation}
-		c_{v,f} = \begin{cases}
-			0 & \text{si } f = f_0 \\
-			M & \text{si } f \neq f_0
-		\end{cases}
-	\end{equation}
-	donde $M$ es una constante arbitrariamente grande (por ejemplo, $M = n \cdot \max_{v,f'} c_{v,f'} + 1$).
-\end{itemize}
-
-En esta instancia, cualquier solución óptima del MCCPP debe:
-\begin{enumerate}
-	\item Asignar el color $f_0$ (costo cero) al máximo número posible de vértices.
-	\item Los vértices restantes recibirán algún color $f_i \neq f_0$ con costo $M$.
-\end{enumerate}
-
-Sea $I^*$ el conjunto de vértices que reciben el color $f_0$ en la solución óptima. Por la restricción de coloración propia:
-\begin{equation}
-	\forall u, v \in I^*: \{u, v\} \notin E
-\end{equation}
-
-Es decir, $I^*$ es un conjunto independiente. El costo óptimo de esta instancia es:
-\begin{equation}
-	Z^* = 0 \cdot |I^*| + M \cdot (n - |I^*|) = M(n - |I^*|)
-\end{equation}
-
-Minimizar $Z^*$ es equivalente a \textbf{maximizar} $|I^*|$, que es precisamente el problema de Maximum Independent Set.
-
-\textbf{Paso 2: Extensión a Maximum Weight Independent Set}
-
-Generalizamos la construcción anterior asignando pesos a los vértices mediante la matriz de costos:
-\begin{equation}
-	c_{v,f} = \begin{cases}
-		M - w(v) & \text{si } f = f_0 \\
-		M & \text{si } f \neq f_0
-	\end{cases}
-\end{equation}
-
-donde $w(v) > 0$ es el peso del vértice $v$ en la instancia de MWIS. Ahora el costo óptimo es:
-\begin{equation}
-	Z^* = \sum_{v \in I^*}(M - w(v)) + M \cdot (n - |I^*|) = Mn - \sum_{v \in I^*} w(v)
-\end{equation}
-
-Minimizar $Z^*$ es equivalente a maximizar $\sum_{v \in I^*} w(v)$, que es MWIS.
-
-\textbf{Paso 3: Resultados de Inaproximabilidad de MWIS}
-
-Maximum Weight Independent Set es uno de los problemas canónicos de inaproximabilidad. Los resultados fundamentales establecen:
-
-\begin{itemize}
-	\item \textbf{Håstad (1999):} Independent Set no puede aproximarse en factor $n^{1-\epsilon}$ para cualquier $\epsilon > 0$, a menos que P = NP \cite{hastad1999clique}.
+\begin{proof}
+	La demostración procede mediante una reducción desde el problema del \textit{Número Cromático} (Graph Coloring), cuya inaproximabilidad es un resultado clásico. Sabemos que determinar el número cromático $\chi(G)$ de un grafo no admite aproximación de factor constante (de hecho, no admite aproximación $n^{1-\varepsilon}$ para cualquier $\varepsilon > 0$~\cite{hastad1999clique}).
 	
-	\item \textbf{Zuckerman (2007):} Bajo la conjetura de que NP $\nsubseteq$ BPTIME($2^{n^{O(1)}}$), Independent Set no puede aproximarse en factor $n / (\log n)^c$ para cualquier constante $c$ \cite{zuckerman2007linear}.
-\end{itemize}
-
-Estos resultados se extienden directamente a la versión ponderada (MWIS) mediante reducciones estándar.
-
-\textbf{Paso 4: Conclusión por Contradicción}
-
-Supongamos, por contradicción, que existe un algoritmo de aproximación de factor constante $\alpha \geq 1$ para el MCCPP que produce una solución $Z_{Alg}$ tal que:
-\begin{equation}
-	Z_{Alg} \leq \alpha \cdot Z^*
-\end{equation}
-
-Para la instancia construida en el Paso 2:
-\begin{align}
-	Z_{Alg} &= Mn - \sum_{v \in I_{Alg}} w(v) \\
-	Z^* &= Mn - \sum_{v \in I^*} w(v)
-\end{align}
-
-donde $I_{Alg}$ es el conjunto independiente implícito en la solución del algoritmo e $I^*$ es el conjunto independiente óptimo.
-
-De la condición de aproximación:
-\begin{align}
-	Mn - \sum_{v \in I_{Alg}} w(v) &\leq \alpha \left(Mn - \sum_{v \in I^*} w(v)\right) \\
-	Mn - \sum_{v \in I_{Alg}} w(v) &\leq \alpha Mn - \alpha \sum_{v \in I^*} w(v) \\
-	\alpha \sum_{v \in I^*} w(v) - \sum_{v \in I_{Alg}} w(v) &\leq (\alpha - 1)Mn
-\end{align}
-
-Para $M$ suficientemente grande (específicamente, $M > \frac{\alpha \cdot W_{max}}{\alpha - 1}$ donde $W_{max} = \max_v w(v) \cdot n$), el término $(\alpha - 1)Mn$ domina, y podemos reorganizar:
-\begin{equation}
-	\sum_{v \in I_{Alg}} w(v) \geq \frac{1}{\alpha} \sum_{v \in I^*} w(v) - O(1)
-\end{equation}
-
-Para instancias donde $\sum_{v \in I^*} w(v) \gg 1$, esto implica que $I_{Alg}$ es una $\alpha$-aproximación para MWIS.
-
-Pero esto contradice los resultados de inaproximabilidad de MWIS, que establecen que no existe aproximación de factor constante para MWIS a menos que P = NP.
-
-Por tanto, no puede existir un algoritmo de aproximación de factor constante para el MCCPP. $\square$
-
-\paragraph{Corolario (Clasificación en la Jerarquía de Aproximabilidad):}
-
-\begin{enumerate}
-	\item \textbf{MCCPP $\notin$ APX:} Como no admite aproximación de factor constante, el MCCPP no pertenece a la clase APX.
+	Supongamos, por contradicción, que existe un algoritmo $\mathcal{A}$ para el MCCPP con un factor de aproximación constante $\rho \ge 1$. Mostraremos que este algoritmo permitiría resolver el problema de \textit{Graph Coloring} con una precisión que viola los límites de inaproximabilidad conocidos.
 	
-	\item \textbf{MCCPP $\in$ log-APX:} Aunque no pertenece a APX, existen algoritmos de aproximación con factor logarítmico. Específicamente, mediante técnicas de Set Cover y relajación primal-dual, se pueden obtener algoritmos con garantía $O(\ln |V|)$ \cite{feige1998threshold}.
+	\paragraph{Construcción de la Instancia:}
+	Sea $G = (V, E)$ una instancia arbitraria del problema de coloración con $n = |V|$ vértices. Construimos una instancia del MCCPP $\langle G, F, \mathcal{C} \rangle$ de la siguiente manera:
+	\begin{itemize}
+		\item El grafo $G$ se mantiene idéntico.
+		\item El conjunto de frecuencias disponibles es $F = \{1, 2, \dots, n\}$.
+		\item La matriz de costos se define utilizando \textit{pesos exponenciales}. Elegimos una base $W$ suficientemente grande, específicamente $W = \rho \cdot n + 1$. El costo de asignar el color $i$ a cualquier vértice $v$ es:
+		\[ c_{v,i} = W^{i-1} \]
+	\end{itemize}
+	Esta construcción es polinomial, ya que la representación binaria de los pesos requiere $O(n \log W)$ bits, lo cual es polinomial en $n$.
 	
-	\item \textbf{No es APX-Complete:} Para ser APX-Complete, un problema debe estar en APX. Como MCCPP $\notin$ APX, no puede ser APX-Complete, aunque sí es APX-Hard.
-\end{enumerate}
+	\paragraph{Análisis del Costo Óptimo:}
+	Sea $\chi(G)$ el número cromático del grafo. La solución óptima del MCCPP utilizará exactamente los colores $\{1, \dots, \chi(G)\}$ para minimizar el costo (debido al crecimiento exponencial, siempre es preferible usar un color de índice menor).
+	El costo óptimo $Z^*$ está acotado superiormente por el caso en que los $n$ vértices usen el color más costoso necesario, el color $\chi(G)$:
+	\[ Z^* \le n \cdot W^{\chi(G)-1} \]
+	
+	\paragraph{Análisis de la Aproximación:}
+	El algoritmo $\mathcal{A}$, al tener factor de aproximación $\rho$, produce una solución con costo $Z_{\mathcal{A}}$ tal que $Z_{\mathcal{A}} \le \rho \cdot Z^*$.
+	Sea $k$ el índice del color más alto utilizado por la solución del algoritmo $\mathcal{A}$. Como al menos un vértice utiliza el color $k$, el costo de la solución está acotado inferiormente por el peso de ese solo vértice:
+	\[ Z_{\mathcal{A}} \ge 1 \cdot W^{k-1} = W^{k-1} \]
+	
+	Combinando las desigualdades:
+	\[ W^{k-1} \le Z_{\mathcal{A}} \le \rho \cdot Z^* \le \rho \cdot n \cdot W^{\chi(G)-1} \]
+	
+	Dividiendo ambos lados por $W^{\chi(G)-1}$:
+	\[ W^{k - \chi(G)} \le \rho \cdot n \]
+	
+	Recordando que elegimos $W = \rho \cdot n + 1$, sustituimos $W$:
+	\[ (\rho \cdot n + 1)^{k - \chi(G)} \le \rho \cdot n \]
+	
+	Analicemos el exponente $k - \chi(G)$. Dado que $k$ es el número de colores usado por una solución válida, necesariamente $k \ge \chi(G)$, por lo que el exponente es un entero no negativo.
+	\begin{itemize}
+		\item Si $k > \chi(G)$, entonces $k - \chi(G) \ge 1$. La desigualdad se convierte en:
+		\[ \rho \cdot n + 1 \le \rho \cdot n \]
+		Lo cual es una contradicción ($1 \le 0$).
+		\item Por lo tanto, la única posibilidad lógica es que $k - \chi(G) = 0$, es decir, $k = \chi(G)$.
+	\end{itemize}
+	
+	\paragraph{Conclusión:}
+	Esto demuestra que si existiera un algoritmo de aproximación de factor constante $\rho$ para el MCCPP con esta estructura de costos, dicho algoritmo encontraría \textbf{exactamente} el número cromático $\chi(G)$ para cualquier grafo.
+	Dado que calcular $\chi(G)$ es NP-difícil y no aproximable dentro de factores polinomiales, concluimos que no puede existir tal algoritmo $\mathcal{A}$.
+	
+	Por tanto, el MCCPP no pertenece a APX.
+\end{proof}
 
 \paragraph{Implicaciones Prácticas:}
 

@@ -14,79 +14,80 @@
 \contentsline {subsubsection}{\numberline {2.5.2}Implicaciones Teóricas: Exclusión del PTAS y APX-Completeness}{8}{subsubsection.2.5.2}%
 \contentsline {subsubsection}{\numberline {2.5.3}Imposibilidad de PTAS}{8}{subsubsection.2.5.3}%
 \contentsline {subsubsection}{\numberline {2.5.4}Análisis Riguroso de Pertenencia a APX (MCCPP)}{8}{subsubsection.2.5.4}%
-\contentsline {paragraph}{Teorema (MCCPP no pertenece a APX):}{8}{section*.2}%
-\contentsline {paragraph}{Demostración:}{8}{section*.3}%
-\contentsline {paragraph}{Corolario (Clasificación en la Jerarquía de Aproximabilidad):}{11}{section*.4}%
-\contentsline {paragraph}{Implicaciones Prácticas:}{11}{section*.5}%
-\contentsline {subsection}{\numberline {2.6}Análisis de Complejidad Parametrizada}{11}{subsection.2.6}%
-\contentsline {subsubsection}{\numberline {2.6.1}Definición Formal de W-Hardness}{12}{subsubsection.2.6.1}%
-\contentsline {subsubsection}{\numberline {2.6.2}Demostración de que el MCCPP es \(\mathbf {W}[\mathbf {1}]\)-Hard cuando se parametriza por \(|F|\)}{12}{subsubsection.2.6.2}%
-\contentsline {subsubsection}{\numberline {2.6.3}Demostración de que el MCCPP es \(\mathbf {W}[\mathbf {1}]\)-Hard cuando se parametriza por Treewidth}{13}{subsubsection.2.6.3}%
-\contentsline {subsubsection}{\numberline {2.6.4}Búsqueda de Parámetros Alternativos FPT para el MCCPP}{19}{subsubsection.2.6.4}%
-\contentsline {section}{\numberline {3}Diseño de Soluciones Algorítmicas}{21}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Soluciones Exactas (Bases de Referencia)}{21}{subsection.3.1}%
-\contentsline {subsubsection}{\numberline {3.1.1}Algoritmo de Fuerza Bruta: Enumeración Completa}{21}{subsubsection.3.1.1}%
-\contentsline {paragraph}{Pseudocódigo Formal\\}{22}{algocfline.1}%
-\contentsline {paragraph}{Demostración de Correctitud:}{22}{section*.24}%
-\contentsline {paragraph}{Análisis de Complejidad Temporal:}{23}{section*.25}%
-\contentsline {subsubsection}{\numberline {3.1.2}Backtracking y Backtracking inteligente:}{24}{subsubsection.3.1.2}%
-\contentsline {paragraph}{Correctitud}{24}{section*.26}%
-\contentsline {paragraph}{Complejidad temporal:}{24}{section*.27}%
-\contentsline {paragraph}{Correctitud}{25}{section*.28}%
-\contentsline {paragraph}{Complejidad temporal}{25}{section*.29}%
-\contentsline {subsubsection}{\numberline {3.1.3}Resolución mediante Programación Entera Lineal (ILP)}{25}{subsubsection.3.1.3}%
-\contentsline {subsubsection}{\numberline {3.1.4}Programación Dinámica (DP) para Grafos Estructurados}{26}{subsubsection.3.1.4}%
-\contentsline {paragraph}{Demostración de Correctitud:}{32}{section*.37}%
-\contentsline {subsection}{\numberline {3.2}Algoritmos de Aproximación}{33}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Algoritmo de Aproximación con Garantía Teórica (\(R \le O(\ln |V|)\))}{33}{subsubsection.3.2.1}%
-\contentsline {subsection}{\numberline {3.3}Heurísticas Greedy Cost-Aware}{37}{subsection.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.1}Estrategia Largest First (LF) Cost-Aware}{37}{subsubsection.3.3.1}%
-\contentsline {subsubsection}{\numberline {3.3.2}Estrategia DSATUR (Degree of Saturation) Cost-Aware}{38}{subsubsection.3.3.2}%
-\contentsline {subsubsection}{\numberline {3.3.3}Estrategia Recursive Largest First (RLF) Cost-Aware}{40}{subsubsection.3.3.3}%
-\contentsline {subsubsection}{\numberline {3.3.4}Heurística Estructural para Grafos Cordales (Intervalo)}{41}{subsubsection.3.3.4}%
-\contentsline {paragraph}{Heurística PEO (Perfect Elimination Ordering):}{42}{section*.38}%
-\contentsline {paragraph}{Análisis de Complejidad Temporal}{42}{section*.39}%
-\contentsline {paragraph}{Garantías de Rendimiento\\}{42}{section*.40}%
-\contentsline {subparagraph}{Rendimiento Empírico Esperado}{42}{section*.41}%
-\contentsline {paragraph}{Comparación con Programación Dinámica Exacta}{43}{section*.42}%
-\contentsline {paragraph}{Justificación Teórica de la Efectividad}{43}{section*.43}%
-\contentsline {paragraph}{Referencias y Notas}{44}{section*.44}%
-\contentsline {subsection}{\numberline {3.4}Metaheurísticas: Exploración del Espacio de Soluciones}{44}{subsection.3.4}%
-\contentsline {subsubsection}{\numberline {3.4.1}Simulated Annealing (SA)}{44}{subsubsection.3.4.1}%
-\contentsline {paragraph}{Análisis de Correctitud}{45}{thmt@dummyctr.dummy.1}%
-\contentsline {paragraph}{Análisis de Complejidad Temporal}{47}{thmt@dummyctr.dummy.4}%
-\contentsline {subsubsection}{\numberline {3.4.2}Trajectory Search Heuristic + Path Relinking (TSH+PR)}{49}{subsubsection.3.4.2}%
-\contentsline {paragraph}{Análisis de Correctitud}{50}{thmt@dummyctr.dummy.5}%
-\contentsline {paragraph}{Análisis de Complejidad Temporal}{54}{thmt@dummyctr.dummy.8}%
-\contentsline {subsection}{\numberline {3.5}Conclusiones}{57}{subsection.3.5}%
-\contentsline {section}{\numberline {4}Implementación y Análisis Experimental}{58}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Generación de Instancias}{58}{subsection.4.1}%
-\contentsline {subsubsection}{\numberline {4.1.1}Criterios de Clasificación}{58}{subsubsection.4.1.1}%
-\contentsline {subsubsection}{\numberline {4.1.2}Categorías de Instancias}{59}{subsubsection.4.1.2}%
-\contentsline {subsection}{\numberline {4.2}Análisis Teórico de Optimalidad por Algoritmo}{59}{subsection.4.2}%
-\contentsline {subsubsection}{\numberline {4.2.1}Algoritmos Exactos: Garantía de Óptimo}{59}{subsubsection.4.2.1}%
-\contentsline {paragraph}{Fuerza Bruta (BF)\\}{59}{section*.49}%
-\contentsline {paragraph}{Backtracking Inteligente\\}{60}{section*.50}%
-\contentsline {paragraph}{ILP Solver\\}{60}{section*.51}%
-\contentsline {paragraph}{Programación Dinámica\\}{61}{section*.52}%
-\contentsline {subsubsection}{\numberline {4.2.2}Algoritmos Aproximados: Sin Garantía de Óptimo}{61}{subsubsection.4.2.2}%
-\contentsline {paragraph}{Heurísticas Greedy (LF, DSATUR, RLF)\\}{61}{section*.53}%
-\contentsline {paragraph}{Algoritmo WSC-Greedy\\}{62}{section*.54}%
-\contentsline {paragraph}{Metaheurísticas (SA, TSH+PR)\\}{62}{section*.55}%
-\contentsline {subsection}{\numberline {4.3}Límites de Escalabilidad de Fuerza Bruta}{62}{subsection.4.3}%
-\contentsline {subsubsection}{\numberline {4.3.1}Análisis Teórico del Espacio de Búsqueda}{62}{subsubsection.4.3.1}%
-\contentsline {subsubsection}{\numberline {4.3.2}Límites Prácticos por Tipo de Instancia}{63}{subsubsection.4.3.2}%
-\contentsline {subsection}{\numberline {4.4}Recomendaciones Algorítmicas por Instancia}{64}{subsection.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.1}Matriz de Decisión}{64}{subsubsection.4.4.1}%
-\contentsline {subsubsection}{\numberline {4.4.2}Recomendaciones Específicas por Categoría}{64}{subsubsection.4.4.2}%
-\contentsline {paragraph}{Instancias con Estructura Especial}{64}{section*.56}%
-\contentsline {paragraph}{Grafos de Intervalo}{64}{section*.57}%
-\contentsline {paragraph}{Pequeñas Instancias Generales}{64}{section*.58}%
-\contentsline {paragraph}{Medianas Instancias Pseudo-Aleatorias}{65}{section*.59}%
-\contentsline {paragraph}{Densas/Completas}{65}{section*.60}%
-\contentsline {paragraph}{Grandes Instancias}{65}{section*.61}%
-\contentsline {subsection}{\numberline {4.5}Comparación Empírica}{66}{subsection.4.5}%
-\contentsline {subsubsection}{\numberline {4.5.1}Métricas de Evaluación}{66}{subsubsection.4.5.1}%
-\contentsline {subsubsection}{\numberline {4.5.2}Tabla Resumen de Rendimiento}{66}{subsubsection.4.5.2}%
-\contentsline {subsection}{\numberline {4.6}Entregables}{66}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Conclusiones del Análisis Experimental}{67}{subsection.4.7}%
+\contentsline {paragraph}{Construcción de la Instancia:}{9}{section*.2}%
+\contentsline {paragraph}{Análisis del Costo Óptimo:}{9}{section*.3}%
+\contentsline {paragraph}{Análisis de la Aproximación:}{9}{section*.4}%
+\contentsline {paragraph}{Conclusión:}{10}{section*.5}%
+\contentsline {paragraph}{Implicaciones Prácticas:}{10}{section*.6}%
+\contentsline {subsection}{\numberline {2.6}Análisis de Complejidad Parametrizada}{10}{subsection.2.6}%
+\contentsline {subsubsection}{\numberline {2.6.1}Definición Formal de W-Hardness}{11}{subsubsection.2.6.1}%
+\contentsline {subsubsection}{\numberline {2.6.2}Demostración de que el MCCPP es \(\mathbf {W}[\mathbf {1}]\)-Hard cuando se parametriza por \(|F|\)}{11}{subsubsection.2.6.2}%
+\contentsline {subsubsection}{\numberline {2.6.3}Demostración de que el MCCPP es \(\mathbf {W}[\mathbf {1}]\)-Hard cuando se parametriza por Treewidth}{12}{subsubsection.2.6.3}%
+\contentsline {subsubsection}{\numberline {2.6.4}Búsqueda de Parámetros Alternativos FPT para el MCCPP}{18}{subsubsection.2.6.4}%
+\contentsline {section}{\numberline {3}Diseño de Soluciones Algorítmicas}{20}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Soluciones Exactas (Bases de Referencia)}{20}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Algoritmo de Fuerza Bruta: Enumeración Completa}{20}{subsubsection.3.1.1}%
+\contentsline {paragraph}{Pseudocódigo Formal\\}{21}{algocfline.1}%
+\contentsline {paragraph}{Demostración de Correctitud:}{21}{section*.25}%
+\contentsline {paragraph}{Análisis de Complejidad Temporal:}{22}{section*.26}%
+\contentsline {subsubsection}{\numberline {3.1.2}Backtracking y Backtracking inteligente:}{23}{subsubsection.3.1.2}%
+\contentsline {paragraph}{Correctitud}{23}{section*.27}%
+\contentsline {paragraph}{Complejidad temporal:}{23}{section*.28}%
+\contentsline {paragraph}{Correctitud}{24}{section*.29}%
+\contentsline {paragraph}{Complejidad temporal}{24}{section*.30}%
+\contentsline {subsubsection}{\numberline {3.1.3}Resolución mediante Programación Entera Lineal (ILP)}{24}{subsubsection.3.1.3}%
+\contentsline {subsubsection}{\numberline {3.1.4}Programación Dinámica (DP) para Grafos Estructurados}{25}{subsubsection.3.1.4}%
+\contentsline {paragraph}{Demostración de Correctitud:}{31}{section*.38}%
+\contentsline {subsection}{\numberline {3.2}Algoritmos de Aproximación}{32}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Algoritmo de Aproximación con Garantía Teórica (\(R \le O(\ln |V|)\))}{32}{subsubsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.3}Heurísticas Greedy Cost-Aware}{36}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Estrategia Largest First (LF) Cost-Aware}{36}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Estrategia DSATUR (Degree of Saturation) Cost-Aware}{37}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Estrategia Recursive Largest First (RLF) Cost-Aware}{39}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}Heurística Estructural para Grafos Cordales (Intervalo)}{40}{subsubsection.3.3.4}%
+\contentsline {paragraph}{Heurística PEO (Perfect Elimination Ordering):}{41}{section*.39}%
+\contentsline {paragraph}{Análisis de Complejidad Temporal}{41}{section*.40}%
+\contentsline {paragraph}{Garantías de Rendimiento\\}{41}{section*.41}%
+\contentsline {subparagraph}{Rendimiento Empírico Esperado}{41}{section*.42}%
+\contentsline {paragraph}{Comparación con Programación Dinámica Exacta}{42}{section*.43}%
+\contentsline {paragraph}{Justificación Teórica de la Efectividad}{42}{section*.44}%
+\contentsline {paragraph}{Referencias y Notas}{43}{section*.45}%
+\contentsline {subsection}{\numberline {3.4}Metaheurísticas: Exploración del Espacio de Soluciones}{43}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Simulated Annealing (SA)}{43}{subsubsection.3.4.1}%
+\contentsline {paragraph}{Análisis de Correctitud}{44}{thmt@dummyctr.dummy.2}%
+\contentsline {paragraph}{Análisis de Complejidad Temporal}{46}{thmt@dummyctr.dummy.5}%
+\contentsline {subsubsection}{\numberline {3.4.2}Trajectory Search Heuristic + Path Relinking (TSH+PR)}{48}{subsubsection.3.4.2}%
+\contentsline {paragraph}{Análisis de Correctitud}{49}{thmt@dummyctr.dummy.6}%
+\contentsline {paragraph}{Análisis de Complejidad Temporal}{53}{thmt@dummyctr.dummy.9}%
+\contentsline {subsection}{\numberline {3.5}Conclusiones}{56}{subsection.3.5}%
+\contentsline {section}{\numberline {4}Implementación y Análisis Experimental}{57}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Generación de Instancias}{57}{subsection.4.1}%
+\contentsline {subsubsection}{\numberline {4.1.1}Criterios de Clasificación}{57}{subsubsection.4.1.1}%
+\contentsline {subsubsection}{\numberline {4.1.2}Categorías de Instancias}{58}{subsubsection.4.1.2}%
+\contentsline {subsection}{\numberline {4.2}Análisis Teórico de Optimalidad por Algoritmo}{58}{subsection.4.2}%
+\contentsline {subsubsection}{\numberline {4.2.1}Algoritmos Exactos: Garantía de Óptimo}{58}{subsubsection.4.2.1}%
+\contentsline {paragraph}{Fuerza Bruta (BF)\\}{58}{section*.50}%
+\contentsline {paragraph}{Backtracking Inteligente\\}{59}{section*.51}%
+\contentsline {paragraph}{ILP Solver\\}{59}{section*.52}%
+\contentsline {paragraph}{Programación Dinámica\\}{60}{section*.53}%
+\contentsline {subsubsection}{\numberline {4.2.2}Algoritmos Aproximados: Sin Garantía de Óptimo}{60}{subsubsection.4.2.2}%
+\contentsline {paragraph}{Heurísticas Greedy (LF, DSATUR, RLF)\\}{60}{section*.54}%
+\contentsline {paragraph}{Algoritmo WSC-Greedy\\}{61}{section*.55}%
+\contentsline {paragraph}{Metaheurísticas (SA, TSH+PR)\\}{61}{section*.56}%
+\contentsline {subsection}{\numberline {4.3}Límites de Escalabilidad de Fuerza Bruta}{61}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}Análisis Teórico del Espacio de Búsqueda}{61}{subsubsection.4.3.1}%
+\contentsline {subsubsection}{\numberline {4.3.2}Límites Prácticos por Tipo de Instancia}{62}{subsubsection.4.3.2}%
+\contentsline {subsection}{\numberline {4.4}Recomendaciones Algorítmicas por Instancia}{63}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Matriz de Decisión}{63}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Recomendaciones Específicas por Categoría}{63}{subsubsection.4.4.2}%
+\contentsline {paragraph}{Instancias con Estructura Especial}{63}{section*.57}%
+\contentsline {paragraph}{Grafos de Intervalo}{63}{section*.58}%
+\contentsline {paragraph}{Pequeñas Instancias Generales}{63}{section*.59}%
+\contentsline {paragraph}{Medianas Instancias Pseudo-Aleatorias}{64}{section*.60}%
+\contentsline {paragraph}{Densas/Completas}{64}{section*.61}%
+\contentsline {paragraph}{Grandes Instancias}{64}{section*.62}%
+\contentsline {subsection}{\numberline {4.5}Comparación Empírica}{65}{subsection.4.5}%
+\contentsline {subsubsection}{\numberline {4.5.1}Métricas de Evaluación}{65}{subsubsection.4.5.1}%
+\contentsline {subsubsection}{\numberline {4.5.2}Tabla Resumen de Rendimiento}{65}{subsubsection.4.5.2}%
+\contentsline {subsection}{\numberline {4.6}Entregables}{65}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Conclusiones del Análisis Experimental}{66}{subsection.4.7}%
